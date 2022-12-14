@@ -4,10 +4,12 @@
 #include "agent.h"
 #include "selection.h"
 #include "crossover.h"
+#include "mutation.h"
+#include "functions.h"
 
 class Population {
 public:
-	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, size_t size, size_t dim);
+	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, Function* target_function, size_t size, size_t dim);
 	~Population();
 
 	std::vector<std::shared_ptr<Agent>> get_current_generation();
@@ -33,6 +35,7 @@ private:
 	Crossover* crossover_operator;
 	Selection* selection_operator;
 	Mutation* mutation_operator;
+	Function* target_function;
 
 	void next_to_current();
 };

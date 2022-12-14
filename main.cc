@@ -1,6 +1,7 @@
 #include "../include/tools.h"
-#include "../include/functions.h"
 #include "../include/population.h"
+//#include "../include/functions.h"
+
 #include <iostream>
 
 

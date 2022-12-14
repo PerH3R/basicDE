@@ -4,7 +4,7 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <vector>
+#include "tools.h"
 //#include "gdcpp.h"
 
 // all functions implemented
