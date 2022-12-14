@@ -1,7 +1,7 @@
 #pragma once
 
 #include "tools.h"
-#include "agent.h"
+//#include "agent.h"
 #include "selection.h"
 #include "crossover.h"
 #include "mutation.h"
