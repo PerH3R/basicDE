@@ -2,7 +2,7 @@
 
 #include "tools.h"
 #include <random>
-#include "population.h"
+#include "agent.h"
 
 enum MUTATION {
 	RANDDIV1
