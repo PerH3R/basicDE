@@ -13,7 +13,7 @@ public:
 	Mutation() = default;
 	Mutation(size_t n, float F = 0.2);
 	virtual ~Mutation() {};
-	virtual void apply(std::vector<Agent*> next_gen) = 0;
+	virtual void apply(std::vector<std::shared_ptr<Agent>> next_gen) = 0;
 
 protected:
 	float F; //mutation rate
@@ -24,7 +24,7 @@ class Randdiv1 : public Mutation {
 public:
     Randdiv1(size_t n, float F = 0.2);
     MUTATION get_type();
-	void apply(std::vector<Agent*> next_gen);
+	void apply(std::vector<std::shared_ptr<Agent>> next_gen);
 
 };
 

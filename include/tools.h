@@ -2,6 +2,7 @@
 
 //#include <thread>
 #include <vector>
+#include<memory>
 
 void set_seed();
 

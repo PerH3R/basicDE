@@ -17,7 +17,7 @@ public:
     Selection(unsigned int pop_size) {};
     virtual ~Selection() {};
     virtual SELECTION get_type() = 0;
-    virtual std::vector<Agent*> apply(std::vector<Agent*> current_gen, std::vector<Agent*> next_gen) = 0;
+    virtual std::vector<std::shared_ptr<Agent>> apply(std::vector<std::shared_ptr<Agent>> current_gen, std::vector<std::shared_ptr<Agent>> next_gen) = 0;
     
 
 
@@ -32,7 +32,7 @@ class Elitist : public Selection {
 public:
     Elitist(unsigned int pop_size);
     SELECTION get_type();
-    std::vector<Agent*> apply(std::vector<Agent*> current_gen, std::vector<Agent*> next_gen);
+    std::vector<std::shared_ptr<Agent>> apply(std::vector<std::shared_ptr<Agent>> current_gen, std::vector<std::shared_ptr<Agent>> next_gen);
 };
 
 

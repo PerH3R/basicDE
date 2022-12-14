@@ -18,7 +18,7 @@ MUTATION Randdiv1::get_type() {
 }
 
 // Apply mutation on all agents, returns selection
-void Randdiv1::apply(std::vector<Agent*> next_gen){
+void Randdiv1::apply(std::vector<std::shared_ptr<Agent>> next_gen){
 	std::default_random_engine generator;
 	std::uniform_int_distribution<size_t> distribution(0, this->n);
 	size_t x1, x2, x3;

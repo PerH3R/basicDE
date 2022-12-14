@@ -13,8 +13,8 @@ SELECTION Elitist::get_type() {
 }
 
 // Apply selection on all agents, returns selection
-std::vector<Agent*> Elitist::apply(std::vector<Agent*> current_gen, std::vector<Agent*> next_gen){
-    std::vector<Agent*> selected;
+std::vector<std::shared_ptr<Agent>> Elitist::apply(std::vector<std::shared_ptr<Agent>> current_gen, std::vector<std::shared_ptr<Agent>> next_gen){
+    std::vector<std::shared_ptr<Agent>> selected;
     for (size_t i = 0; i < n; i++) {
         if (current_gen[i]->get_fitness() >= next_gen[i]->get_fitness()) {
             selected.push_back(current_gen[i]);

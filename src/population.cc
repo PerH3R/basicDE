@@ -9,8 +9,8 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 	this->cur_gen.reserve(size);
 	this->next_gen.reserve(size);
 	for (size_t i = 0; i < size; i++) {
-		this->cur_gen.push_back(new Agent(dim, mutation_operator));
-		this->next_gen.push_back(new Agent(dim, mutation_operator));
+		this->cur_gen.push_back(std::make_unique<Agent>(dim, mutation_operator));
+		this->next_gen.push_back(std::make_unique<Agent>(dim, mutation_operator));
 	}
 
 	
