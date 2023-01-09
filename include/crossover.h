@@ -1,6 +1,5 @@
-#pragma once
-
 #include "agent.h"
+#include <random>
 
 enum CROSSOVER {
 	BINOMIAL
@@ -8,10 +7,10 @@ enum CROSSOVER {
 
 class Crossover {
 public:
-	Crossover();
+	Crossover() = default;
 	virtual ~Crossover();
     virtual CROSSOVER get_crossover() = 0;
-    virtual std::shared_ptr<Agent> apply(std::vector<std::shared_ptr<Agent>> population, int target_index) = 0;
+    virtual std::shared_ptr<Agent> apply(std::vector<std::shared_ptr<Agent>> current_gen, std::vector<std::shared_ptr<Agent>> next_gen) = 0;
 
 private:
 
@@ -19,7 +18,7 @@ private:
 
 class Binomial : public Crossover {
 public:
-    Binomial();
+    Binomial() = default();
     CROSSOVER get_crossover();
-    std::shared_ptr<Agent> apply(std::vector<std::shared_ptr<Agent>> population, int target_index);
+    std::shared_ptr<Agent> apply(std::vector<std::shared_ptr<Agent>> current_gen, std::vector<std::shared_ptr<Agent>> next_gen);
 };

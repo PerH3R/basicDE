@@ -14,7 +14,7 @@ CFLAGS			= -std=c++11 -g -Wall -Wextra -fopenmp
 all: $(MAIN_TARGET)
 
 $(MAIN_TARGET): $(OBJECTS) $(MAIN_OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -I${INC_DIR} -o $@ $^
 
 %.o: %.cc
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<

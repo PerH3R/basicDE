@@ -25,7 +25,7 @@ double Agent::get_fitness() {
 }
 
 std::vector<double> Agent::get_position() {
-
+	return this->position;
 }
 
 void Agent::set_position(std::vector<double> new_position) {

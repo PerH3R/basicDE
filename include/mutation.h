@@ -8,6 +8,7 @@ enum MUTATION {
 	RANDDIV1
 };
 
+
 class Mutation {
 public:
 	Mutation() = default;
@@ -25,7 +26,6 @@ public:
     Randdiv1(size_t n, float F = 0.2);
     MUTATION get_type();
 	void apply(std::vector<std::shared_ptr<Agent>> next_gen);
-
 };
 
 

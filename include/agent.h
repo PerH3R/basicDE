@@ -1,7 +1,6 @@
 #pragma once
 
 #include "tools.h"
-#include "mutation.h"
 #include "functions.h"
 
 class Agent {
@@ -23,7 +22,7 @@ private:
 	size_t d;
 	std::vector<double> position;
 	size_t fitness;
-	Mutation* mutation_operator;
+	//Mutation* mutation_operator;
 	Function* fitness_function;
 	bool fitness_uptodate;
 
