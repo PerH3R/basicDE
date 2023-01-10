@@ -13,16 +13,22 @@ struct results {
 
 
 
-
+results return_value(std::vector<double> location, double fitness, int i){
+  results result;
+  result.best_location = location;
+  result.best_fitness = fitness;
+  result.iterations = i;
+  return result;
+}
 
 
 
 //main loop
-results loop(Function* f, Population* pop, unsigned iterations) {
-	results result;
+results loop(Function* f, Population* pop, unsigned iterations, size_t dimension) {
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
-	result.best_fitness = std::numeric_limits<double>::max();
+	//TODO: dimension getters in Function?
+	std::vector<double> best_location(dimension, 0.0);
 	
 
 	for (unsigned i = 0; i < iterations; i++) {
@@ -39,17 +45,16 @@ results loop(Function* f, Population* pop, unsigned iterations) {
 		pop->apply_selection();
 
 		pop->sort();
-		best_fitness = pop->get_current_generation()[0]->get_fitness();
 
-		if (best_fitness < result.best_fitness)
+		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
-			result.best_fitness = best_fitness;
-			//TODO: dereference?
-			result.best_location = pop->get_current_generation()[0]->get_position();
-			result.iterations = i;
+			best_fitness = pop->get_current_generation()[0]->get_fitness();
+			best_location = pop->get_current_generation()[0]->get_position();
 		}
 		//additional stopping criteria
+		//...
 	}
+	return return_value(best_location, best_fitness, iterations);
 }
 
 
@@ -61,7 +66,7 @@ int main(int argc, char* argv[]) {
 	int num_args = 0; //TODO: remove
 
 	if (argc != num_args) {
-		std::cerr << "expected " << num_args << " arguments, got " << argc << argv <<".";
+		std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
 	};
 
 	//convert argv to correct type
@@ -70,13 +75,13 @@ int main(int argc, char* argv[]) {
 	//TODO: finish command line params and remove below
 	int function_num = 0;
 	int number_of_runs = 10;
-	size_t pop_size = 100;
-	int dim = 2;
+	size_t pop_size = 5;
+	size_t dim = 2;
 
 
 	//implemented testfunctions
 	Function* function;
-	Mutation* mutation = new Randdiv1(pop_size);
+	Mutation* mutation = new Randdiv1(dim, pop_size);
 	Crossover* crossover = new Binomial(dim);
 	Selection* selection = new Elitist(pop_size);
 	switch (static_cast<FUNCTION> (function_num)) {
@@ -96,10 +101,15 @@ int main(int argc, char* argv[]) {
 
 	//main loop
 	for (size_t i = 0; i < number_of_runs; i++) {
-		std::cout << "Run " << i << std::endl;
+		std::cout << "Run " << i << " ";
 		//set_seed();
 
-		results result = loop(function, pop, number_of_runs);
+		results result = loop(function, pop, number_of_runs, dim);
+		std::cout << result.best_fitness;
+		for (float i: result.best_location){
+			std::cout << i;
+		}
+		std::cout << std::endl;
 	};
 	return 0;
 }
