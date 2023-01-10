@@ -12,8 +12,8 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 	this->cur_gen.reserve(size);
 	this->next_gen.reserve(size);
 	for (size_t i = 0; i < size; i++) {
-		this->cur_gen.push_back(*Agent(dim, mutation_operator, crossover_operator, target_function));
-		this->next_gen.push_back(*Agent(dim, mutation_operator, crossover_operator, target_function));
+		this->cur_gen.push_back(std::make_shared<Agent>(dim, mutation_operator, crossover_operator, target_function));
+		this->next_gen.push_back(std::make_shared<Agent>(dim, mutation_operator, crossover_operator, target_function));
 	}
 
 	
