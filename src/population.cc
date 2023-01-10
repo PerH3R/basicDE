@@ -44,8 +44,8 @@ void Population::apply_selection() {
 	std::vector<Agent*> selected_agents = selection_operator->apply(this->cur_gen, this->next_gen);
 	for (size_t i = 0; i < n; ++i)
 	{
-		delete cur_gen[i];
-		delete next_gen[i];
+		// delete cur_gen[i];
+		// delete next_gen[i];
 	}
 	cur_gen = selected_agents;
 	for (size_t i = 0; i < n; i++) {

@@ -17,8 +17,8 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	this->donor.reserve(dim);
 	for (size_t i = 0; i < dim; ++i)	{
 		float value = distribution(generator);
-		this->position[i] = value;
-		this->donor[i] = value;
+		this->position.push_back(value);
+		this->donor.push_back(value);
 	}
 	this->calculate_fitness();
 	std::cout << "new agent with fitness:" << this->fitness << " at " << this->position[0] << " " << this->position[1] << std::endl;
