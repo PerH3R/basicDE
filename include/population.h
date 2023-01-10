@@ -28,7 +28,7 @@ public:
 	void sort();
 private:
 	size_t n; //population size
-	size_t d; //dimension size
+	size_t dim; //dimension size
 	std::vector<std::shared_ptr<Agent> > cur_gen;
 	std::vector<std::shared_ptr<Agent> > next_gen;
 

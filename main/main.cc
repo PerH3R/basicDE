@@ -28,7 +28,8 @@ results loop(Function* f, Population* pop, unsigned iterations, size_t dimension
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
 	//TODO: dimension getters in Function?
-	std::vector<double> best_location(dimension, 0.0);
+	std::vector<double> best_location;
+	best_location.reserve(dimension);
 	
 
 	for (unsigned i = 0; i < iterations; i++) {

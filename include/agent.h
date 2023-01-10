@@ -10,6 +10,7 @@
 class Crossover;
 class Mutation;
 #include <cstdlib>
+#include <iostream>
 
 class Agent {
 public:

@@ -1,26 +1,27 @@
 #include "../include/agent.h"
 
-Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Function* fitness_function) {
-	this->dim = dimension;
-	this->mutation_operator = mutation_operator;
-	this->crossover_operator = crossover_operator;
-	this->fitness_function = fitness_function;
+Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Function* fitness_function) : 
+			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), fitness_function(fitness_function) {
+	// this->dim = dimension;
+	// this->mutation_operator = mutation_operator;
+	// this->crossover_operator = crossover_operator;
+	// this->fitness_function = fitness_function;
 	this->fitness = std::numeric_limits<double>::max();
 	this->fitness_uptodate = false;
 
-	//TODO:initialize pos and donor
+	//TODO:rand seed
 	std::pair<double,double> range = fitness_function->get_range();
 	std::default_random_engine generator;
 	std::uniform_real_distribution<float> distribution(range.first, range.second);
-	position.reserve(dim);
-	donor.reserve(dim);
+	this->position.reserve(dim);
+	this->donor.reserve(dim);
 	for (size_t i = 0; i < dim; ++i)	{
 		float value = distribution(generator);
 		this->position[i] = value;
 		this->donor[i] = value;
 	}
 	this->calculate_fitness();
-	// std::cout << "new agent at:" << position << std::endl;
+	std::cout << "new agent with fitness:" << this->fitness << " at " << this->position[0] << " " << this->position[1] << std::endl;
 
 }
 
@@ -28,7 +29,7 @@ Agent::~Agent() {
 
 }
 
-void Agent::mutate(std::vector<std::shared_ptr<Agent>> cur_gen, size_t idx){
+void Agent::mutate(std::vector<Agent>> cur_gen, size_t idx){
 	this->donor = this->mutation_operator->apply(cur_gen, idx);
 }
 
@@ -43,9 +44,11 @@ void Agent::calculate_fitness() {
 
 double Agent::get_fitness() {
 	if (fitness_uptodate == false) {
+		std::cout << "calculating fitness... ";
 		this->calculate_fitness();
 	}
-	return this->fitness;
+	std::cout << fitness << std::endl;
+	return fitness;
 }
 
 std::vector<double>& Agent::get_position() {
