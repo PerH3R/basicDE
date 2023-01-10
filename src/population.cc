@@ -12,8 +12,8 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 	this->cur_gen.reserve(size);
 	this->next_gen.reserve(size);
 	for (size_t i = 0; i < size; i++) {
-		this->cur_gen.push_back(std::make_shared<Agent>(dim, mutation_operator, crossover_operator, target_function));
-		this->next_gen.push_back(std::make_shared<Agent>(dim, mutation_operator, crossover_operator, target_function));
+		this->cur_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function));
+		this->next_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function));
 	}
 
 	
@@ -41,15 +41,15 @@ void Population::apply_crossover() {
 }
 
 void Population::apply_selection() {
-	std::vector<std::shared_ptr<Agent> > selected_agents = selection_operator->apply(this->cur_gen, this->next_gen);
+	std::vector<Agent*> selected_agents = selection_operator->apply(this->cur_gen, this->next_gen);
 	for (size_t i = 0; i < n; ++i)
 	{
-		// delete cur_gen[i];
-		// delete next_gen[i];
+		delete cur_gen[i];
+		delete next_gen[i];
 	}
 	cur_gen = selected_agents;
 	for (size_t i = 0; i < n; i++) {
-		this->next_gen.push_back(std::make_shared<Agent>(dim, mutation_operator, crossover_operator, target_function));
+		this->next_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function));
 	}
 }
 
@@ -68,11 +68,11 @@ void Population::sort(){
 	}while(sorted == false);
 }
 
-std::vector<std::shared_ptr<Agent>> Population::get_current_generation(){
+std::vector<Agent*> Population::get_current_generation(){
 	return cur_gen;
 }
 
 
-std::vector<std::shared_ptr<Agent>> Population::get_next_generation(){
+std::vector<Agent*> Population::get_next_generation(){
 	return next_gen;
 }

@@ -29,11 +29,11 @@ Agent::~Agent() {
 
 }
 
-void Agent::mutate(std::vector<Agent>> cur_gen, size_t idx){
+void Agent::mutate(std::vector<Agent*> cur_gen, size_t idx){
 	this->donor = this->mutation_operator->apply(cur_gen, idx);
 }
 
-void Agent::crossover(std::vector<std::shared_ptr<Agent>> next_gen, size_t idx){
+void Agent::crossover(std::vector<Agent*> next_gen, size_t idx){
 	next_gen[idx]->set_position( this->crossover_operator->apply(position, donor) );
 }
 
