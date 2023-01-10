@@ -5,7 +5,7 @@
 
 // Elitist
 Elitist::Elitist(unsigned int pop_size) {
-    n = pop_size;
+    this->n = pop_size;
 }
 
 SELECTION Elitist::get_type() {

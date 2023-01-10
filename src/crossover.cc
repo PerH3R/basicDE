@@ -2,9 +2,9 @@
 
 // Crossover 
 //TODO:remove?
-Crossover::Crossover(size_t n, float F) {
+Crossover::Crossover(size_t dim, float F) {
 	this->F = F; 
-	this->n = n;
+	this->dim = dim;
 }
 
 // Crossover::~Crossover(){
@@ -12,8 +12,8 @@ Crossover::Crossover(size_t n, float F) {
 // }
 
 // Randdiv1
-Binomial::Binomial(size_t n, float F) {
-	this->n = n;
+Binomial::Binomial(size_t dim, float F) {
+	this->dim = dim;
 	this->F = F;
 }
 
@@ -25,7 +25,7 @@ CROSSOVER Binomial::get_type() {
 // Apply crossover on all agents, returns selection
 std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<double> donor_vec){
 	//TODO:sanity check, are cur_pos and donor vec same dim as 'n'
-	for (size_t i = 0; i < n; ++i){
+	for (size_t i = 0; i < dim; ++i){
 		//TODO: look at rand generation
 		float chance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		if (chance < F)		{

@@ -9,6 +9,17 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	this->fitness_uptodate = false;
 
 	//TODO:initialize pos and donor
+	std::pair<double,double> range = fitness_function->get_range();
+	position.reserve(dimension);
+	donor.reserve(dimension);
+	for (int i = 0; i < d; ++i)	{
+
+		float value = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(range.first-range.second));
+		this->position[i] = value;
+		this->donor[i] = value;
+	}
+	// std::cout << "new agent at:" << position << std::endl;
+
 }
 
 Agent::~Agent() {
@@ -16,11 +27,11 @@ Agent::~Agent() {
 }
 
 void Agent::mutate(std::vector<std::shared_ptr<Agent>> cur_gen, size_t idx){
-	this->donor_vec = this->mutation_operator->apply(cur_gen, idx);
+	this->donor = this->mutation_operator->apply(cur_gen, idx);
 }
 
 void Agent::crossover(std::vector<std::shared_ptr<Agent>> next_gen, size_t idx){
-	next_gen[idx]->set_position(this->crossover_operator->apply(this->position, donor_vec));
+	next_gen[idx]->set_position(this->crossover_operator->apply(this->position, donor));
 }
 
 void Agent::calculate_fitness() {

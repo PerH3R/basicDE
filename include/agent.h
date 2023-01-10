@@ -29,11 +29,12 @@ public:
 private:
 	size_t d;
 	std::vector<double> position;
-	std::vector<double> donor_vec;
+	std::vector<double> donor;
 	size_t fitness;
 	Mutation* mutation_operator;
 	Crossover* crossover_operator;
 	Function* fitness_function;
 	bool fitness_uptodate;
+
 
 };

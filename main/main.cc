@@ -19,9 +19,11 @@ struct results {
 
 //main loop
 results loop(Function* f, Population* pop, unsigned iterations) {
+	results result;
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
-
+	result.best_fitness = std::numeric_limits<double>::max();
+	
 
 	for (unsigned i = 0; i < iterations; i++) {
 		//mutate
@@ -39,6 +41,13 @@ results loop(Function* f, Population* pop, unsigned iterations) {
 		pop->sort();
 		best_fitness = pop->get_current_generation()[0]->get_fitness();
 
+		if (best_fitness < result.best_fitness)
+		{
+			result.best_fitness = best_fitness;
+			//TODO: dereference?
+			result.best_location = pop->get_current_generation()[0]->get_position();
+			result.iterations = i;
+		}
 		//additional stopping criteria
 	}
 }
@@ -52,7 +61,7 @@ int main(int argc, char* argv[]) {
 	int num_args = 0; //TODO: remove
 
 	if (argc != num_args) {
-		std::cerr << "expected " << num_args << " arguments, got " << argc << ".";
+		std::cerr << "expected " << num_args << " arguments, got " << argc << argv <<".";
 	};
 
 	//convert argv to correct type
@@ -68,7 +77,7 @@ int main(int argc, char* argv[]) {
 	//implemented testfunctions
 	Function* function;
 	Mutation* mutation = new Randdiv1(pop_size);
-	Crossover* crossover = new Binomial();
+	Crossover* crossover = new Binomial(dim);
 	Selection* selection = new Elitist(pop_size);
 	switch (static_cast<FUNCTION> (function_num)) {
 		case SPHERE: function = new Sphere(); break;
@@ -81,7 +90,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	//initialise population
-	Population* pop = new Population(crossover, selection, mutation, pop_size, dim);
+	Population* pop = new Population(crossover, selection, mutation, function, pop_size, dim);
 
 	//TODO: run logs
 
