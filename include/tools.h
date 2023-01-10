@@ -2,7 +2,8 @@
 
 //#include <thread>
 #include <vector>
-#include<memory>
+#include <memory>
+#include <random>
 
 void set_seed();
 
