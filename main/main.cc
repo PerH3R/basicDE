@@ -19,7 +19,7 @@ struct results {
 
 //main loop
 results loop(Function* f, Population* pop, unsigned iterations) {
-	double best_fitness = std::numeric_limits<double>::max;
+	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
 
 
@@ -92,5 +92,5 @@ int main(int argc, char* argv[]) {
 
 		results result = loop(function, pop, number_of_runs);
 	};
-
+	return 0;
 }
