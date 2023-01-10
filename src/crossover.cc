@@ -23,13 +23,16 @@ CROSSOVER Binomial::get_type() {
 }
 
 // Apply crossover on all agents, returns selection
-std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<double> donor_vec){
+std::vector<double> Binomial::apply(std::vector<double>& cur_pos, std::vector<double>& donor_vec){
+	std::vector<float> new_pos(dim, 0.0);
 	//TODO:sanity check, are cur_pos and donor vec same dim as 'n'
 	for (size_t i = 0; i < dim; ++i){
 		//TODO: look at rand generation
 		float chance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		if (chance < F)		{
-			cur_pos[i] = donor_vec[i];
+			new_pos[i] = donor_vec[i];
+		}else{
+			new_pos[i] = cur_pos[i];
 		}
 	}
 	return cur_pos;

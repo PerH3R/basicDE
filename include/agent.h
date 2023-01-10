@@ -9,6 +9,7 @@
 //TODO: look at this
 class Crossover;
 class Mutation;
+#include <cstdlib>
 
 class Agent {
 public:
@@ -21,13 +22,13 @@ public:
 	void calculate_fitness();
 	double get_fitness();
 
-	std::vector<double> get_position();
+	std::vector<double>& get_position();
 	void set_position(std::vector<double> new_position);
 
 
 
 private:
-	size_t d;
+	size_t dim;
 	std::vector<double> position;
 	std::vector<double> donor;
 	size_t fitness;
@@ -35,6 +36,7 @@ private:
 	Crossover* crossover_operator;
 	Function* fitness_function;
 	bool fitness_uptodate;
+
 
 
 };
