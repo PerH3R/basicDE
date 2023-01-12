@@ -1,10 +1,12 @@
 #include "../include/crossover.h"
 
+
+
 // Crossover 
 //TODO:remove?
-Crossover::Crossover(size_t dim, float F) {
-	this->F = F; 
-	this->dim = dim;
+Crossover::Crossover(size_t dim, float F) : dim(dim), F(F){
+	// this->F = F; 
+	// this->dim = dim;
 }
 
 // Crossover::~Crossover(){
@@ -12,9 +14,9 @@ Crossover::Crossover(size_t dim, float F) {
 // }
 
 // Randdiv1
-Binomial::Binomial(size_t dim, float F) {
-	this->dim = dim;
-	this->F = F;
+Binomial::Binomial(size_t dim, float F) : Crossover(dim, F){
+	// this->dim = dim;
+	// this->F = F;
 }
 
 
@@ -23,19 +25,40 @@ CROSSOVER Binomial::get_type() {
 }
 
 // Apply crossover on all agents, returns selection
-std::vector<double> Binomial::apply(std::vector<double>& cur_pos, std::vector<double>& donor_vec){
-	std::vector<float> new_pos(dim, 0.0);
+std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<double> donor_vec){
+	// std::cout << "co apply dim: " << this->dim << std::endl;
+
+	std::vector<double> new_pos;
+	new_pos.reserve(this->dim);
+
 	//TODO:sanity check, are cur_pos and donor vec same dim as 'n'
-	for (size_t i = 0; i < dim; ++i){
+	if (cur_pos.size() != this->dim){
+		std::cerr << "co apply invalid posiiton size\n";
+	}
+	if (donor_vec.size() != this->dim){
+		std::cerr << "co apply invalid donor size\n";
+	}
+
+	for (size_t i = 0; i < this->dim; ++i){
 		//TODO: look at rand generation
 		float chance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		if (chance < F)		{
-			new_pos[i] = donor_vec[i];
+			// std::cout << "donated position " << i << std::endl;
+			new_pos.push_back(donor_vec[i]);
 		}else{
-			new_pos[i] = cur_pos[i];
+			new_pos.push_back(cur_pos[i]);
 		}
 	}
-	return cur_pos;
+	if (cur_pos.size() != this->dim){
+		std::cerr << "co apply invalid posiiton size\n";
+	}
+	if (donor_vec.size() != this->dim){
+		std::cerr << "co apply invalid donor size\n";
+	}if (new_pos.size() != this->dim){
+		std::cerr << "co apply invalid posiiton size\n";
+	}
+	// std::cout << "co apply pos: " << new_pos.size() << " dim: " << this->dim << std::endl;
+	return new_pos;
 }
 
 

@@ -8,7 +8,7 @@ OBJECTS			= $(SOURCES:.cc=.o)
 MAIN_OBJ		= $(MAIN_SRC:.cc=.o)
 MAIN_TARGET	= de
 CC					= g++
-CFLAGS			= -std=c++11 -g -Wall -Wextra -fopenmp
+CFLAGS			= -std=c++11 -g -Wall -Wextra -fopenmp -Wreturn-type
 
 
 all: $(MAIN_TARGET)
