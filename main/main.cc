@@ -32,6 +32,7 @@ results loop(Population* pop, unsigned iterations, size_t dimension) {
 	
 
 	for (unsigned i = 0; i < iterations; i++) {
+		std::cout << "iteration " << i << std::endl;
 		//mutate
 		pop->apply_mutation();
 
