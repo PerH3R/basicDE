@@ -1,11 +1,11 @@
 #pragma once
 
 #include "tools.h"
-#include "agent.h"
+// #include "agent.h"
 #include "selection.h"
-#include "crossover.h"
-#include "mutation.h"
-#include "functions.h"
+// #include "crossover.h"
+// #include "mutation.h"
+// #include "functions.h"
 
 class Population {
 public:
@@ -20,6 +20,8 @@ public:
 	void apply_mutation();
 	void apply_crossover();
 	void apply_selection();
+
+	void print_fitness();
 
 
 

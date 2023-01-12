@@ -21,7 +21,21 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 }
 
 Population::~Population() {
+	for(Agent* i : cur_gen){
+		delete i;
+		i = NULL;
+	}
+	for(Agent* i : next_gen){
+		delete i;
+		i = NULL;
+	}
+}
 
+void Population::print_fitness(){
+	for (size_t i = 0; i < n; ++i){
+		std::cout << cur_gen[i]->get_fitness() << " ";
+	}
+	std::cout << std::endl;
 }
 
 void Population::apply_mutation() {
@@ -41,16 +55,16 @@ void Population::apply_crossover() {
 }
 
 void Population::apply_selection() {
-	std::vector<Agent*> selected_agents = selection_operator->apply(this->cur_gen, this->next_gen);
+	selection_operator->apply(this->cur_gen, this->next_gen);
 	for (size_t i = 0; i < n; ++i)
 	{
 		// delete cur_gen[i];
 		// delete next_gen[i];
 	}
-	cur_gen = selected_agents;
-	for (size_t i = 0; i < n; i++) {
-		this->next_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function));
-	}
+	// cur_gen = selected_agents;
+	// for (size_t i = 0; i < n; i++) {
+	// 	this->next_gen[i] = new Agent(dim, mutation_operator, crossover_operator, target_function);
+	// }
 }
 
 void Population::sort(){

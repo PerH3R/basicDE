@@ -1,5 +1,8 @@
 #include "../include/mutation.h"
 
+//TODO:remove
+#include <iostream>
+
 // Mutation 
 //TODO:remove?
 Mutation::Mutation(size_t dim, size_t n, float F) {
@@ -40,6 +43,13 @@ std::vector<double> Randdiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	} while (x3 == x2 || x3 == x1 || x3 == idx);
 
 	std::vector<double> donor_vec(this->dim, 0.0);
+	// for (double p : donor_vec){
+	// 	std::cout << p << " ";
+	// }
+	// std::cout << std::endl;
+
+	// std::cout << idx << " " << x1 << " " << x2 << " " << x3 << std::endl;
+
 	for (size_t j = 0; j < this->dim; j++) {
 		double a = cur_gen[x1]->get_position()[j];
 		double b = cur_gen[x2]->get_position()[j];

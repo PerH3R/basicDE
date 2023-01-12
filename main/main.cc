@@ -24,7 +24,7 @@ results return_value(std::vector<double> location, double fitness, int i){
 
 
 //main loop
-results loop(Function* f, Population* pop, unsigned iterations, size_t dimension) {
+results loop(Population* pop, unsigned iterations, size_t dimension) {
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
 	//TODO: dimension getters in Function?
@@ -44,7 +44,9 @@ results loop(Function* f, Population* pop, unsigned iterations, size_t dimension
 		//selection
 		pop->apply_selection();
 
+		pop->print_fitness();
 		pop->sort();
+		pop->print_fitness();
 
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
@@ -69,14 +71,15 @@ int main(int argc, char* argv[]) {
 		std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
 	};
 
-	//convert argv to correct type
+	//TODO: convert argv to correct type
 
 
 	//TODO: finish command line params and remove below
 	int function_num = 0;
-	int number_of_runs = 10;
+	unsigned int number_of_runs = 1;
+	unsigned int iterations = 5;
 	size_t pop_size = 5;
-	size_t dim = 2;
+	size_t dim = 5;
 
 
 	//implemented testfunctions
@@ -95,21 +98,29 @@ int main(int argc, char* argv[]) {
 	}
 
 	//initialise population
-	Population* pop = new Population(crossover, selection, mutation, function, pop_size, dim);
 
 	//TODO: run logs
 
 	//main loop
 	for (size_t i = 0; i < number_of_runs; i++) {
+		Population* pop = new Population(crossover, selection, mutation, function, pop_size, dim);
 		std::cout << "Run " << i << " ";
 		//set_seed();
 
-		results result = loop(function, pop, number_of_runs, dim);
-		std::cout << result.best_fitness;
-		for (float i: result.best_location){
-			std::cout << i;
-		}
+		results result = loop(pop, iterations, dim);
 		std::cout << std::endl;
+		delete pop;
+		pop=NULL;
+
 	};
+
+	delete function;
+	delete mutation;
+	delete crossover;
+	delete selection;
+	function=NULL;
+	mutation=NULL;
+	crossover=NULL;
+	selection=NULL;
 	return 0;
 }
