@@ -27,17 +27,12 @@ void Elitist::apply(std::vector<Agent*> current_gen, std::vector<Agent*> next_ge
         std::cout << next_gen[i]->get_fitness() << " ";
     }
     std::cout << std::endl;
-
-    // std::vector<Agent*> selected;
-    // selected.reserve(current_gen.size());
+    
     for (size_t i = 0; i < n; i++) {
-        if (current_gen[i]->get_fitness() >= next_gen[i]->get_fitness()) {
-            // selected.push_back(current_gen[i]);
+        if (current_gen[i]->get_fitness() <= next_gen[i]->get_fitness()) {
             //do nothing
         } else {
-            std::vector<double> best_position = next_gen[i]->get_position();
-            current_gen[i]->set_position(best_position);
-            // selected.push_back(next_gen[i]);
+            current_gen[i]->set_position(next_gen[i]->get_position());
         }
     }
     std::cout << "-------------" << std::endl;
