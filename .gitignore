@@ -2,3 +2,8 @@
 .vs
 *.o
 de
+deps/
+build/CMakeFiles/
+build/deps/
+build/lib/
+build/

@@ -2,6 +2,7 @@
 
 #include "tools.h"
 // #include "agent.h"
+#include "boundary.h"
 #include "selection.h"
 // #include "crossover.h"
 // #include "mutation.h"
@@ -9,7 +10,8 @@
 
 class Population {
 public:
-	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, Function* target_function, size_t size, size_t dim);
+	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::bbob::Sphere* target_function, 
+				Boundary* boundary_correction, size_t size, unsigned int* budget);
 	~Population();
 
 	std::vector<Agent*> get_current_generation();
@@ -19,9 +21,12 @@ public:
 
 	void apply_mutation();
 	void apply_crossover();
+	void apply_boundary_correction();
 	void apply_selection();
 
 	void print_fitness();
+
+	size_t get_population_size();
 
 
 
@@ -37,7 +42,9 @@ private:
 	Crossover* crossover_operator;
 	Selection* selection_operator;
 	Mutation* mutation_operator;
-	Function* target_function;
+	Boundary* boundary_correction;
+	ioh::problem::bbob::Sphere* target_function;
+	unsigned int* budget; 
 
 	void next_to_current();
 };

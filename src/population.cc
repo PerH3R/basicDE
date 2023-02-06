@@ -1,19 +1,23 @@
 #include "../include/population.h"
 
-Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, Function* target_function,
-					   size_t size, size_t dim) {
+
+//TODO: change variable assignment
+Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::bbob::Sphere* target_function,
+					   Boundary* boundary_correction, size_t size, unsigned int* budget) {
 	this->crossover_operator = crossover_operator;
 	this->selection_operator = selection_operator;
 	this->mutation_operator = mutation_operator;
+	this->boundary_correction = boundary_correction;
 	this->target_function = target_function;
-	this->n = size;
-	this->dim = dim;
+	this->n = target_function->meta_data().n_variables;
+	this->dim = target_function->bounds().lb.size();
+	this->budget=budget;
 
 	this->cur_gen.reserve(size);
 	this->next_gen.reserve(size);
 	for (size_t i = 0; i < size; i++) {
-		this->cur_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function));
-		this->next_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function));
+		this->cur_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function, budget));
+		this->next_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function, budget));
 	}
 
 	
@@ -29,6 +33,10 @@ Population::~Population() {
 		delete i;
 		i = NULL;
 	}
+}
+
+size_t Population::get_population_size(){
+	return this->n;
 }
 
 void Population::print_fitness(){
@@ -67,8 +75,13 @@ void Population::apply_selection() {
 	// }
 }
 
+void Population::apply_boundary_correction(){
+	this->boundary_correction->apply(this->next_gen);
+}
+
 void Population::sort(){
 	bool sorted;
+	//TODO: efficient sorting
 	do{
 		sorted = true;
 		for (size_t i = 0; i < n-1; ++i){

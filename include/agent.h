@@ -1,13 +1,15 @@
 #pragma once
 
 #include "tools.h"
-#include "functions.h"
+#include "ioh.hpp"
 #include "mutation.h"
 #include "crossover.h"
 
 //TODO: double/float consistency
 
 //TODO: look at this
+
+// #include "functions.h"
 // class Crossover;
 class Mutation;
 #include <chrono> //sleep
@@ -18,7 +20,7 @@ class Mutation;
 
 class Agent {
 public:
-	Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Function* fitness_function);
+	Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, ioh::problem::bbob::Sphere* target_function, unsigned int* budget);
 	~Agent();
 
 	void mutate(std::vector<Agent*> cur_gen, size_t idx);
@@ -39,9 +41,10 @@ private:
 	std::vector<double> position;
 	std::vector<double> donor;
 	size_t fitness;
+	unsigned int* budget;
 	Mutation* mutation_operator;
 	Crossover* crossover_operator;
-	Function* fitness_function;
+	ioh::problem::bbob::Sphere* target_function;
 	bool fitness_uptodate;
 
 

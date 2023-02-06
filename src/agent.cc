@@ -1,11 +1,11 @@
 #include "../include/agent.h"
 
-Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Function* fitness_function) : 
-			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), fitness_function(fitness_function) {
+Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, ioh::problem::bbob::Sphere* target_function, unsigned int* budget) : 
+			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), target_function(target_function), budget(budget){
 	// this->dim = dimension;
 	// this->mutation_operator = mutation_operator;
 	// this->crossover_operator = crossover_operator;
-	// this->fitness_function = fitness_function;
+	// this->target_function = target_function;
 	this->fitness = std::numeric_limits<double>::max();
 	this->fitness_uptodate = false;
 
@@ -15,7 +15,12 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 
 	//TODO:rand seed
 	set_seed();
-	std::pair<double,double> range = fitness_function->get_range();
+
+	std::cout << target_function->meta_data() << std::endl;
+    // std::cout << "bounds of variables :  " << target_function->bounds().lb << std::endl;
+
+	//TODO: read funcion metadata
+	
 	// std::default_random_engine generator;
 	// std::uniform_real_distribution<float> distribution(range.first, range.second);
 	this->position.reserve(dim);
@@ -23,7 +28,7 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	for (size_t i = 0; i < dim; ++i)	{
 		// float value = distribution(generator);
 		double random = (double)rand()/RAND_MAX;
-		double value = range.first + random * (range.second-range.first);
+		double value = target_function->bounds().lb[i] + random * (target_function->bounds().ub[i]-target_function->bounds().lb[i]);
 		this->position.push_back(value);
 		this->donor.push_back(value);
 	}
@@ -67,20 +72,21 @@ void Agent::crossover(std::vector<Agent*> next_gen, size_t idx){
 	// std::cout << "=========" << std::endl;
 }
 
+//TODO: budget
 void Agent::calculate_fitness() {
-	// std::cout << "fitness " << std::endl;
-	// print_position(this->position);
-	this->fitness = this->fitness_function->evaluate(position);
+	// this->fitness = this->target_function(position);
+	this->fitness = (*target_function)(position);
 	fitness_uptodate = true;
-	// print_position(this->position);
 }
 
+
+
 double Agent::get_fitness() {
-	if (fitness_uptodate == false) {
+	if (fitness_uptodate == false && *budget > 0) {
 		// std::cout << "calculating fitness... ";
 		this->calculate_fitness();
+		*budget -= 1;
 	}
-	// std::cout << fitness << std::endl;
 	return fitness;
 }
 

@@ -1,5 +1,6 @@
 #include "../include/tools.h"
 #include "../include/population.h"
+// #include "ioh.h"
 //#include "../include/functions.h"
 
 #include <iostream>
@@ -24,15 +25,17 @@ results return_value(std::vector<double> location, double fitness, int i){
 
 
 //main loop
-results loop(Population* pop, unsigned iterations, size_t dimension) {
+results single_problem(Population* pop, unsigned int* budget, size_t dimension) {
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
 	//TODO: dimension getters in Function?
 	std::vector<double> best_location(dimension, -1);
+	unsigned int iterations=0;
 	
-
-	for (unsigned i = 0; i < iterations; i++) {
-		std::cout << "iteration " << i << std::endl;
+	//TODO: budget
+	while (*budget > pop->get_population_size()) {
+		iterations++;
+		std::cout << "budget left: " << *budget << std::endl;
 		//mutate
 		pop->apply_mutation();
 
@@ -40,7 +43,7 @@ results loop(Population* pop, unsigned iterations, size_t dimension) {
 		pop->apply_crossover();
 
 		//boundary check
-
+		pop->apply_boundary_correction();
 
 		//selection
 		pop->apply_selection();
@@ -78,50 +81,64 @@ int main(int argc, char* argv[]) {
 	//TODO: finish command line params and remove below
 	int function_num = 0;
 	unsigned int number_of_runs = 1;
-	unsigned int iterations = 5;
 	size_t pop_size = 5;
 	size_t dim = 5;
+	unsigned int budget_value = 5*pop_size;
+	unsigned int* budget = &budget_value;
 
 
 	//implemented testfunctions
-	Function* function;
-	Mutation* mutation = new Randdiv1(dim, pop_size);
-	Crossover* crossover = new Binomial(dim);
-	Selection* selection = new Elitist(pop_size);
-	switch (static_cast<FUNCTION> (function_num)) {
-		case SPHERE: function = new Sphere(); break;
-		case SCHWEFEL: function = new Schwefel(); break;
-		case ZAKHAROV: function = new Zakharov(); break;
-		case MICHALEWICZ: function = new Michalewicz(); break;
-	default:
-		std::cerr << "selected unavailable function\n";
-		return 1;
-	}
-
-	//initialise population
+	// Function* function;
+	// switch (static_cast<FUNCTION> (function_num)) {
+	// 	case SPHERE: function = new Sphere(); break;
+	// 	case SCHWEFEL: function = new Schwefel(); break;
+	// 	case ZAKHAROV: function = new Zakharov(); break;
+	// 	case MICHALEWICZ: function = new Michalewicz(); break;
+	// default:
+	// 	std::cerr << "selected unavailable function\n";
+	// 	return 1;
+	// }
 
 	//TODO: run logs
 
 	//main loop
-	for (size_t i = 0; i < number_of_runs; i++) {
-		Population* pop = new Population(crossover, selection, mutation, function, pop_size, dim);
+	for (size_t i = 0; i < number_of_runs; i++) {	
+		//TODO: problem selector
+		auto problem = new ioh::problem::bbob::Sphere(i, dim);
+
+		Mutation* mutation = new Randdiv1(dim, pop_size);
+		Crossover* crossover = new Binomial(dim);
+		Selection* selection = new Elitist(pop_size);
+		Boundary* boundary_correction = new Clamp(problem);
+
+		
+		std::cout << "metadata" << problem->meta_data().n_variables << std::endl;
+
+		Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget);
+
 		std::cout << "Run " << i << " ";
 		//set_seed();
 
-		results result = loop(pop, iterations, dim);
+		results result = single_problem(pop, budget, dim);
 		std::cout << std::endl;
 		delete pop;
+		delete problem;
 		pop=NULL;
+		problem=NULL;
+
+		// delete function;
+		delete mutation;
+		delete crossover;
+		delete selection;
+		delete boundary_correction;
+		// function=NULL;
+		mutation=NULL;
+		crossover=NULL;
+		selection=NULL;
+		boundary_correction=NULL;
 
 	};
 
-	delete function;
-	delete mutation;
-	delete crossover;
-	delete selection;
-	function=NULL;
-	mutation=NULL;
-	crossover=NULL;
-	selection=NULL;
+	
 	return 0;
 }
