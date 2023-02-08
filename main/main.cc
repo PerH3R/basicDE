@@ -42,9 +42,6 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 		//crossover
 		pop->apply_crossover();
 
-		//boundary check
-		pop->apply_boundary_correction();
-
 		//selection
 		pop->apply_selection();
 
@@ -81,9 +78,9 @@ int main(int argc, char* argv[]) {
 	//TODO: finish command line params and remove below
 	int function_num = 0;
 	unsigned int number_of_runs = 1;
-	size_t pop_size = 5;
+	size_t pop_size = 25;
 	size_t dim = 5;
-	unsigned int budget_value = 5*pop_size;
+	unsigned int budget_value = 100*pop_size;
 	unsigned int* budget = &budget_value;
 
 
@@ -106,13 +103,13 @@ int main(int argc, char* argv[]) {
 		//TODO: problem selector
 		auto problem = new ioh::problem::bbob::Sphere(i, dim);
 
-		Mutation* mutation = new Randdiv1(dim, pop_size);
+		Mutation* mutation = new TargetToPBestDiv1(dim, pop_size); //Randdiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(dim);
 		Selection* selection = new Elitist(pop_size);
 		Boundary* boundary_correction = new Clamp(problem);
 
 		
-		std::cout << "metadata" << problem->meta_data().n_variables << std::endl;
+		std::cout << "metadata" << problem->meta_data() << std::endl;
 
 		Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget);
 

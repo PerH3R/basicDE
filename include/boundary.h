@@ -1,11 +1,11 @@
 #pragma once
 
-#include "agent.h"
 #include <random>
+
+#include "ioh.hpp"
 
 //TODO: remove
 #include <iostream>
-class Agent;
 
 enum BOUNDARY {
 	CLAMP
@@ -17,7 +17,7 @@ public:
     Boundary(ioh::problem::bbob::Sphere* target_function);
 	virtual ~Boundary() { };
     virtual BOUNDARY get_type() = 0;
-    virtual void apply(std::vector<Agent*> next_gen) = 0;
+    virtual std::vector<double> apply(std::vector<double> position) = 0;
 
 protected:
     ioh::problem::bbob::Sphere* target_function;
@@ -29,5 +29,5 @@ public:
     Clamp (ioh::problem::bbob::Sphere* target_function);// = default();
     ~Clamp(){};
     BOUNDARY get_type();
-    void apply(std::vector<Agent*> next_gen);
+    std::vector<double> apply(std::vector<double> next_gen);
 };

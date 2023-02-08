@@ -2,7 +2,7 @@
 
 #include "tools.h"
 // #include "agent.h"
-#include "boundary.h"
+// #include "boundary.h" //via agent
 #include "selection.h"
 // #include "crossover.h"
 // #include "mutation.h"
@@ -17,13 +17,14 @@ public:
 	std::vector<Agent*> get_current_generation();
 	std::vector<Agent*> get_next_generation();
 
-	void current_to_next(std::vector<Agent*>);
+	//void current_to_next(std::vector<Agent*>);
 
 	void apply_mutation();
 	void apply_crossover();
 	void apply_boundary_correction();
 	void apply_selection();
 
+	void add_to_archive(std::vector< std::pair<std::vector<double>, double > > rejected_values);
 	void print_fitness();
 
 	size_t get_population_size();
@@ -36,8 +37,10 @@ public:
 private:
 	size_t n; //population size
 	size_t dim; //dimension size
+	size_t archive_multiplier;
 	std::vector<Agent*> cur_gen;
 	std::vector<Agent*> next_gen;
+	std::vector< std::pair<std::vector<double>, double > > archive;
 
 	Crossover* crossover_operator;
 	Selection* selection_operator;

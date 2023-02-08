@@ -1,7 +1,9 @@
 #include "../include/agent.h"
 
-Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, ioh::problem::bbob::Sphere* target_function, unsigned int* budget) : 
-			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), target_function(target_function), budget(budget){
+Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Boundary* boundary_correction, 
+				ioh::problem::bbob::Sphere* target_function, unsigned int* budget) : 
+			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), boundary_correction(boundary_correction),
+				target_function(target_function), budget(budget){
 	// this->dim = dimension;
 	// this->mutation_operator = mutation_operator;
 	// this->crossover_operator = crossover_operator;
@@ -16,7 +18,7 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	//TODO:rand seed
 	set_seed();
 
-	std::cout << target_function->meta_data() << std::endl;
+	// std::cout << target_function->meta_data() << std::endl;
     // std::cout << "bounds of variables :  " << target_function->bounds().lb << std::endl;
 
 	//TODO: read funcion metadata
@@ -33,7 +35,7 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 		this->donor.push_back(value);
 	}
 	this->calculate_fitness();
-	std::cout << "new agent with fitness:" << this->fitness << " at ";
+	// std::cout << "new agent with fitness:" << this->fitness << " at ";
 	print_position(this->position);
 
 }
@@ -95,19 +97,28 @@ std::vector<double> Agent::get_position() {
 }
 
 void Agent::set_position(std::vector<double> new_position) {
-	//if dimension fits and new position is different from current position
+	//if dimension fits
 	if (new_position.size() == this->dim) {
 		if (this->position.size() == this->dim){
-			// for (double i : this->position){
-				
-			// }
-			for (size_t i = 0; i < this->dim; ++i){
-				this->position[i] = new_position[i];
-			}
+			//correct out-of-bounds coordinates
+			new_position = boundary_correction->apply(new_position);
 
-			// this->position = new_position;
-			fitness_uptodate = false;
+			//track if new position is different from current position
+			bool change = false;
+			
+			//update position
+			for (size_t i = 0; i < this->dim; ++i){
+				if (this->position[i] != new_position[i]){
+					this->position[i] = new_position[i];
+					change = true;					
+				}
+			}
+			//tell agent to update fitness if position has changed
+			if (change){
+				fitness_uptodate = false;
+			}
 		}else{
+			//would be very improbable
 			std::cerr << "incorrect dimensions current position\n";
 		}
 	}else{

@@ -4,6 +4,7 @@
 //TODO: change variable assignment
 Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::bbob::Sphere* target_function,
 					   Boundary* boundary_correction, size_t size, unsigned int* budget) {
+	std::cout << "creating Population...";
 	this->crossover_operator = crossover_operator;
 	this->selection_operator = selection_operator;
 	this->mutation_operator = mutation_operator;
@@ -16,10 +17,10 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 	this->cur_gen.reserve(size);
 	this->next_gen.reserve(size);
 	for (size_t i = 0; i < size; i++) {
-		this->cur_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function, budget));
-		this->next_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, target_function, budget));
+		this->cur_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, boundary_correction, target_function, budget));
+		this->next_gen.push_back(new Agent(dim, mutation_operator, crossover_operator, boundary_correction, target_function, budget));
 	}
-
+	std::cout << " done!" << std::endl;
 	
 
 }
@@ -62,21 +63,37 @@ void Population::apply_crossover() {
 	
 }
 
-void Population::apply_selection() {
-	selection_operator->apply(this->cur_gen, this->next_gen);
-	for (size_t i = 0; i < n; ++i)
-	{
-		// delete cur_gen[i];
-		// delete next_gen[i];
+void Population::add_to_archive(std::vector< std::pair<std::vector<double>, double > > rejected_values){
+	int rv_idx = 0;
+	while (archive.size() < n*archive_multiplier){
+		archive.push_back(rejected_values[rv_idx]);
+		rv_idx++;
 	}
+	while (rv_idx < rejected_values.size()){
+		//TODO: randomly generate number
+		std::default_random_engine int_generator;
+		std::uniform_int_distribution<size_t> distribution(0, n*archive_multiplier);
+		archive[distribution(int_generator)] = rejected_values[rv_idx];
+		rv_idx++;
+	}
+
+}
+
+void Population::apply_selection() {
+	if (mutation_operator->use_archive()){
+		add_to_archive(selection_operator->apply(this->cur_gen, this->next_gen));
+	}else{
+	selection_operator->apply(this->cur_gen, this->next_gen);
+	}
+	// for (size_t i = 0; i < n; ++i)
+	// {
+	// 	// delete cur_gen[i];
+	// 	// delete next_gen[i];
+	// }
 	// cur_gen = selected_agents;
 	// for (size_t i = 0; i < n; i++) {
 	// 	this->next_gen[i] = new Agent(dim, mutation_operator, crossover_operator, target_function);
 	// }
-}
-
-void Population::apply_boundary_correction(){
-	this->boundary_correction->apply(this->next_gen);
 }
 
 void Population::sort(){
