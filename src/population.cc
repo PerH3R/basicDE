@@ -2,7 +2,7 @@
 
 
 //TODO: change variable assignment
-Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::bbob::Sphere* target_function,
+Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function,
 					   Boundary* boundary_correction, size_t size, unsigned int* budget) {
 	std::cout << "creating Population...";
 	this->crossover_operator = crossover_operator;

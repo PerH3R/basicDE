@@ -1,7 +1,7 @@
 #include "../include/agent.h"
 
 Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Boundary* boundary_correction, 
-				ioh::problem::bbob::Sphere* target_function, unsigned int* budget) : 
+				ioh::problem::RealSingleObjective* target_function, unsigned int* budget) : 
 			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), boundary_correction(boundary_correction),
 				target_function(target_function), budget(budget){
 	// this->dim = dimension;

@@ -1,13 +1,13 @@
 #include "../include/boundary.h"
 
 // Selection
-Boundary::Boundary(ioh::problem::bbob::Sphere* target_function) : target_function(target_function){
+Boundary::Boundary(ioh::problem::RealSingleObjective* target_function) : target_function(target_function){
 
 }
 
 
 // Elitist
-Clamp::Clamp(ioh::problem::bbob::Sphere* target_function) : Boundary(target_function) {
+Clamp::Clamp(ioh::problem::RealSingleObjective* target_function) : Boundary(target_function) {
     
 }
 

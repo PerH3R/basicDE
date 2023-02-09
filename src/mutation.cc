@@ -291,3 +291,46 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	return donor_vec;
 	
 }
+
+// Desmu (stochastic levy-flight)
+Desmu::Desmu(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
+	
+}
+
+
+MUTATION Desmu::get_type() {
+  return DESMU;
+}
+
+std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
+	std::default_random_engine generator;
+	std::uniform_int_distribution<size_t> distribution(0, this->n);
+	size_t x1, x2, x3;
+
+ 	//select 3 uniform random vectors
+	do {
+		//provided population is sorted, x1 should be optimal
+		x1 = distribution(generator);
+	} while (false);		
+	do {
+		x2 = distribution(generator);
+	} while (x2 == x1);
+	
+	x3 = 0;
+
+	std::default_random_engine float_generator;
+	std::uniform_real_distribution<float> float_distribution(0.0, 1.0);
+	float scale_factor;
+
+	//calculate donor vector
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		scale_factor = float_distribution(float_generator);
+		double a = cur_gen[x1]->get_position()[j];
+		double b = cur_gen[x2]->get_position()[j];
+		double best = cur_gen[x3]->get_position()[j];
+		donor_vec[j] = a + (this->F * scale_factor) * (best - b);
+	}
+	return donor_vec;
+	
+}

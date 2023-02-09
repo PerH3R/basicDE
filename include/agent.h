@@ -21,7 +21,7 @@ class Mutation;
 
 class Agent {
 public:
-	Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Boundary* boundary_correction, ioh::problem::bbob::Sphere* target_function, unsigned int* budget);
+	Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Boundary* boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget);
 	~Agent();
 
 	void mutate(std::vector<Agent*> cur_gen, size_t idx);
@@ -46,7 +46,7 @@ private:
 	Mutation* mutation_operator;
 	Crossover* crossover_operator;
 	Boundary* boundary_correction;
-	ioh::problem::bbob::Sphere* target_function;
+	ioh::problem::RealSingleObjective* target_function;
 	bool fitness_uptodate;
 
 

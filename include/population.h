@@ -10,7 +10,7 @@
 
 class Population {
 public:
-	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::bbob::Sphere* target_function, 
+	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function, 
 				Boundary* boundary_correction, size_t size, unsigned int* budget);
 	~Population();
 
@@ -46,7 +46,7 @@ private:
 	Selection* selection_operator;
 	Mutation* mutation_operator;
 	Boundary* boundary_correction;
-	ioh::problem::bbob::Sphere* target_function;
+	ioh::problem::RealSingleObjective* target_function;
 	unsigned int* budget; 
 
 	void next_to_current();

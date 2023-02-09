@@ -12,7 +12,8 @@ enum MUTATION {
 	TTPBESTDIV1,
 	TTBESTDIV2,
 	TTRANDDIV2,
-	TWOOPTDIV1
+	TWOOPTDIV1,
+	DESMU
 };
 
 
@@ -76,6 +77,14 @@ class TwoOptDiv1 : public Mutation {
 public:
     TwoOptDiv1(size_t dim, size_t n, float F = 0.2, bool archive=false);
     ~TwoOptDiv1() {};
+    MUTATION get_type();
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
+class Desmu : public Mutation {
+public:
+    Desmu(size_t dim, size_t n, float F = 0.2, bool archive=false);
+    ~Desmu() {};
     MUTATION get_type();
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
 };
