@@ -4,8 +4,8 @@
 
 // Crossover 
 //TODO:remove?
-Crossover::Crossover(size_t dim, float F) : dim(dim), F(F){
-	// this->F = F; 
+Crossover::Crossover(size_t dim, float Cr) : dim(dim), Cr(Cr){
+	// this->Cr = Cr; 
 	// this->dim = dim;
 }
 
@@ -14,9 +14,9 @@ Crossover::Crossover(size_t dim, float F) : dim(dim), F(F){
 // }
 
 // Randdiv1
-Binomial::Binomial(size_t dim, float F) : Crossover(dim, F){
+Binomial::Binomial(size_t dim, float Cr) : Crossover(dim, Cr){
 	// this->dim = dim;
-	// this->F = F;
+	// this->Cr = Cr;
 }
 
 
@@ -42,7 +42,7 @@ std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<dou
 	for (size_t i = 0; i < this->dim; ++i){
 		//TODO: look at rand generation
 		float chance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		if (chance < F)		{
+		if (chance < Cr)		{
 			// std::cout << "donated position " << i << std::endl;
 			new_pos.push_back(donor_vec[i]);
 		}else{
