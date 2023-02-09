@@ -66,7 +66,7 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 
 int main(int argc, char* argv[]) {
 	//check arguments
-	int num_args = 0; //TODO: remove
+	int num_args = 1; //TODO: remove
 
 	if (argc != num_args) {
 		std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
@@ -83,20 +83,7 @@ int main(int argc, char* argv[]) {
 	unsigned int budget_value = 100*pop_size;
 	unsigned int* budget = &budget_value;
 
-
-	//implemented testfunctions
-	// Function* function;
-	// switch (static_cast<FUNCTION> (function_num)) {
-	// 	case SPHERE: function = new Sphere(); break;
-	// 	case SCHWEFEL: function = new Schwefel(); break;
-	// 	case ZAKHAROV: function = new Zakharov(); break;
-	// 	case MICHALEWICZ: function = new Michalewicz(); break;
-	// default:
-	// 	std::cerr << "selected unavailable function\n";
-	// 	return 1;
-	// }
-
-	//TODO: run logs
+	//TODO: run logs for IOH
 
 	//main loop
 	for (size_t i = 0; i < number_of_runs; i++) {	
