@@ -11,7 +11,7 @@
 class Population {
 public:
 	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function, 
-				Boundary* boundary_correction, size_t size, unsigned int* budget);
+				Boundary* boundary_correction, size_t pop_size, unsigned int* budget);
 	~Population();
 
 	std::vector<Agent*> get_current_generation();
@@ -24,23 +24,24 @@ public:
 	void apply_boundary_correction();
 	void apply_selection();
 
-	void add_to_archive(std::vector< std::pair<std::vector<double>, double > > rejected_values);
 	void print_fitness();
 
-	size_t get_population_size();
-
-
-
-	
+	size_t get_population_size();	
 	
 	void sort();
 private:
+	void add_next_to_archive();
+	Agent* create_agent();
+	bool agent_in_use(Agent* target);
+	
+
 	size_t n; //population size
 	size_t dim; //dimension size
-	size_t archive_multiplier;
+	size_t archive_size;
 	std::vector<Agent*> cur_gen;
 	std::vector<Agent*> next_gen;
-	std::vector< std::pair<std::vector<double>, double > > archive;
+
+	std::vector<Agent*> archive;
 
 	Crossover* crossover_operator;
 	Selection* selection_operator;

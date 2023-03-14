@@ -3,42 +3,24 @@
 //TODO:remove
 #include <iostream>
 
-// Mutation 
-//TODO:remove?
-Mutation::Mutation(size_t dim, size_t n, float F, bool archive) : dim(dim), n(n), F(F), archive(archive){
-	
-}
+// RandDiv1
 
-bool Mutation::use_archive(){
-	return archive;
-}
-
-// Randdiv1
-Randdiv1::Randdiv1(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
-	
-}
-
-
-MUTATION Randdiv1::get_type() {
-  return RANDDIV1;
-}
-
-std::vector<double> Randdiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::default_random_engine generator;
 	std::uniform_int_distribution<size_t> distribution(0, this->n);
-	size_t x1, x2, x3;
+	int x1, x2, x3;
 
 	// for (size_t i = 0; i < this->n; i++) {
 
  	//select 3 uniform random vectors
 	do {
-		x1 = distribution(generator);
+		x1 = tools.rand_int_unif(0, this->n);
 	} while (x1 == idx);		
 	do {
-		x2 = distribution(generator);
+		x2 = tools.rand_int_unif(0, this->n);
 	} while (x2 == x1 || x2 == idx);
 	do {
-		x3 = distribution(generator);
+		x3 = tools.rand_int_unif(0, this->n);
 	} while (x3 == x2 || x3 == x1 || x3 == idx);
 
 	std::vector<double> donor_vec(this->dim, 0.0);
@@ -62,17 +44,8 @@ std::vector<double> Randdiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 
-// Bestdiv1
-Bestdiv1::Bestdiv1(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
-	
-}
-
-
-MUTATION Bestdiv1::get_type() {
-  return BESTDIV1;
-}
-
-std::vector<double> Bestdiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+// BestDiv1
+std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::default_random_engine generator;
 	std::uniform_int_distribution<size_t> distribution(0, this->n);
 	size_t x1, x2, x3;
@@ -103,16 +76,6 @@ std::vector<double> Bestdiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 // Target To PBest Div 1
-TargetToPBestDiv1::TargetToPBestDiv1(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
-	
-}
-
-
-MUTATION TargetToPBestDiv1::get_type() {
-  return TTPBESTDIV1;
-}
-
-
 //TODO: add archive, fix p sampling
 std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::default_random_engine float_generator;
@@ -154,17 +117,11 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 	
 }
 
+bool TargetToPBestDiv1::use_archive(){
+	return archive;
+}
+
 // Target To Best Div 2
-TargetToBestDiv2::TargetToBestDiv2(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
-	
-}
-
-
-MUTATION TargetToBestDiv2::get_type() {
-  return TTBESTDIV2;
-}
-
-
 std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::default_random_engine generator;
 	//from 1 to n because we take always include index 0
@@ -203,14 +160,6 @@ std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 
 
 //Target To Rand Div 1
-TargetToRandDiv2::TargetToRandDiv2(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
-	
-}
-
-MUTATION TargetToRandDiv2::get_type() {
-  return TTRANDDIV2;
-}
-
 std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::default_random_engine generator;
 	//from 1 to n because we take always include index 0
@@ -247,16 +196,6 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 }
 
 //2-OptDiv1
-TwoOptDiv1::TwoOptDiv1(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
-	
-}
-
-
-MUTATION TwoOptDiv1::get_type() {
-  return TWOOPTDIV1;
-}
-
-
 std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::default_random_engine generator;
 	//from 1 to n because we take always include index 0
@@ -293,15 +232,6 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 // Desmu (stochastic levy-flight)
-Desmu::Desmu(size_t dim, size_t n, float F, bool archive) : Mutation(dim, n, F, archive){
-	
-}
-
-
-MUTATION Desmu::get_type() {
-  return DESMU;
-}
-
 std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::default_random_engine generator;
 	std::uniform_int_distribution<size_t> distribution(0, this->n);

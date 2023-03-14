@@ -12,11 +12,8 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	this->fitness_uptodate = false;
 
 	//TODO:remove sleep
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	// std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-
-	//TODO:rand seed
-	set_seed();
 
 	// std::cout << target_function->meta_data() << std::endl;
     // std::cout << "bounds of variables :  " << target_function->bounds().lb << std::endl;
@@ -29,8 +26,9 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	this->donor.reserve(dim);
 	for (size_t i = 0; i < dim; ++i)	{
 		// float value = distribution(generator);
-		double random = (double)rand()/RAND_MAX;
-		double value = target_function->bounds().lb[i] + random * (target_function->bounds().ub[i]-target_function->bounds().lb[i]);
+		// double random = (double)rand()/RAND_MAX;
+		// double value = target_function->bounds().lb[i] + random * (target_function->bounds().ub[i]-target_function->bounds().lb[i]);
+		double value = tools.rand_double_unif(target_function->bounds().lb[i], target_function->bounds().ub[i]);
 		this->position.push_back(value);
 		this->donor.push_back(value);
 	}
