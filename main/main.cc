@@ -1,5 +1,6 @@
 #include "../include/tools.h"
 #include "../include/population.h"
+#include "../include/argparse.h"
 // #include "ioh.h"
 //#include "../include/functions.h"
 
@@ -11,6 +12,28 @@ struct results {
 	double best_fitness;
 	unsigned iterations;
 };
+
+Mutation* get_mutation_operator(int mut_op, int dim, int pop_size, int archive=0){
+	switch(mut_op){
+		case 1:
+			return new RandDiv1(dim, pop_size);
+		case 2:
+			return new BestDiv1(dim, pop_size);
+		case 3:
+			return new TargetToPBestDiv1(dim, pop_size, archive);
+		case 4:
+			return new TargetToBestDiv2(dim, pop_size);
+		case 5:
+			return new TargetToRandDiv2(dim, pop_size);
+		case 6:
+			return new TwoOptDiv1(dim, pop_size);
+		case 7:
+			return new Desmu(dim, pop_size);
+		default:
+			std::cerr << "Mutation operator out of range. Continuing using RandDiv1." << std::endl;
+			return new RandDiv1(dim, pop_size);		
+	}	
+}
 
 
 
@@ -68,19 +91,31 @@ int main(int argc, char* argv[]) {
 	//check arguments
 	int num_args = 1; //TODO: remove
 
+	auto argparser = new Argparse(argc, argv);
+
 	if (argc != num_args) {
 		std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
 	};
 
+	tools.set_seed();
+
 	//TODO: convert argv to correct type
 
 
+
 	//TODO: finish command line params and remove below
-	int function_num = 0;
-	unsigned int number_of_runs = 1;
-	size_t pop_size = 25;
-	size_t dim = 5;
-	unsigned int budget_value = 100*pop_size;
+	int function_num = std::stoi(argparser->get_values()["-f"]);
+
+	unsigned int number_of_runs = std::stoi(argparser->get_values()["-runs"]);
+
+	size_t pop_size = std::stoi(argparser->get_values()["-pop_size"]);
+
+	size_t dim = std::stoi(argparser->get_values()["-d"]);
+
+	size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
+
+	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
+
 	unsigned int* budget = &budget_value;
 
 	//TODO: run logs for IOH
@@ -90,7 +125,7 @@ int main(int argc, char* argv[]) {
 		//TODO: problem selector
 		auto problem = new ioh::problem::bbob::Sphere(i, dim);
 
-		Mutation* mutation = new TargetToPBestDiv1(dim, pop_size); //Randdiv1(dim, pop_size);
+		Mutation* mutation = get_mutation_operator(1, dim, pop_size, archive_size); //new TargetToPBestDiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(dim);
 		Selection* selection = new Elitist(pop_size);
 		Boundary* boundary_correction = new Clamp(problem);
