@@ -68,9 +68,9 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 		//selection
 		pop->apply_selection();
 
-		pop->print_fitness();
+		// pop->print_fitness();
 		pop->sort();
-		pop->print_fitness();
+		// pop->print_fitness();
 
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
@@ -112,6 +112,8 @@ int main(int argc, char* argv[]) {
 
 	size_t dim = std::stoi(argparser->get_values()["-d"]);
 
+	int m = std::stoi(argparser->get_values()["-m"]);
+
 	size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
 
 	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
@@ -133,12 +135,13 @@ int main(int argc, char* argv[]) {
 		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
 
-		Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget);
+		Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget, archive_size);
 
 		std::cout << "Run " << i << " ";
 		//set_seed();
 
 		results result = single_problem(pop, budget, dim);
+		pop->print_fitness();
 		std::cout << std::endl;
 		delete pop;
 		delete problem;

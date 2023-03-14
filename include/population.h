@@ -11,7 +11,7 @@
 class Population {
 public:
 	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function, 
-				Boundary* boundary_correction, size_t pop_size, unsigned int* budget);
+				Boundary* boundary_correction, size_t pop_size, unsigned int* budget, int archive_size);
 	~Population();
 
 	std::vector<Agent*> get_current_generation();
@@ -30,7 +30,8 @@ public:
 	
 	void sort();
 private:
-	void add_next_to_archive();
+	void add_to_archive();
+	void repopulate_next_gen();
 	Agent* create_agent();
 	bool agent_in_use(Agent* target);
 	

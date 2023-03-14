@@ -44,12 +44,12 @@ std::vector< bool > Elitist::apply(std::vector<Agent*> current_gen, std::vector<
             temp = NULL;
         }
     }
-    std::cout << "-------------" << std::endl;
-    for (size_t i = 0; i < n; ++i){
-        std::cout << current_gen[i]->get_fitness() << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "==============" << std::endl;
+    // std::cout << "-------------" << std::endl;
+    // for (size_t i = 0; i < n; ++i){
+    //     std::cout << current_gen[i]->get_fitness() << " ";
+    // }
+    // std::cout << std::endl;
+    // std::cout << "==============" << std::endl;
     return kept_indexes;
 }
 
