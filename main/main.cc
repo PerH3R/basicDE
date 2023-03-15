@@ -72,13 +72,16 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 		pop->sort();
 		// pop->print_fitness();
 
+		//fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
+			pop->print_fitness();
 			best_fitness = pop->get_current_generation()[0]->get_fitness();
 			best_location = pop->get_current_generation()[0]->get_position();
 		}
 		//additional stopping criteria
 		//...
+		std::cout << "==================" << std::endl;
 	}
 	return return_value(best_location, best_fitness, iterations);
 }
@@ -141,6 +144,7 @@ int main(int argc, char* argv[]) {
 		//set_seed();
 
 		results result = single_problem(pop, budget, dim);
+		std::cout << "final result" << std::endl;
 		pop->print_fitness();
 		std::cout << std::endl;
 		delete pop;
