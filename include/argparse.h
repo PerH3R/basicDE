@@ -22,7 +22,7 @@ flag				meaning					default					vals
 -Cr					crossover rate 			0.2						real
 -runs				repeated runs			1						int
 -budget				mutex with -i			2500					int	
--pop_size			population size			25						int
+-pop_size			population size			25						int >5
 
 //operator specific
 -archive_size		use archive (ttpb mut)	0						int (0 = no archive)	
