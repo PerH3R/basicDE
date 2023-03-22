@@ -13,7 +13,8 @@ struct results {
 	unsigned iterations;
 };
 
-Mutation* get_mutation_operator(int mut_op, int dim, int pop_size, int archive=0){
+Mutation* get_mutation_operator(int mut_op, int dim, int pop_size, ioh::problem::RealSingleObjective* problem, Boundary* boundary_correction, 
+									unsigned int* budget, int archive=0){
 	switch(mut_op){
 		case 1:
 			return new RandDiv1(dim, pop_size);
@@ -29,6 +30,8 @@ Mutation* get_mutation_operator(int mut_op, int dim, int pop_size, int archive=0
 			return new TwoOptDiv1(dim, pop_size);
 		case 7:
 			return new Desmu(dim, pop_size);
+		case 8:
+			return new Bea(dim, pop_size, boundary_correction, problem, budget);
 		default:
 			std::cerr << "Mutation operator out of range. Continuing using RandDiv1." << std::endl;
 			return new RandDiv1(dim, pop_size);		
@@ -128,15 +131,15 @@ int main(int argc, char* argv[]) {
 	//main loop
 	for (size_t i = 0; i < number_of_runs; i++) {	
 		//TODO: problem selector
-		auto problem = new ioh::problem::bbob::Sphere(i, dim);
-
-		Mutation* mutation = get_mutation_operator(1, dim, pop_size, archive_size); //new TargetToPBestDiv1(dim, pop_size);
+		auto problem = new ioh::problem::bbob::Sphere(i, dim);		
+		Boundary* boundary_correction = new Clamp(problem);
+		Mutation* mutation = get_mutation_operator(std::stoi(argparser->get_values()["-m"]), dim, pop_size, problem, boundary_correction, budget, archive_size); //new TargetToPBestDiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(dim);
 		Selection* selection = new Elitist(pop_size);
-		Boundary* boundary_correction = new Clamp(problem);
 
 		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
+		std::cout << "optimizing using " << mutation->get_type() << std::endl;
 
 		Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget, archive_size);
 

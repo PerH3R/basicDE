@@ -2,6 +2,9 @@
 
 #include "tools.h"
 #include "agent.h"
+#include "boundary.h"
+
+#include <iostream>
 
 //TODO: think about this forward declaration
 class Agent;
@@ -13,7 +16,8 @@ enum MUTATION {
 	TTBESTDIV2,
 	TTRANDDIV2,
 	TWOOPTDIV1,
-	DESMU
+	DESMU,
+	BEA
 };
 
 
@@ -91,4 +95,34 @@ public:
     ~Desmu() {};
     MUTATION get_type(){return DESMU;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
+class Bea : public Mutation {
+public:
+	Bea(size_t dim, size_t n, Boundary* boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
+			float F = 0.2, float Pbea = 0.8, int Nsegments = 2, int Nclones = 2) : Mutation(dim, n, F), boundary_correction(boundary_correction),
+			target_function(target_function), Nclones(Nclones), Pbea(Pbea), Nsegments(Nsegments), budget(budget){
+
+		if (Nsegments > dim){
+			std::cerr << "WARNING: Nsegments larger than dim. Defaulting to Nsegments = dim (segment_size = 1)." << std::endl;
+			this->Nsegments = this->dim;
+		}
+		int segment_size = this->dim / this->Nsegments;
+	};
+    ~Bea() {};
+    MUTATION get_type(){return BEA;};
+    std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+
+private:
+	void mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2, int x3,
+		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_gene, int end_gene);
+
+	Boundary* boundary_correction; //clamp seems like a very bad option
+	ioh::problem::RealSingleObjective* target_function;
+
+	int Nclones; //>2 is useless unless x1-x3 are rerolled for each clone
+	float Pbea;
+	int Nsegments;
+	int segment_size;
+	unsigned int* budget;
 };
