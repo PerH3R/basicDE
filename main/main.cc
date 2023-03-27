@@ -13,28 +13,33 @@ struct results {
 	unsigned iterations;
 };
 
-Mutation* get_mutation_operator(int mut_op, int dim, int pop_size, ioh::problem::RealSingleObjective* problem, Boundary* boundary_correction, 
-									unsigned int* budget, int archive=0){
+Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObjective* problem, Boundary* boundary_correction, 
+									unsigned int* budget){
+	int mut_op = std::stoi(argparser->get_values()["-m"]);
+	size_t pop_size = std::stoi(argparser->get_values()["-pop_size"]);
+	size_t dim = std::stoi(argparser->get_values()["-d"]);
+	float F = std::stod(argparser->get_values()["-F"]);
+	size_t archive = std::stoi(argparser->get_values()["-archive"]);
 	switch(mut_op){
 		case 1:
-			return new RandDiv1(dim, pop_size);
+			return new RandDiv1(dim, pop_size, F);
 		case 2:
-			return new BestDiv1(dim, pop_size);
-		case 3:
-			return new TargetToPBestDiv1(dim, pop_size, archive);
+			return new BestDiv1(dim, pop_size, F);
+		case 3:			
+			return new TargetToPBestDiv1(dim, pop_size, F, archive);
 		case 4:
-			return new TargetToBestDiv2(dim, pop_size);
+			return new TargetToBestDiv2(dim, pop_size, F);
 		case 5:
-			return new TargetToRandDiv2(dim, pop_size);
+			return new TargetToRandDiv2(dim, pop_size, F);
 		case 6:
-			return new TwoOptDiv1(dim, pop_size);
+			return new TwoOptDiv1(dim, pop_size, F);
 		case 7:
-			return new Desmu(dim, pop_size);
+			return new Desmu(dim, pop_size, F);
 		case 8:
-			return new Bea(dim, pop_size, boundary_correction, problem, budget);
+			return new Bea(dim, pop_size, boundary_correction, problem, budget, F);
 		default:
 			std::cerr << "Mutation operator out of range. Continuing using RandDiv1." << std::endl;
-			return new RandDiv1(dim, pop_size);		
+			return new RandDiv1(dim, pop_size, F);		
 	}	
 }
 
@@ -61,7 +66,7 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 	//TODO: budget
 	while (*budget > pop->get_population_size()) {
 		iterations++;
-		std::cout << "budget left: " << *budget << std::endl;
+		std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
 		pop->apply_mutation();
 
@@ -133,7 +138,7 @@ int main(int argc, char* argv[]) {
 		//TODO: problem selector
 		auto problem = new ioh::problem::bbob::Sphere(i, dim);		
 		Boundary* boundary_correction = new Clamp(problem);
-		Mutation* mutation = get_mutation_operator(std::stoi(argparser->get_values()["-m"]), dim, pop_size, problem, boundary_correction, budget, archive_size); //new TargetToPBestDiv1(dim, pop_size);
+		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget); //new TargetToPBestDiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(dim);
 		Selection* selection = new Elitist(pop_size);
 
