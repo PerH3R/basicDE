@@ -129,11 +129,9 @@ std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 	// std::uniform_int_distribution<size_t> distribution(1, this->n);
 	size_t x1, x2, x3, x4;
 
- 	//select 3 uniform random vectors
-	do {
-		//provided population is sorted, x1 should be optimal
-		x1 = 0;
-	} while (x1 == idx);		
+ 	//provided population is sorted, x1 is optimal
+	x1 = 0;
+
 	do {
 		x2 = tools.rand_int_unif(1, this->n);
 	} while (x2 == x1 || x2 == idx);
@@ -170,7 +168,7 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t 
  	//select 3 uniform random vectors
 	do {
 		//provided population is sorted, x1 should be optimal
-		x1 = 0;
+		x1 = tools.rand_int_unif(1, this->n);;
 	} while (x1 == idx);		
 	do {
 		x2 = tools.rand_int_unif(1, this->n);
