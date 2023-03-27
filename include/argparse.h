@@ -25,7 +25,7 @@ flag				meaning					default					vals
 -pop_size			population size			25						int >5
 
 //operator specific
--archive_size		use archive (ttpb mut)	0						int (0 = no archive)	
+-archive		use archive (ttpb mut)	0						int (0 = no archive)	
 
 */
 
