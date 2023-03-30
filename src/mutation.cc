@@ -290,7 +290,7 @@ void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2
 					clones[i][j] = self + (this->F * (c - self)) + (this->F * (a - b));
 				}
 			}
-
+			clones[i] = boundary_correction->apply(clones[i]); //TODO NOT MENTIONED IN PAPER BUT WEIRD NOT TO INCLUDE
 			//evaluate		
 			fitness[i] = (*target_function)(clones[i]);
 			*budget-=1;
