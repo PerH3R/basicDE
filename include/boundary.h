@@ -8,7 +8,8 @@
 #include <iostream>
 
 enum BOUNDARY {
-	CLAMP
+	CLAMP,
+    REFLECT
 };
 
 class Boundary {
@@ -26,8 +27,16 @@ protected:
 
 class Clamp : public Boundary {
 public:
-    Clamp (ioh::problem::RealSingleObjective* target_function);// = default();
+    Clamp (ioh::problem::RealSingleObjective* target_function) : Boundary(target_function) {};
     ~Clamp(){};
-    BOUNDARY get_type();
+    BOUNDARY get_type(){return CLAMP;};
+    std::vector<double> apply(std::vector<double> next_gen);
+};
+
+class Reflect : public Boundary {
+public:
+    Reflect (ioh::problem::RealSingleObjective* target_function): Boundary(target_function) {};
+    ~Reflect(){};
+    BOUNDARY get_type(){return REFLECT;};
     std::vector<double> apply(std::vector<double> next_gen);
 };
