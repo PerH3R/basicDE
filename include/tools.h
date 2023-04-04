@@ -18,15 +18,20 @@ public:
 
 	void set_seed(int seed=-1);
 
-	template <typename T>
-	double get_euclidean_distance(std::vector<T> pos1,
-								  std::vector<T> pos2);
-
 	double rand_double_unif(double const begin, double const end);
 
 	int rand_int_unif(int const start, int const end);
 			
 	double rand_double_norm(double const mean, double const stdDev);
+
+	//calculate difference in position
+	std::vector<double> vec_sub(std::vector<double> first, std::vector<double> second);
+
+
+	std::vector<double> vec_scale(std::vector<double> vec, double scalar);
+
+
+	std::vector<double> vec_sum(std::vector<double> first, std::vector<double> second);
 
 
 private:
