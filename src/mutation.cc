@@ -25,12 +25,6 @@ std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	} while (x3 == x2 || x3 == x1 || x3 == idx);
 
 	std::vector<double> donor_vec(this->dim, 0.0);
-	// for (double p : donor_vec){
-	// 	std::cout << p << " ";
-	// }
-	// std::cout << std::endl;
-
-	// std::cout << idx << " " << x1 << " " << x2 << " " << x3 << std::endl;
 
 	for (size_t j = 0; j < this->dim; j++) {
 		double a = cur_gen[x1]->get_position()[j];
@@ -269,20 +263,22 @@ std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 //Bea
 void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2, int x3,
-		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_gene, int end_gene){
+		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_index, int end_index){
+
+	std::cout << start_index << std::endl;
 
 	//change segment using Bea or TTR/1
 	for (int i = 0; i < clones.size(); ++i){
 		if(*budget > 0){
 			if (i == 0 && tools.rand_double_unif(0.0,1.0) < this->Pbea){
 				//Bea
-				for (size_t j = start_gene; j < end_gene; j++) {
+				for (size_t j = start_index; j < end_index; j++) {
 					double self = clones[i][j];
 					clones[i][j] = self + tools.rand_double_unif(target_function->bounds().lb[j], target_function->bounds().ub[j]);
 				}
 			} else {
 				//calculate segment using TTR/1
-				for (size_t j = start_gene; j < end_gene; j++) {
+				for (size_t j = start_index; j < end_index; j++) {
 					double self = clones[i][j];
 					double a = cur_gen[x1]->get_position()[j];
 					double b = cur_gen[x2]->get_position()[j];
@@ -303,7 +299,7 @@ void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2
 	//copy into others
 	for (int i = 0; i < clones.size(); ++i){
 		if(i != best_clone){
-			for (size_t j = start_gene; j < end_gene; j++) {
+			for (size_t j = start_index; j < end_index; j++) {
 				clones[i][j] = clones[best_clone][j];
 			}
 		}
@@ -336,11 +332,13 @@ std::vector<double> Bea::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 	for (int i = 0; i < Nsegments; ++i){
 		if (remainder == 0){
-			mutate_segment(cur_gen, idx, x1, x2, x3, clones, fitness,
-							(i*segment_size) + remainder_settled, (i+1) * segment_size + remainder_settled);
+			int start_index = (i*segment_size) + remainder_settled;
+			int end_index = ((i+1) * segment_size) + remainder_settled;
+			mutate_segment(cur_gen, idx, x1, x2, x3, clones, fitness, start_index, end_index);
 		} else {
-			mutate_segment(cur_gen, idx, x1, x2, x3, clones, fitness,
-							(i*segment_size) + remainder_settled, (i+1) * segment_size + remainder_settled + 1);
+			int start_index = (i*segment_size) + remainder_settled + 1;
+			int end_index = ((i+1) * segment_size) + remainder_settled + 1;
+			mutate_segment(cur_gen, idx, x1, x2, x3, clones, fitness, start_index, end_index);
 			remainder--;
 			remainder_settled++;
 		}

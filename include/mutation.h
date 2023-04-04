@@ -107,7 +107,7 @@ public:
 			std::cerr << "WARNING: Nsegments larger than dim. Defaulting to Nsegments = dim (segment_size = 1)." << std::endl;
 			this->Nsegments = this->dim;
 		}
-		int segment_size = this->dim / this->Nsegments;
+		this->segment_size = std::floor(this->dim / this->Nsegments);
 	};
     ~Bea() {};
     MUTATION get_type(){return BEA;};
