@@ -29,6 +29,14 @@ public:
 	size_t get_population_size();	
 	
 	void sort();
+
+	CROSSOVER get_crossover(){return this->crossover_operator->get_type();};
+	SELECTION get_selection(){return this->selection_operator->get_type();};
+	MUTATION get_mutation(){return this->mutation_operator->get_type();};
+	BOUNDARY get_boundary(){return this->boundary_correction->get_type();};
+
+	void update_vector_pool(double best_fitness){mutation_operator->update_vector_pool(best_fitness, cur_gen, next_gen);}; //DirMut specific
+
 private:
 	void add_to_archive();
 	void repopulate_next_gen();

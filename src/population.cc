@@ -58,9 +58,9 @@ void Population::print_fitness(){
 
 void Population::apply_mutation() {
 	for (size_t i = 0; i < this->n; i++) {
-		//this->next_gen[i] = 
 		this->cur_gen[i]->mutate(this->cur_gen, i);
 	}
+		
 	// mutation_operator->apply(this->cur_gen);
 }
 
@@ -118,15 +118,17 @@ void Population::apply_selection() {
 
 void Population::sort(){
 	bool sorted;
-	//TODO: efficient sorting
+	//TODO: more efficient sorting?
+	// reverse bubble sort
 	do{
 		sorted = true;
-		for (size_t i = 0; i < n-1; ++i){
+		for (size_t i = this->n-1; i > 0; --i){ //looping backwards might be faster
 			double cur = cur_gen[i]->get_fitness();
-			double next = cur_gen[i+1]->get_fitness();
-			if (cur > next){
+			double next = cur_gen[i-1]->get_fitness();
+			if (cur < next){
 				sorted = false;
-				std::swap(cur_gen[i], cur_gen[i+1]);
+				std::swap(cur_gen[i], cur_gen[i-1]);
+				std::swap(next_gen[i], next_gen[i-1]); //keeping indexes matched is important for some operators
 			}
 		}
 	}while(sorted == false);
