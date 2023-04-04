@@ -45,6 +45,16 @@ Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObj
 	}	
 }
 
+ioh::problem::RealSingleObjective* get_problem(int problem, int i, size_t dim){
+	switch(problem){
+		case 1:
+			return new ioh::problem::bbob::Sphere(i, dim);
+		case 2:
+			return new ioh::problem::bbob::Schwefel(i, dim);
+		default:
+			return new ioh::problem::bbob::Sphere(i, dim);
+	}
+}
 
 
 results return_value(std::vector<double> location, double fitness, int i){
@@ -142,7 +152,7 @@ int main(int argc, char* argv[]) {
 	//main loop
 	for (size_t i = 0; i < number_of_runs; i++) {	
 		//TODO: problem selector
-		auto problem = new ioh::problem::bbob::Sphere(i, dim);		
+		auto problem = get_problem(2, i, dim);		
 		Boundary* boundary_correction = new Clamp(problem);
 		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget); //new TargetToPBestDiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(dim);
