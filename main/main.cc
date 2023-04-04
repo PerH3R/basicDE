@@ -37,6 +37,8 @@ Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObj
 			return new Desmu(dim, pop_size, F);
 		case 8:
 			return new Bea(dim, pop_size, boundary_correction, problem, budget, F);
+		case 9:
+			return new DirMut(dim, pop_size, F);
 		default:
 			std::cerr << "Mutation operator out of range. Continuing using RandDiv1." << std::endl;
 			return new RandDiv1(dim, pop_size, F);		
@@ -64,7 +66,7 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 	unsigned int iterations=0;
 	
 	//TODO: budget
-	while (*budget > pop->get_population_size()) {
+	while (*budget > 0) {
 		iterations++;
 		std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
@@ -84,8 +86,12 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
 			pop->print_fitness();
+			if (pop->get_mutation() == DIRMUT)			{
+				pop->update_vector_pool(best_fitness);
+			}
 			best_fitness = pop->get_current_generation()[0]->get_fitness();
 			best_location = pop->get_current_generation()[0]->get_position();
+			
 		}
 		//additional stopping criteria
 		//...

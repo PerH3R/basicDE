@@ -17,7 +17,8 @@ enum MUTATION {
 	TTRANDDIV2,
 	TWOOPTDIV1,
 	DESMU,
-	BEA
+	BEA,
+	DIRMUT
 };
 
 
@@ -25,10 +26,11 @@ class Mutation {
 public:
 	Mutation() = default;
 	Mutation(size_t dim, size_t n, float F = 0.2) : dim(dim), n(n), F(F){};
-	bool use_archive(){return false;};
+	virtual bool use_archive(){return false;};
 	virtual ~Mutation() { };
 	virtual MUTATION get_type() = 0;
 	virtual std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx) = 0;
+	virtual void update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen){};
 
 protected:
 	float F; //mutation rate
@@ -125,4 +127,21 @@ private:
 	int Nsegments;
 	int segment_size;
 	unsigned int* budget;
+};
+
+class DirMut : public Mutation {
+public:
+	DirMut(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {
+		set_base_operator(new RandDiv1(dim, n, F));
+	};
+    ~DirMut() {delete this->base_operator; this->base_operator=NULL;};
+    void set_base_operator(Mutation* new_base_operator){ base_operator = new_base_operator; };
+    void update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen);
+    MUTATION get_type(){return DIRMUT;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+private:
+	Mutation* base_operator;
+	std::vector< std::vector<double> > vector_pool; //pool of difference vectors of improved agents	
+	bool improved = false;
+
 };

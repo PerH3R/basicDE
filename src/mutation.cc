@@ -265,8 +265,6 @@ std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2, int x3,
 		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_index, int end_index){
 
-	std::cout << start_index << std::endl;
-
 	//change segment using Bea or TTR/1
 	for (int i = 0; i < clones.size(); ++i){
 		if(*budget > 0){
@@ -289,7 +287,7 @@ void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2
 			clones[i] = boundary_correction->apply(clones[i]); //TODO NOT MENTIONED IN PAPER BUT WEIRD NOT TO INCLUDE
 			//evaluate		
 			fitness[i] = (*target_function)(clones[i]);
-			*budget-=1;
+			*budget -= 1;
 		}
 	}
 
@@ -344,7 +342,44 @@ std::vector<double> Bea::apply(std::vector<Agent*> cur_gen, size_t idx){
 		}
 	}
 
-	//all data copied into every clone
+	//all data is copied into every clone so we can pass the first
 	return clones[0];
+	
+}
+
+//DIRMUT
+void DirMut::update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen){
+	for (int i = 0; i < this->n; ++i){
+		if (cur_gen[i]->get_fitness() < best_fitness){
+			//next_gen contains previous generation at this point in the loop
+			auto diff = tools.vec_sub(cur_gen[i]->get_position(), next_gen[i]->get_position());
+			this->vector_pool.push_back(diff); 
+		}
+	}
+	std::cout << vector_pool.size() << std::endl;
+	this->improved = true;
+}
+
+std::vector<double> DirMut::apply(std::vector<Agent*> cur_gen, size_t idx){
+	std::vector<double> donor_vec(this->dim, 0.0);
+	if(this->improved){
+		size_t r1, r2;
+		do {
+			r1 = tools.rand_int_unif(0, this->n);
+		} while (r1 == idx);
+		r2 = tools.rand_int_unif(0, vector_pool.size());
+		donor_vec = tools.vec_sum(cur_gen[r1]->get_position() , tools.vec_scale(vector_pool[r2], this->F));
+
+	} else{
+		donor_vec = this->base_operator->apply(cur_gen, idx);
+	}
+
+
+	//clear vector pool after each iteration
+	if(idx == this->n - 1){
+		vector_pool.clear();
+		this->improved = false;
+	}
+	return donor_vec;
 	
 }
