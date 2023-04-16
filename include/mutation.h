@@ -102,7 +102,7 @@ public:
 class Bea : public Mutation {
 public:
 	Bea(size_t dim, size_t n, Boundary* boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
-			float F = 0.2, float Pbea = 0.8, int Nsegments = 2, int Nclones = 2) : Mutation(dim, n, F), boundary_correction(boundary_correction),
+			float F = 0.2, float Pbea = 0.8, int Nsegments = 5, int Nclones = 2) : Mutation(dim, n, F), boundary_correction(boundary_correction),
 			target_function(target_function), Nclones(Nclones), Pbea(Pbea), Nsegments(Nsegments), budget(budget){
 
 		if (Nsegments > dim){
