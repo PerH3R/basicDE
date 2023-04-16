@@ -25,9 +25,6 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	this->position.reserve(dim);
 	this->donor.reserve(dim);
 	for (size_t i = 0; i < dim; ++i)	{
-		// float value = distribution(generator);
-		// double random = (double)rand()/RAND_MAX;
-		// double value = target_function->bounds().lb[i] + random * (target_function->bounds().ub[i]-target_function->bounds().lb[i]);
 		double value = tools.rand_double_unif(target_function->bounds().lb[i], target_function->bounds().ub[i]);
 		this->position.push_back(value);
 		this->donor.push_back(value);
