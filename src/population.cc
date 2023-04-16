@@ -72,6 +72,19 @@ void Population::apply_crossover() {
 	
 }
 
+void Population::randomise_population(){
+	for (size_t i = 0; i < this->n; i++) {
+		std::vector<double> new_position;
+		new_position.reserve(this->dim);
+		for (int j = 0; j < this->dim; ++j){
+			double value = tools.rand_double_unif(target_function->bounds().lb[j], target_function->bounds().ub[j]);
+			new_position.push_back(value);
+		}
+		this->cur_gen[i]->set_position(new_position);
+		this->next_gen[i]->set_position(new_position);
+	}
+}
+
 void Population::repopulate_next_gen() {
 	for (size_t i = 0; i < this->n; i++) {
 		if (mutation_operator->use_archive() == false)		{

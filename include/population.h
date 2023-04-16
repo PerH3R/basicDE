@@ -30,10 +30,18 @@ public:
 	
 	void sort();
 
+	//if the population gets stuck
+	void randomise_population();
+
 	CROSSOVER get_crossover(){return this->crossover_operator->get_type();};
 	SELECTION get_selection(){return this->selection_operator->get_type();};
 	MUTATION get_mutation(){return this->mutation_operator->get_type();};
 	BOUNDARY get_boundary(){return this->boundary_correction->get_type();};
+
+	void set_crossover(Crossover* new_crossover){this->crossover_operator = new_crossover;};
+	void set_selection(Selection* new_selection){this->selection_operator = new_selection;};
+	void set_mutation(Mutation* new_mutation){this->mutation_operator = new_mutation;};
+	void set_boundary(Boundary* new_boundary){this->boundary_correction = new_boundary;};
 
 	void update_vector_pool(double best_fitness){mutation_operator->update_vector_pool(best_fitness, cur_gen, next_gen);}; //DirMut specific
 
