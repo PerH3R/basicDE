@@ -25,7 +25,7 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
     return std::make_shared<ioh::suite::BBOB>(problems, instances, dimensions);
 }
 
-inline ioh::logger::Analyzer get_logger(const std::string &folder_name = "results", const bool store_positions = false)
+inline ioh::logger::Analyzer get_logger(const std::string &folder_name = "results", const bool store_positions = true) //false
 {
     /// Instantiate a logger.
     using namespace ioh;
@@ -41,12 +41,15 @@ inline ioh::logger::Analyzer get_logger(const std::string &folder_name = "result
 }
 
 Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObjective* problem, Boundary* boundary_correction, 
-									unsigned int* budget){
+									unsigned int* budget, int mutator = -1){
 	int mut_op = std::stoi(argparser->get_values()["-m"]);
 	size_t pop_size = std::stoi(argparser->get_values()["-pop_size"]);
 	size_t dim = problem->meta_data().n_variables;
 	float F = std::stod(argparser->get_values()["-F"]);
 	size_t archive = std::stoi(argparser->get_values()["-archive"]);
+	if (mutator != -1){
+		mut_op = mutator;
+	}
 	switch(mut_op){
 		case 1:
 			return new RandDiv1(dim, pop_size, F);
@@ -95,7 +98,8 @@ results return_value(std::vector<double> location, double fitness, int i){
 
 
 //main loop
-results single_problem(Population* pop, unsigned int* budget, size_t dimension) {
+results single_problem(Population* pop, unsigned int* budget, size_t dimension, 
+		ioh::problem::RealSingleObjective* problem, Argparse* argparser, Boundary* boundary_correction) { //this row for random
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
 	//TODO: dimension getters in Function?
@@ -107,7 +111,7 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 	//TODO: budget
 	while (*budget > 0) {
 		iterations++;
-		std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
+		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
 		pop->apply_mutation();
 
@@ -117,17 +121,26 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 		//selection
 		pop->apply_selection();
 
-		// pop->print_fitness();
+		//sort population
 		pop->sort();
-		// pop->print_fitness();
 
-		//fitness improvement
+		//full random for baselines
+		int new_m;
+		do{
+			new_m = tools.rand_int_unif(1,9);
+		}while(new_m != 6); //6 doesnt work
+		pop->set_mutation(get_mutation_operator(argparser, problem, boundary_correction, budget, new_m));
+
+		//on fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
+			std::cout << "==================" << std::endl;
+			std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 			pop->print_fitness();
-			if (pop->get_mutation() == DIRMUT)			{
+			std::cout << "==================" << std::endl;
+			// if (pop->get_mutation() == DIRMUT)			{
 				pop->update_vector_pool(best_fitness);
-			}
+			// }
 			best_fitness = pop->get_current_generation()[0]->get_fitness();
 			best_location = pop->get_current_generation()[0]->get_position();
 			
@@ -141,8 +154,9 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 			no_movement++;
 		}
 		if (no_movement > 5){
-			std::cerr << "No movement for >5  iterations. Aborting run. " << std::endl;
-			return return_value(best_location, best_fitness, iterations);
+			std::cerr << "Searching stuck. No movement for >5  iterations. shuffling population. " << std::endl;
+			pop->randomise_population();
+			// return return_value(best_location, best_fitness, iterations);
 		}
 
 		//TODO: optimum reached (value can't be retrieved from ioh?)
@@ -150,9 +164,13 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension) 
 		// 	/* code */
 		// }
 
-		std::cout << "==================" << std::endl;
+		// std::cout << "==================" << std::endl;
 	}
+	std::cout << "==================" << std::endl;
+	std::cout << "best fitness found: " << best_fitness << std::endl;
+	std::cout << "==================" << std::endl;
 	return return_value(best_location, best_fitness, iterations);
+
 }
 
 
@@ -197,7 +215,8 @@ int main(int argc, char* argv[]) {
 	//main loop
 	// for (size_t i = 0; i < number_of_runs; i++) {	
 
-	auto logger = get_logger();
+
+	auto logger = get_logger("results-m"+argparser->get_values()["-m"]+"-p"+argparser->get_values()["-pop_size"]);
     /// Instatiate a bbob suite of problem {1,2}, instance {1, 2} and dimension {5,10}.
     // const auto &suite_factory = ioh::suite::SuiteRegistry<ioh::problem::RealSingleObjective>::instance();
     // const auto suite = suite_factory.create("BBOB", {1, 20}, {1, 2}, {dim});
@@ -245,7 +264,7 @@ int main(int argc, char* argv[]) {
 		// std::cout << "Run " << i << " ";
 		
 
-		results result = single_problem(pop, budget, problem_dim);
+		results result = single_problem(pop, budget, problem_dim, problem, argparser, boundary_correction);
 		std::cout << "final result" << std::endl;
 		pop->print_fitness();
 		std::cout << std::endl;
