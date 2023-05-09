@@ -25,8 +25,9 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
     return std::make_shared<ioh::suite::BBOB>(problems, instances, dimensions);
 }
 
-inline ioh::logger::Analyzer get_logger(const std::string &folder_name = "results", const bool store_positions = true) //false
+inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = true) //false
 {
+	std::string algname = argparser->get_values()["-m"];
     /// Instantiate a logger.
     using namespace ioh;
     return logger::Analyzer(
@@ -34,22 +35,21 @@ inline ioh::logger::Analyzer get_logger(const std::string &folder_name = "result
         {},                        // no additional properties 
         fs::current_path(),        // path to store data
         folder_name,               // name of the folder in path, which will be newly created
-        "PSO",                     // name of the algoritm 
+        algname,                     // name of the algoritm 
         "Type1",                   // additional info about the algorithm              
         store_positions            // where to store x positions in the data files 
     );
 }
 
 Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObjective* problem, Boundary* boundary_correction, 
-									unsigned int* budget, int mutator = -1){
-	int mut_op = std::stoi(argparser->get_values()["-m"]);
-	size_t pop_size = std::stoi(argparser->get_values()["-pop_size"]);
+									unsigned int* budget, int pop_size, int mut_op = -1){
+	// int mut_op = std::stoi(argparser->get_values()["-m"]);
 	size_t dim = problem->meta_data().n_variables;
 	float F = std::stod(argparser->get_values()["-F"]);
 	size_t archive = std::stoi(argparser->get_values()["-archive"]);
-	if (mutator != -1){
-		mut_op = mutator;
-	}
+	// if (mutator != -1){
+	// 	mut_op = mutator;
+	// }
 	switch(mut_op){
 		case 1:
 			return new RandDiv1(dim, pop_size, F);
@@ -69,22 +69,24 @@ Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObj
 			return new Bea(dim, pop_size, boundary_correction, problem, budget, F);
 		case 9:
 			return new DirMut(dim, pop_size, F);
+		case 10:
+			return new RandomSearch(dim, pop_size, problem, F);
 		default:
 			std::cerr << "Mutation operator out of range. Continuing using RandDiv1." << std::endl;
 			return new RandDiv1(dim, pop_size, F);		
 	}	
 }
 
-ioh::problem::RealSingleObjective* get_problem(int problem, int i, size_t dim){
-	switch(problem){
-		case 1:
-			return new ioh::problem::bbob::Sphere(i, dim);
-		case 2:
-			return new ioh::problem::bbob::Schwefel(i, dim);
-		default:
-			return new ioh::problem::bbob::Sphere(i, dim);
-	}
-}
+// ioh::problem::RealSingleObjective* get_problem(int problem, int i, int dim){
+// 	switch(problem){
+// 		case 1:
+// 			return new ioh::problem::bbob::Sphere(i, dim);
+// 		case 2:
+// 			return new ioh::problem::bbob::Schwefel(i, dim);
+// 		default:
+// 			return new ioh::problem::bbob::Sphere(1, 5);
+// 	}
+// }
 
 
 results return_value(std::vector<double> location, double fitness, int i){
@@ -125,19 +127,23 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 		pop->sort();
 
 		//full random for baselines
-		int new_m;
-		do{
-			new_m = tools.rand_int_unif(1,9);
-		}while(new_m != 6); //6 doesnt work
-		pop->set_mutation(get_mutation_operator(argparser, problem, boundary_correction, budget, new_m));
+		if (std::stoi(argparser->get_values()["-m"]) == 99){
+			int new_m;
+			do{
+				new_m = tools.rand_int_unif(1,11);
+			}while(new_m == 7); //7 doesnt work
+			// std::cout << new_m << std::endl;
+			pop->set_mutation(get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m));
+		}
+		
 
 		//on fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
-			std::cout << "==================" << std::endl;
-			std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
-			pop->print_fitness();
-			std::cout << "==================" << std::endl;
+			// std::cout << "==================" << std::endl;
+			// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
+			// pop->print_fitness();
+			// std::cout << "==================" << std::endl;
 			// if (pop->get_mutation() == DIRMUT)			{
 				pop->update_vector_pool(best_fitness);
 			// }
@@ -198,34 +204,24 @@ int main(int argc, char* argv[]) {
 
 	unsigned int number_of_runs = std::stoi(argparser->get_values()["-runs"]);
 
-	size_t pop_size = std::stoi(argparser->get_values()["-pop_size"]);
+	
 
 	// int dim = std::stoi(argparser->get_values()["-d"]);
 
 	int m = std::stoi(argparser->get_values()["-m"]);
-
 	size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
-
 	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
-
 	unsigned int* budget = &budget_value;
 
-	//TODO: run logs for IOH
-
-	//main loop
-	// for (size_t i = 0; i < number_of_runs; i++) {	
-
-
-	auto logger = get_logger("results-m"+argparser->get_values()["-m"]+"-p"+argparser->get_values()["-pop_size"]);
+	auto logger = get_logger(argparser, "results/results-m"+argparser->get_values()["-m"]+"-d"+argparser->get_values()["-d"]
+		+"-pop_size"+argparser->get_values()["-pop_size"]+"-F"+argparser->get_values()["-F"]+"-Cr"+argparser->get_values()["-Cr"]);
     /// Instatiate a bbob suite of problem {1,2}, instance {1, 2} and dimension {5,10}.
     // const auto &suite_factory = ioh::suite::SuiteRegistry<ioh::problem::RealSingleObjective>::instance();
     // const auto suite = suite_factory.create("BBOB", {1, 20}, {1, 2}, {dim});
     const auto suite = create_suite(1, 1, 1);
 
-
     /// Show output folder of the logger 
     std::cout << "Storing data at: " << logger.output_directory() << std::endl; 
-
     
     /// Attach logger to a suite. We can either attach a logger to a suite or for
     /// each new problem in a suite manually (e.g. call problem->attach_logger(logger)
@@ -234,8 +230,6 @@ int main(int argc, char* argv[]) {
 
     /// To access problems of the suite.
     for (const auto &problem_shr : *suite){
-    	
-
     	auto problem = problem_shr.get();
     	tools.set_seed(problem->meta_data().instance);
 
@@ -248,16 +242,22 @@ int main(int argc, char* argv[]) {
 
 		// set up operators and problem variables
 		int problem_dim = problem->meta_data().n_variables;
+    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//set population size
+    	if (pop_size < 4){
+    		pop_size = 4 + std::floor((3*std::log(problem_dim)));
+    		std::cout << "automatic population size of: " << pop_size << std::endl;
+    	}//automatic pop_size if not specified or too small
+    	
 		// auto problem = get_problem(2, i, dim);		
 		Boundary* boundary_correction = new Clamp(problem);
-		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget); //new TargetToPBestDiv1(dim, pop_size);
+		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget, pop_size, m); //new TargetToPBestDiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(problem_dim);
 		Selection* selection = new Elitist(pop_size);
 		
 
 		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
-		std::cout << "optimizing using " << mutation->get_type() << std::endl;
+		std::cout << "optimizing using operator " << mutation->get_type()+1 << std::endl;
 
 		Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget, archive_size);
 
@@ -267,7 +267,7 @@ int main(int argc, char* argv[]) {
 		results result = single_problem(pop, budget, problem_dim, problem, argparser, boundary_correction);
 		std::cout << "final result" << std::endl;
 		pop->print_fitness();
-		std::cout << std::endl;
+		std::cout << "=================" << std::endl;
 		
 
 		delete pop;
