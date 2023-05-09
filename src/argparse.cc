@@ -9,14 +9,15 @@ Argparse::Argparse(int argc, char* argv[]) : argc(argc), argv(argv)//,
 
 	int i = 1; //skip main
 	while (i < argc){
-		std::cout << i << argv[i] << std::endl;		
+		std::cout << i << " " << argv[i] << std::endl;		
 		//is a flag
 		if (argv[i][0] == '-'){
 			// if (argv[i] == "-archive"){ //bools
 				// flag_vals[argv[i]] = "1";
 				// i++; //next flag
 			// }else 
-			if ((argv[i] == "-F" || argv[i] == "-Cr") && (this->isReal(argv[i+1]))){ //doubles
+			std::string argument(argv[i]);
+			if ( (argument == "-F" || argument == "-Cr") && (this->isReal(argv[i+1]) ) ){ //doubles
 				flag_vals[argv[i]] = argv[i+1];
 				i+=2; //skip associated value
 			}else if ((flag_vals.find(argv[i]) != flag_vals.end()) && (this->isInteger(argv[i+1]))){ //integers (rest)
