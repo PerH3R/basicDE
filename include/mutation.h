@@ -18,7 +18,8 @@ enum MUTATION {
 	TWOOPTDIV1,
 	DESMU,
 	BEA,
-	DIRMUT
+	DIRMUT,
+	RANDOMSEARCH
 };
 
 
@@ -144,4 +145,14 @@ private:
 	std::vector< std::vector<double> > vector_pool; //pool of difference vectors of improved agents	
 	bool improved = false;
 
+};
+
+class RandomSearch : public Mutation {
+public:
+    RandomSearch(size_t dim, size_t n, ioh::problem::RealSingleObjective* target_function, float F = 0.2) : Mutation(dim, n, F), target_function(target_function) {};
+    ~RandomSearch() {};
+    MUTATION get_type(){return RANDOMSEARCH;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+private:
+	ioh::problem::RealSingleObjective* target_function;
 };

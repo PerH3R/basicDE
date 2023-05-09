@@ -356,7 +356,7 @@ void DirMut::update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen
 			this->vector_pool.push_back(diff); 
 		}
 	}
-	std::cout << vector_pool.size() << std::endl;
+	// std::cout << "vector pool size: " <<vector_pool.size() << std::endl;
 	this->improved = true;
 }
 
@@ -382,4 +382,13 @@ std::vector<double> DirMut::apply(std::vector<Agent*> cur_gen, size_t idx){
 	}
 	return donor_vec;
 	
+}
+
+//RandomSearch
+std::vector<double> RandomSearch::apply(std::vector<Agent*> cur_gen, size_t idx){
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		donor_vec[j] = tools.rand_double_unif(this->target_function->bounds().lb[j], this->target_function->bounds().ub[j]);
+	}
+	return donor_vec;	
 }
