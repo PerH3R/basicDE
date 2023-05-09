@@ -31,7 +31,7 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	}
 	this->calculate_fitness();
 	// std::cout << "new agent with fitness:" << this->fitness << " at ";
-	print_position(this->position);
+	// print_position(this->position);
 
 }
 
