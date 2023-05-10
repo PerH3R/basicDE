@@ -3,24 +3,12 @@
 #include "tools.h"
 #include "agent.h"
 #include "boundary.h"
+#include "operators.h"
 
 #include <iostream>
 
 //TODO: think about this forward declaration
 class Agent;
-
-enum MUTATION {
-	RANDDIV1,
-	BESTDIV1,
-	TTPBESTDIV1,
-	TTBESTDIV2,
-	TTRANDDIV2,
-	TWOOPTDIV1,
-	DESMU,
-	BEA,
-	DIRMUT,
-	RANDOMSEARCH
-};
 
 
 class Mutation {
