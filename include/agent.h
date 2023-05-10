@@ -5,11 +5,11 @@
 #include "mutation.h"
 #include "crossover.h"
 #include "boundary.h"
+#include "operators.h"
 
 //TODO: double/float consistency
 
 //TODO: look at this
-
 // #include "functions.h"
 // class Crossover;
 class Mutation;
@@ -33,19 +33,29 @@ public:
 	std::vector<double> get_position();
 	void set_position(std::vector<double> new_position);
 
+	CROSSOVER get_crossover();
+	MUTATION get_mutation();
+	BOUNDARY get_boundary();
+
+	void set_crossover(Crossover* new_crossover){this->crossover_operator = new_crossover;};
+	void set_mutation(Mutation* new_mutation){this->mutation_operator = new_mutation;};
+	void set_boundary(Boundary* new_boundary){this->boundary_correction = new_boundary;};
 
 
 private:
 	void print_position(std::vector<double> to_print);
 
+	// std::vector<std::tuple<std::vector<double>, CROSSOVER, MUTATION, BOUNDARY> > history;
 	size_t dim;
 	std::vector<double> position;
 	std::vector<double> donor;
 	double fitness;
 	unsigned int* budget;
+
 	Mutation* mutation_operator;
 	Crossover* crossover_operator;
 	Boundary* boundary_correction;
+
 	ioh::problem::RealSingleObjective* target_function;
 	bool fitness_uptodate;
 

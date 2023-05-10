@@ -133,7 +133,7 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 				new_m = tools.rand_int_unif(1,11);
 			}while(new_m == 7); //7 doesnt work
 			// std::cout << new_m << std::endl;
-			pop->set_mutation(get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m));
+			pop->set_individual_mutation( get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m), -1);
 		}
 		
 

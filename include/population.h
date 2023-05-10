@@ -33,15 +33,32 @@ public:
 	//if the population gets stuck
 	void randomise_population();
 
-	CROSSOVER get_crossover(){return this->crossover_operator->get_type();};
-	SELECTION get_selection(){return this->selection_operator->get_type();};
-	MUTATION get_mutation(){return this->mutation_operator->get_type();};
-	BOUNDARY get_boundary(){return this->boundary_correction->get_type();};
 
-	void set_crossover(Crossover* new_crossover){this->crossover_operator = new_crossover;};
+	SELECTION get_selection(){return this->selection_operator->get_type();};
+
+	CROSSOVER get_base_crossover(){return this->crossover_operator->get_type();};
+	MUTATION get_base_mutation(){return this->mutation_operator->get_type();};
+	BOUNDARY get_base_boundary(){return this->boundary_correction->get_type();};
+
+	CROSSOVER get_individual_crossover(int idx){return this->cur_gen[idx]->get_crossover();};
+	MUTATION get_individual_mutation(int idx){return this->cur_gen[idx]->get_mutation();};
+	BOUNDARY get_individual_boundary(int idx){return this->cur_gen[idx]->get_boundary();};
+
+
+	//change selection operator
 	void set_selection(Selection* new_selection){this->selection_operator = new_selection;};
-	void set_mutation(Mutation* new_mutation){this->mutation_operator = new_mutation;};
-	void set_boundary(Boundary* new_boundary){this->boundary_correction = new_boundary;};
+
+	//change the operator that's passed when creating a new Agent
+	void set_base_crossover(Crossover* new_crossover){this->crossover_operator = new_crossover;};
+	void set_base_mutation(Mutation* new_mutation){this->mutation_operator = new_mutation;};
+	void set_base_boundary(Boundary* new_boundary){this->boundary_correction = new_boundary;};
+
+
+
+	//changes operator of a one or all Agents from the current population (idx=-1 to change all, idx between 0 to n to change specific individual)
+	void set_individual_crossover(Crossover* new_crossover, int idx = -1);
+	void set_individual_mutation(Mutation* new_mutation, int idx = -1);
+	void set_individual_boundary(Boundary* new_boundary, int idx = -1);
 
 	void update_vector_pool(double best_fitness){mutation_operator->update_vector_pool(best_fitness, cur_gen, next_gen);}; //DirMut specific
 

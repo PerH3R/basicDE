@@ -155,3 +155,54 @@ std::vector<Agent*> Population::get_current_generation(){
 std::vector<Agent*> Population::get_next_generation(){
 	return next_gen;
 }
+
+void Population::set_individual_crossover(Crossover* new_crossover, int idx){
+	if (idx == -1){
+		//change all
+		for (int i = 0; i < this->n; ++i){
+			cur_gen[i]->set_crossover(new_crossover);
+			next_gen[i]->set_crossover(new_crossover);
+		}
+		/* code */
+	} else if(idx > -1 && idx < this->n){
+		//change single individual
+		cur_gen[idx]->set_crossover(new_crossover);
+		next_gen[idx]->set_crossover(new_crossover);
+	}else{
+		std::cerr << "invalid index: " << idx << std::endl;
+	}
+}
+
+void Population::set_individual_mutation(Mutation* new_mutation, int idx){
+	if (idx == -1){
+		//change all
+		for (int i = 0; i < this->n; ++i){
+			cur_gen[i]->set_mutation(new_mutation);
+			next_gen[i]->set_mutation(new_mutation);
+		}
+		/* code */
+	} else if(idx > -1 && idx < this->n){
+		//change single individual
+		cur_gen[idx]->set_mutation(new_mutation);
+		next_gen[idx]->set_mutation(new_mutation);
+	}else{
+		std::cerr << "invalid index: " << idx << std::endl;
+	}
+}
+
+void Population::set_individual_boundary(Boundary* new_boundary, int idx){
+	if (idx == -1){
+		//change all
+		for (int i = 0; i < this->n; ++i){
+			cur_gen[i]->set_boundary(new_boundary);
+			next_gen[i]->set_boundary(new_boundary);
+		}
+		/* code */
+	} else if(idx > -1 && idx < this->n){
+		//change single individual
+		cur_gen[idx]->set_boundary(new_boundary);
+		next_gen[idx]->set_boundary(new_boundary);
+	}else{
+		std::cerr << "invalid index: " << idx << std::endl;
+	}
+}

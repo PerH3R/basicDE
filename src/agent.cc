@@ -62,12 +62,20 @@ void Agent::crossover(std::vector<Agent*> next_gen, size_t idx){
 	// std::cout << "==========" << std::endl << "crossover" << std::endl;
 	// print_position(this->position);
 	// print_position(this->donor);
+
 	std::vector<double> new_position = this->crossover_operator->apply(this->position, this->donor);
+
 	// print_position(new_position);
 	// std::cout << "agent co idx: " << idx << std::endl;
+
 	next_gen[idx]->set_position(new_position);
+
 	// std::cout << "=========" << std::endl;
 }
+
+CROSSOVER Agent::get_crossover(){return this->crossover_operator->get_type();}
+MUTATION Agent::get_mutation(){return this->mutation_operator->get_type();}
+BOUNDARY Agent::get_boundary(){return this->boundary_correction->get_type();}
 
 //TODO: budget
 void Agent::calculate_fitness() {
