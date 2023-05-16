@@ -1,9 +1,11 @@
-cmake_minimum_required (VERSION 3.1)
-project (simpleDE)
+cmake_minimum_required (VERSION 3.15)
+project (simpleDE
+		VERSION "0.3.9"
+)
 set(CMAKE_CXX_STANDARD 17)
 link_libraries(stdc++fs)
 add_compile_definitions(FSEXPERIMENTAL)
-set(CXX_FLAGS  "${CXX_FLAGS} -std=c++17 -g -Wall -Wextra -fopenmp -Wreturn-type -lstdc++fs")
+set(CXX_FLAGS  "${CXX_FLAGS} -std=c++17 -g -Wall -Wextra -fopenmp -Wreturn-type -lstdc++fs  ")
 add_subdirectory(deps/IOHexperimenter)
 
 
