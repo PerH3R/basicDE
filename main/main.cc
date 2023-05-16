@@ -27,7 +27,13 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
 
 inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = true) //false
 {
-	std::string algname = argparser->get_values()["-m"];
+	std::string algname;
+	if (std::stoi(argparser->get_values()["-m"]) != 99)
+	{
+		algname = MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])];
+	} else {
+		algname = "random operators";
+	}
     /// Instantiate a logger.
     using namespace ioh;
     return logger::Analyzer(
