@@ -4,11 +4,10 @@
 //#include <cmath>
 // #include "tools.h"
 #include "agent.h"
+#include "operators.h"
 
 // all functions implemented
-enum SELECTION {
-    ELITIST
-};
+
 
 // base class
 class Selection {

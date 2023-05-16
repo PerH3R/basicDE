@@ -3,14 +3,12 @@
 #include <random>
 
 #include "ioh.hpp"
+#include "operators.h"
 
 //TODO: remove
 #include <iostream>
 
-enum BOUNDARY {
-	CLAMP,
-    REFLECT
-};
+
 
 class Boundary {
 public:

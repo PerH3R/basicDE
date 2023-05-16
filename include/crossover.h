@@ -3,15 +3,13 @@
 // #include "agent.h"
 #include <random>
 #include "tools.h"
+#include "operators.h"
 
 //TODO: remove
 #include <iostream>
 // class Agent;
 
-enum CROSSOVER {
-	BINOMIAL,
-    EXPONENTIAL
-};
+
 
 class Crossover {
 public:
