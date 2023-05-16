@@ -77,18 +77,6 @@ Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObj
 	}	
 }
 
-// ioh::problem::RealSingleObjective* get_problem(int problem, int i, int dim){
-// 	switch(problem){
-// 		case 1:
-// 			return new ioh::problem::bbob::Sphere(i, dim);
-// 		case 2:
-// 			return new ioh::problem::bbob::Schwefel(i, dim);
-// 		default:
-// 			return new ioh::problem::bbob::Sphere(1, 5);
-// 	}
-// }
-
-
 results return_value(std::vector<double> location, double fitness, int i){
   results result;
   result.best_location = location;
@@ -104,7 +92,6 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 		ioh::problem::RealSingleObjective* problem, Argparse* argparser, Boundary* boundary_correction) { //this row for random
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
-	//TODO: dimension getters in Function?
 	std::vector<double> best_location(dimension, -1);
 	unsigned int iterations = 0;
 	unsigned int no_movement = 0;
@@ -144,9 +131,11 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 			// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 			// pop->print_fitness();
 			// std::cout << "==================" << std::endl;
-			// if (pop->get_mutation() == DIRMUT)			{
-				pop->update_vector_pool(best_fitness);
+
+			// if (pop->get_mutation() == DIRMUT){
+				pop->update_vector_pool(best_fitness);  /////TODO: IF DIRMUT IS A POSSIBLE OPERATOR
 			// }
+
 			best_fitness = pop->get_current_generation()[0]->get_fitness();
 			best_location = pop->get_current_generation()[0]->get_position();
 			
