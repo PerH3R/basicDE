@@ -38,7 +38,8 @@ std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<dou
 	if (donor_vec.size() != this->dim){
 		std::cerr << "co apply invalid donor size\n";
 	}
-
+	
+	//TODO: add the fixed variable
 	for (size_t i = 0; i < this->dim; ++i){
 		//TODO: look at rand generation
 		float chance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
