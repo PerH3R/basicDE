@@ -17,7 +17,9 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
 {
     const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
     const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-    const std::vector<int> dimensions{5,20};
+    std::vector<int> dimensions;
+    if (dim == 0){ dimensions = {5,20}; }
+    else{ dimensions = {dim}; }
 
     if (using_factory)
         return ioh::suite::SuiteRegistry<ioh::problem::RealSingleObjective>::instance()
@@ -34,6 +36,8 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
 	} else {
 		algname = "random operators";
 	}
+	std::string info = argparser->getArgsAsString();
+
     /// Instantiate a logger.
     using namespace ioh;
     return logger::Analyzer(
@@ -42,7 +46,7 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
         fs::current_path(),        // path to store data
         folder_name,               // name of the folder in path, which will be newly created
         algname,                     // name of the algoritm 
-        "Type1",                   // additional info about the algorithm              
+        info,                   // additional info about the algorithm              
         store_positions            // where to store x positions in the data files 
     );
 }
@@ -57,28 +61,28 @@ Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObj
 	// 	mut_op = mutator;
 	// }
 	switch(mut_op){
-		case 1:
+		case 0:
 			return new RandDiv1(dim, pop_size, F);
-		case 2:
+		case 1:
 			return new BestDiv1(dim, pop_size, F);
-		case 3:			
+		case 2:			
 			return new TargetToPBestDiv1(dim, pop_size, F, archive);
-		case 4:
+		case 3:
 			return new TargetToBestDiv2(dim, pop_size, F);
-		case 5:
+		case 4:
 			return new TargetToRandDiv2(dim, pop_size, F);
-		case 6:
+		case 5:
 			return new TwoOptDiv1(dim, pop_size, F);
-		case 7:
+		case 6:
 			return new Desmu(dim, pop_size, F);
-		case 8:
+		case 7:
 			return new Bea(dim, pop_size, boundary_correction, problem, budget, F);
-		case 9:
+		case 8:
 			return new DirMut(dim, pop_size, F);
-		case 10:
+		case 9:
 			return new RandomSearch(dim, pop_size, problem, F);
 		default:
-			std::cerr << "Mutation operator out of range. Continuing using RandDiv1." << std::endl;
+			std::cerr << "Mutation operator " << mut_op << " out of range. Continuing using RandDiv1." << std::endl;
 			return new RandDiv1(dim, pop_size, F);		
 	}	
 }
@@ -123,8 +127,8 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 		if (std::stoi(argparser->get_values()["-m"]) == 99){
 			int new_m;
 			do{
-				new_m = tools.rand_int_unif(1,11);
-			}while(new_m == 7); //7 doesnt work
+				new_m = tools.rand_int_unif(0,10);
+			}while(new_m == 6); //desmu doesnt work
 			// std::cout << new_m << std::endl;
 			pop->set_individual_mutation( get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m), -1);
 		}
@@ -213,7 +217,7 @@ int main(int argc, char* argv[]) {
     /// Instatiate a bbob suite of problem {1,2}, instance {1, 2} and dimension {5,10}.
     // const auto &suite_factory = ioh::suite::SuiteRegistry<ioh::problem::RealSingleObjective>::instance();
     // const auto suite = suite_factory.create("BBOB", {1, 20}, {1, 2}, {dim});
-    const auto suite = create_suite(1, 1, 1);
+    const auto suite = create_suite(1, 1, std::stoi(argparser->get_values()["-d"]) );
 
     /// Show output folder of the logger 
     std::cout << "Storing data at: " << logger.output_directory() << std::endl; 
@@ -239,7 +243,7 @@ int main(int argc, char* argv[]) {
 		int problem_dim = problem->meta_data().n_variables;
     	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//set population size
     	if (pop_size < 4){
-    		pop_size = 4 + std::floor((3*std::log(problem_dim)));
+    		pop_size = 4 + 5*problem_dim;
     		std::cout << "automatic population size of: " << pop_size << std::endl;
     	}//automatic pop_size if not specified or too small
     	

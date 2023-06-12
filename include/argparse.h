@@ -37,6 +37,7 @@ public:
 	bool isReal(std::string str);
 	bool isInteger(std::string str);
 	void printArgs();
+	std::string getArgsAsString();
 	std::map<std::string, std::string> get_values() const;
 
 
@@ -46,11 +47,11 @@ private:
 	//const std::string arg_names[10];
 	std::map<std::string, std::string> flag_vals = {
 		{"-f","1"}, 
-		{"-d","5"}, 
-		{"-m","1"}, 
-		{"-F","0.2"}, 
+		{"-d","0"}, 
+		{"-m","0"}, 
+		{"-F","0.5"}, 
 		{"-c","1"}, 
-		{"-Cr","0.2"}, 
+		{"-Cr","0.5"}, 
 		{"-runs","1"}, 
 		{"-budget", "2500"}, 
 		{"-pop_size", "0"},

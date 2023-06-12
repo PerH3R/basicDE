@@ -64,3 +64,11 @@ void Argparse::printArgs(){
     	std::cout << it->first << " " << it->second << "\n";
 	}
 }
+
+std::string Argparse::getArgsAsString(){
+	std::string returnvalue;
+	for(auto it = flag_vals.cbegin(); it != flag_vals.cend(); ++it){
+    	returnvalue += it->first + " " + it->second + " ";
+	}
+	return returnvalue;
+}
