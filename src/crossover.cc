@@ -39,11 +39,12 @@ std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<dou
 		std::cerr << "co apply invalid donor size\n";
 	}
 	
+	int crossover_point = = tools.rand_int_unif(0,this->dim)
 	//TODO: add the fixed variable
 	for (size_t i = 0; i < this->dim; ++i){
 		//TODO: look at rand generation
-		float chance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		if (chance < Cr)		{
+		float chance = rand_double_unif(0.0, 1.0);
+		if ( (chance < Cr)||(i == fixed_point) )		{
 			// std::cout << "donated position " << i << std::endl;
 			new_pos.push_back(donor_vec[i]);
 		}else{
@@ -70,7 +71,7 @@ Exponential::Exponential(size_t dim, float Cr) : Crossover(dim, Cr){
 
 
 CROSSOVER Exponential::get_type() {
-  return BINOMIAL;
+  return EXPONENTIAL;
 }
 
 // Apply crossover on all agents, returns selection
