@@ -11,3 +11,5 @@ todo: ioh profiler function structure
 		> describe implemented operators
 
 PyBind interface/config files
+
+rework argparse strucuture for easier retrievable values
