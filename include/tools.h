@@ -34,6 +34,8 @@ public:
 
 	std::vector<double> vec_sum(std::vector<double> first, std::vector<double> second);
 
+	//TODO: function that gives tuple of random indexes (excluding a given index)
+
 
 private:
 	std::mt19937 rng;
