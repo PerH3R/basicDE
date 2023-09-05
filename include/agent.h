@@ -30,6 +30,8 @@ public:
 	void calculate_fitness();
 	double get_fitness();
 
+	bool check_position_oob(const std::vector<double>& given_position);
+
 	std::vector<double> get_position();
 	void set_position(std::vector<double> new_position);
 
@@ -58,6 +60,8 @@ private:
 
 	ioh::problem::RealSingleObjective* target_function;
 	bool fitness_uptodate;
+
+	int resample_limit; //10+ln(dim)^2
 
 
 

@@ -32,6 +32,7 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	this->calculate_fitness();
 	// std::cout << "new agent with fitness:" << this->fitness << " at ";
 	// print_position(this->position);
+	this->resample_limit = 10+std::pow((std::log(this->dim)),2);
 
 }
 
@@ -47,30 +48,32 @@ void Agent::print_position(std::vector<double> to_print){
 }
 
 void Agent::mutate(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "==========" << std::endl << "mutating" << std::endl;
-	// print_position(this->position);
 	std::vector<double> donor_vec = this->mutation_operator->apply(cur_gen, idx);
+	int retries = 0;
+	std::cout << "dv" << std::endl;
+	print_position(donor_vec);
+	//attempt generation of donor vector within bounds
+	while(check_position_oob(donor_vec) == true && retries < this->resample_limit){
+		retries++;
+		std::vector<double> donor_vec = this->mutation_operator->apply(cur_gen, idx);
+		std::cout << "rdv" << retries <<std::endl;
+		print_position(donor_vec);
+	}
+	
+	//apply correction if no donor vector within bounds could be generated
+	if (check_position_oob(donor_vec) == true){
+		donor_vec = boundary_correction->apply(donor_vec);
+	}
+
 	for (size_t i = 0; i < this->dim; ++i){
 		this->donor[i] = donor_vec[i];
 	}
-	// this->donor = donor_vec;
-	// print_position(this->donor);
-	// std::cout << "==========" << std::endl;
 }
 
 void Agent::crossover(std::vector<Agent*> next_gen, size_t idx){
-	// std::cout << "==========" << std::endl << "crossover" << std::endl;
-	// print_position(this->position);
-	// print_position(this->donor);
-
 	std::vector<double> new_position = this->crossover_operator->apply(this->position, this->donor);
 
-	// print_position(new_position);
-	// std::cout << "agent co idx: " << idx << std::endl;
-
 	next_gen[idx]->set_position(new_position);
-
-	// std::cout << "=========" << std::endl;
 }
 
 CROSSOVER Agent::get_crossover(){return this->crossover_operator->get_type();}
@@ -103,8 +106,14 @@ void Agent::set_position(std::vector<double> new_position) {
 	//if dimension fits
 	if (new_position.size() == this->dim) {
 		if (this->position.size() == this->dim){
-			//correct out-of-bounds coordinates
-			new_position = boundary_correction->apply(new_position);
+			
+			//redundant check for out-of-bounds coordinates TODO:remove for performance if everything works fine
+			std::vector<double> corrected_position = boundary_correction->apply(new_position);
+			if (corrected_position != new_position){
+				new_position = corrected_position;
+				std::cerr << "emergency correction applied - please investigate";
+			}
+			
 
 			//track if new position is different from current position
 			bool change = false;
@@ -116,6 +125,7 @@ void Agent::set_position(std::vector<double> new_position) {
 					change = true;					
 				}
 			}
+
 			//tell agent to update fitness if position has changed
 			if (change){
 				fitness_uptodate = false;
@@ -127,4 +137,14 @@ void Agent::set_position(std::vector<double> new_position) {
 	}else{
 		std::cerr << "incorrect dimensions new position\n";
 	}
+}
+
+bool Agent::check_position_oob(const std::vector<double>& given_position){
+	//std::cout << "gp" << given_position.size() << " " << this->dim << std::endl;
+	for (size_t i = 0; i < this->dim; ++i){
+		if (given_position[i] < this->target_function->bounds().lb[i] || given_position[i] > this->target_function->bounds().ub[i]){
+			return true;
+		}
+	}
+	return false;
 }

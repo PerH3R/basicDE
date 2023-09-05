@@ -29,6 +29,10 @@ flag				meaning					default					vals
 
 */
 
+/*
+TODO: configurable retry/resample limit
+*/
+
 class Argparse {
 public:
 	Argparse(int argc, char* argv[]);
