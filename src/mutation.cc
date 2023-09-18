@@ -94,6 +94,8 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 		x2 = tools.rand_int_unif(0, this->n);
 	} while (x2 == x1 || x2 == idx);
 	do {
+		//TODO: if (use archive) select x3 from P U A
+		
 		x3 = tools.rand_int_unif(0, this->n);
 	} while (x3 == x2 || x3 == x1 || x3 == idx);
 
