@@ -3,6 +3,7 @@
 // RandDiv1
 
 std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+	// std::cout << "rand/1" << std::endl;
 
 	//select 3 vectors uniformly at random 
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
@@ -24,25 +25,11 @@ std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 // BestDiv1
 std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::default_random_engine generator;
-	// std::uniform_int_distribution<size_t> distribution(0, this->n);
-	size_t x1, x2, x3;
+	// std::cout << "best/1" << std::endl;
 
 	//exclude optimal (first if sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
-
- 	//select 3 uniform random vectors
-	// do {
-	// 	//provided population is sorted, x1 should be optimal
-	// 	x1 = 0;
-	// } while (false);		
-	// do {
-	// 	x2 = tools.rand_int_unif(0, this->n);
-	// } while (x2 == x1 || x2 == idx);
-	// do {
-	// 	x3 = tools.rand_int_unif(0, this->n);
-	// } while (x3 == x2 || x3 == x1 || x3 == idx);
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
@@ -60,6 +47,7 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 // Target To PBest Div 1
 //TODO: add archive, fix p sampling
 std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+	// std::cout << "ttpb/1" << std::endl;
 	float p;
 	do{
 		p = tools.rand_double_unif(0.0,1.0);
@@ -105,6 +93,7 @@ bool TargetToPBestDiv1::use_archive(){
 
 // Target To Best Div 2
 std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+	// std::cout << "ttb/2" << std::endl;
  	
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	//if best and self are not the same
@@ -131,6 +120,7 @@ std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 
 //Target To Rand Div 2
 std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+	// std::cout << "ttr/2" << std::endl;
 
 	std::vector<Agent*> cur_gen_ex_self = std::vector<Agent*>(cur_gen.begin(), cur_gen.end());
 	cur_gen_ex_self.erase(cur_gen_ex_self.begin()+idx);
@@ -152,6 +142,7 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 
 //2-OptDiv1
 std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+	// std::cout << "2opt/1" << std::endl;
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
 	//TODO: check if swap swaps correctly
