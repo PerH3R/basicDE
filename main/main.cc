@@ -137,6 +137,7 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 		//on fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
+			std::cout << "new best is: " << pop->get_current_generation()[0]->get_fitness() << " at iteration " << iterations << std::endl;
 			// std::cout << "==================" << std::endl;
 			// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 			// pop->print_fitness();
@@ -248,7 +249,7 @@ int main(int argc, char* argv[]) {
     	}//automatic pop_size if not specified or too small
     	
 		// auto problem = get_problem(2, i, dim);		
-		Boundary* boundary_correction = new Clamp(problem);
+		Boundary* boundary_correction = new Reflect(problem);
 		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget, pop_size, m); //new TargetToPBestDiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(problem_dim);
 		Selection* selection = new Elitist(pop_size);
