@@ -50,14 +50,13 @@ void Agent::print_position(std::vector<double> to_print){
 void Agent::mutate(std::vector<Agent*> cur_gen, size_t idx){
 	std::vector<double> donor_vec = this->mutation_operator->apply(cur_gen, idx);
 	int retries = 0;
-	std::cout << "dv" << std::endl;
-	print_position(donor_vec);
+	// std::cout << "dv" << std::endl;
+	// print_position(donor_vec);
 	//attempt generation of donor vector within bounds
 	while(check_position_oob(donor_vec) == true && retries < this->resample_limit){
 		retries++;
 		std::vector<double> donor_vec = this->mutation_operator->apply(cur_gen, idx);
-		std::cout << "rdv" << retries <<std::endl;
-		print_position(donor_vec);
+		// print_position(donor_vec);
 	}
 	
 	//apply correction if no donor vector within bounds could be generated
