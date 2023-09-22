@@ -3,33 +3,16 @@
 // RandDiv1
 
 std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::default_random_engine generator;
-	// std::uniform_int_distribution<size_t> distribution(0, this->n-1);
-	// generator.seed(time(NULL));
-	int x1, x2, x3;
 
-	// for (size_t i = 0; i < this->n; i++) {
-
- 	//select 3 uniform random vectors
-	do {
-		x1 = tools.rand_int_unif(0, this->n);
-		// x1 = distribution(generator);
-	} while (x1 == idx);		
-	do {
-		x2 = tools.rand_int_unif(0, this->n);
-		// x2 = distribution(generator);
-	} while (x2 == x1 || x2 == idx);
-	do {
-		x3 = tools.rand_int_unif(0, this->n);
-		// x3 = distribution(generator);
-	} while (x3 == x2 || x3 == x1 || x3 == idx);
+	//select 3 vectors uniformly at random 
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
 	std::vector<double> donor_vec(this->dim, 0.0);
 
 	for (size_t j = 0; j < this->dim; j++) {
-		double a = cur_gen[x1]->get_position()[j];
-		double b = cur_gen[x2]->get_position()[j];
-		double c = cur_gen[x3]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
 		donor_vec[j] = a + this->F * (b - c);
 	}
 	return donor_vec;
@@ -45,24 +28,28 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	// std::uniform_int_distribution<size_t> distribution(0, this->n);
 	size_t x1, x2, x3;
 
+	//exclude optimal (first if sorted) solution from random options
+	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
+
  	//select 3 uniform random vectors
-	do {
-		//provided population is sorted, x1 should be optimal
-		x1 = 0;
-	} while (false);		
-	do {
-		x2 = tools.rand_int_unif(0, this->n);
-	} while (x2 == x1 || x2 == idx);
-	do {
-		x3 = tools.rand_int_unif(0, this->n);
-	} while (x3 == x2 || x3 == x1 || x3 == idx);
+	// do {
+	// 	//provided population is sorted, x1 should be optimal
+	// 	x1 = 0;
+	// } while (false);		
+	// do {
+	// 	x2 = tools.rand_int_unif(0, this->n);
+	// } while (x2 == x1 || x2 == idx);
+	// do {
+	// 	x3 = tools.rand_int_unif(0, this->n);
+	// } while (x3 == x2 || x3 == x1 || x3 == idx);
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
-		double a = cur_gen[x1]->get_position()[j];
-		double b = cur_gen[x2]->get_position()[j];
-		double c = cur_gen[x3]->get_position()[j];
+		double a = cur_gen[0]->get_position()[j];
+		double b = chosen_vectors[0]->get_position()[j];
+		double c = chosen_vectors[1]->get_position()[j];
 		donor_vec[j] = a + this->F * (b - c);
 	}
 	return donor_vec;
@@ -73,31 +60,29 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 // Target To PBest Div 1
 //TODO: add archive, fix p sampling
 std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	std::default_random_engine float_generator;
-	std::uniform_real_distribution<float> float_distribution(0.0, 1.0);
 	float p;
 	do{
 		p = tools.rand_double_unif(0.0,1.0);
 	}while(p<(2.0/this->n));
 	
+	std::vector<Agent*> archive_vector; //TODO: temp until real archive implementation
+	std::vector<Agent*> temp_gen;
+	for (int i = 0; i < cur_gen.size(); ++i){
+	 	if (i != p){
+	 		temp_gen.push_back(cur_gen[i]);
+	 	}	 	
+	} 
+	if (this->archive){
+		for (int i = 0; i < archive_vector.size(); ++i){
+		 	temp_gen.push_back(archive_vector[i]);
+		}
+	}
 
-	std::default_random_engine int_generator;
-	std::uniform_int_distribution<size_t> distribution(0, this->n);
-	size_t x1, x2, x3;
-
- 	//select 3 uniform random vectors
-	do {
-		//provided population is sorted, lower index should be better
-		x1 = tools.rand_int_unif(0, this->n);
-	} while (x1 == idx || x1 > (p*n));		
-	do {
-		x2 = tools.rand_int_unif(0, this->n);
-	} while (x2 == x1 || x2 == idx);
-	do {
-		//TODO: if (use archive) select x3 from P U A
-		
-		x3 = tools.rand_int_unif(0, this->n);
-	} while (x3 == x2 || x3 == x1 || x3 == idx);
+	//only last index can be chosen from archive
+	std::vector<Agent*> chosen_vectors;
+	do{
+		chosen_vectors = tools.pick_random(temp_gen, 2, false);
+	}while(std::find(cur_gen.begin(), cur_gen.end(), chosen_vectors[0]) != cur_gen.end());
 
 
 	//TODO
@@ -105,9 +90,9 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		double self = cur_gen[idx]->get_position()[j];
-		double p = cur_gen[x1]->get_position()[j];
-		double b = cur_gen[x2]->get_position()[j];
-		double c = cur_gen[x3]->get_position()[j];
+		double p = cur_gen[p]->get_position()[j];
+		double b = chosen_vectors[0]->get_position()[j];
+		double c = chosen_vectors[1]->get_position()[j];
 		donor_vec[j] = self + (this->F * (p - self)) + (this->F * (b - c));
 	}
 	return donor_vec;
@@ -120,33 +105,23 @@ bool TargetToPBestDiv1::use_archive(){
 
 // Target To Best Div 2
 std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::default_random_engine generator;
-	//from 1 to n because we take always include index 0
-	// std::uniform_int_distribution<size_t> distribution(1, this->n);
-	size_t x1, x2, x3, x4;
-
- 	//provided population is sorted, x1 is optimal
-	x1 = 0;
-
-	do {
-		x2 = tools.rand_int_unif(1, this->n);
-	} while (x2 == x1 || x2 == idx);
-	do {
-		x3 = tools.rand_int_unif(1, this->n);
-	} while (x3 == x2 || x3 == x1 || x3 == idx);
-	do {
-		x4 = tools.rand_int_unif(1, this->n);
-	} while (x4 == x3|| x4 == x2 || x4 == x1 || x4 == idx);
+ 	
+	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
+	//if best and self are not the same
+	if(idx != 0){
+		cur_gen_ex_first.erase(cur_gen_ex_first.begin()+(idx-1));
+	}
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 4, false);
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		double best = cur_gen[0]->get_position()[j];
 		double self = cur_gen[idx]->get_position()[j];
-		double a = cur_gen[x1]->get_position()[j];
-		double b = cur_gen[x2]->get_position()[j];
-		double c = cur_gen[x3]->get_position()[j];
-		double d = cur_gen[x4]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
+		double d = chosen_vectors[3]->get_position()[j];
 		donor_vec[j] = self + (this->F * (best - self)) + (this->F * (a - b)) + (this->F * (c - d));
 	}
 	return donor_vec;
@@ -156,34 +131,19 @@ std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 
 //Target To Rand Div 2
 std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::default_random_engine generator;
-	//from 1 to n because we take always include index 0
-	// std::uniform_int_distribution<size_t> distribution(1, this->n);
-	size_t x1, x2, x3, x4;
 
- 	//select 3 uniform random vectors
-	do {
-		//provided population is sorted, x1 should be optimal
-		x1 = tools.rand_int_unif(1, this->n);;
-	} while (x1 == idx);		
-	do {
-		x2 = tools.rand_int_unif(1, this->n);
-	} while (x2 == x1 || x2 == idx);
-	do {
-		x3 = tools.rand_int_unif(1, this->n);
-	} while (x3 == x2 || x3 == x1 || x3 == idx);
-	do {
-		x4 = tools.rand_int_unif(1, this->n);
-	} while (x4 == x3|| x4 == x2 || x4 == x1 || x4 == idx);
+	std::vector<Agent*> cur_gen_ex_self = std::vector<Agent*>(cur_gen.begin(), cur_gen.end());
+	cur_gen_ex_self.erase(cur_gen_ex_self.begin()+idx);
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_self, 4, false);
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		double self = cur_gen[idx]->get_position()[j];
-		double a = cur_gen[x1]->get_position()[j];
-		double b = cur_gen[x2]->get_position()[j];
-		double c = cur_gen[x3]->get_position()[j];
-		double d = cur_gen[x4]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
+		double d = chosen_vectors[3]->get_position()[j];
 		donor_vec[j] = self + (this->F * (a - b)) + (this->F * (c - d));
 	}
 	return donor_vec;
@@ -192,34 +152,20 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 
 //2-OptDiv1
 std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::default_random_engine generator;
-	// //from 1 to n because we take always include index 0
-	// std::uniform_int_distribution<size_t> distribution(1, this->n);
-	size_t x1, x2, x3, x4;
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
- 	//select 3 uniform random vectors
-	do {
-		//provided population is sorted, x1 should be optimal
-		x1 = tools.rand_int_unif(1, this->n);
-	} while (x1 == idx);		
-	do {
-		x2 = tools.rand_int_unif(1, this->n);
-	} while (x2 == x1 || x2 == idx);
-	do {
-		x3 = tools.rand_int_unif(1, this->n);
-	} while (x3 == x2 || x3 == x1 || x3 == idx);
-
+	//TODO: check if swap swaps correctly
 	//use the fittest vector as base for donor
-	if (cur_gen[x2]->get_fitness() < cur_gen[x1]->get_fitness()){
-		std::swap(x1, x2);
+	if (chosen_vectors[0]->get_fitness() < chosen_vectors[1]->get_fitness()){
+		std::swap(chosen_vectors[0], chosen_vectors[1]);
 	}
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
-		double a = cur_gen[x1]->get_position()[j];
-		double b = cur_gen[x2]->get_position()[j];
-		double c = cur_gen[x3]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
 		donor_vec[j] = a + (this->F * (b - c));
 	}
 	return donor_vec;

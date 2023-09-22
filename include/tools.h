@@ -34,7 +34,21 @@ public:
 
 	std::vector<double> vec_sum(std::vector<double> first, std::vector<double> second);
 
-	//TODO: function that gives tuple of random indexes (excluding a given index)
+	//TODO: function that returns a veector of n randomly chosen values from a given vector
+	//taken from rick boks auto-DE
+	template<typename T>
+	std::vector<T> pick_random(std::vector<T> possibilities, int const n, bool const replace){
+		std::vector<T> picked;
+		picked.reserve(n);
+		for (int i = 0; i < n; i++){
+			int const r = this->rand_int_unif(0,possibilities.size()-1);
+			T const x = possibilities[r];
+			if (!replace)
+				possibilities.erase(possibilities.begin() + r);
+			picked.push_back(x);
+		}
+		return picked;
+	}
 
 
 private:
