@@ -40,7 +40,6 @@ std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<dou
 	}if (new_pos.size() != this->dim){
 		std::cerr << "co apply invalid posiiton size\n";
 	}
-	// std::cout << "co apply pos: " << new_pos.size() << " dim: " << this->dim << std::endl;
 	return new_pos;
 }
 
@@ -87,7 +86,6 @@ std::vector<double> Exponential::apply(const std::vector<double> cur_pos, std::v
 	}if (new_pos.size() != this->dim){
 		std::cerr << "co apply invalid posiiton size\n";
 	}
-	// std::cout << "co apply pos: " << new_pos.size() << " dim: " << this->dim << std::endl;
 	return new_pos;
 }
 
