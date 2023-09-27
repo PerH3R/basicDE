@@ -7,3 +7,5 @@ build/CMakeFiles/
 build/deps/
 build/lib/
 build/
+scripts/pictures/
+scripts/positions/
