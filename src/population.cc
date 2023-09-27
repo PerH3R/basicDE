@@ -206,3 +206,30 @@ void Population::set_individual_boundary(Boundary* new_boundary, int idx){
 		std::cerr << "invalid index: " << idx << std::endl;
 	}
 }
+
+//default: filenames=""
+void Population::write_population(std::string filename){
+	//if filename not provided, automatic filename generation based on problem attributes if 
+	// std::string file_location = "progress/";
+	if (filename == ""){
+		filename = std::to_string(target_function->meta_data().problem_id) + "_";
+		filename += target_function->meta_data().name + "_";
+		filename += std::to_string(target_function->meta_data().n_variables) + "_";
+		filename += std::to_string(this->mutation_operator->get_type());
+		filename += std::to_string(target_function->meta_data().instance);
+	}
+	// filename = file_location + filename;
+	std::ofstream positionfile;
+	positionfile.open(filename, std::ios::app);
+	for (int i = 0; i < n; ++i){
+		std::vector<double> i_pos = this->cur_gen[i]->get_position();
+		std::ostringstream pos_oss;
+    	std::copy(i_pos.begin(), i_pos.end(), std::ostream_iterator<double>(pos_oss, ","));
+    	std::string pos_str( pos_oss.str() );
+    	positionfile << pos_str;
+    	positionfile << ";";
+	}
+	positionfile << '\n';
+	positionfile.close();
+	
+}

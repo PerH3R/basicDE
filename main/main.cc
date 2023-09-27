@@ -106,9 +106,18 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 	unsigned int iterations = 0;
 	unsigned int no_movement = 0;
 	unsigned int previous_iteration_budget = *budget;
+
+	//TODO: do something neat for this
+	bool log_pos = false;
+	bool first_it = true;
 	
 	//TODO: budget
 	while (*budget > 0) {
+		if (log_pos && first_it){
+			pop->write_population();
+			first_it = false;
+		}
+
 		iterations++;
 		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
@@ -122,6 +131,9 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 
 		//sort population
 		pop->sort();
+		if (log_pos){
+			pop->write_population();
+		}
 
 		//full random for baselines
 		if (std::stoi(argparser->get_values()["-m"]) == 99){

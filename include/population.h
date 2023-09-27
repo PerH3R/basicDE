@@ -7,6 +7,8 @@
 // #include "crossover.h"
 // #include "mutation.h"
 // #include "functions.h"
+#include <string>
+#include <iostream>
 
 class Population {
 public:
@@ -25,6 +27,9 @@ public:
 	void apply_selection();
 
 	void print_fitness();
+
+	//writes positions of population to file
+	void write_population(std::string filename = "");
 
 	size_t get_population_size();	
 	
