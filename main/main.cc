@@ -15,8 +15,10 @@ struct results {
 
 inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> create_suite(int problem, int inst, int dim, const bool using_factory = true)
 {
-    const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
-    const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	const std::vector<int> problems{1,2,3,4,5};
+    const std::vector<int> instances{1};
+    // const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
+    // const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     std::vector<int> dimensions;
     if (dim == 0){ dimensions = {5,20}; }
     else{ dimensions = {dim}; }
