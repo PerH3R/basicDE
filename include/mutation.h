@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+#include <algorithm>
 //TODO: think about this forward declaration
 class Agent;
 

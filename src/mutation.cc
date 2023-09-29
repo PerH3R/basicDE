@@ -48,15 +48,21 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 //TODO: add archive, fix p sampling
 std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	// std::cout << "ttpb/1" << std::endl;
-	float p;
-	do{
-		p = tools.rand_double_unif(0.0,1.0);
-	}while(p<(2.0/this->n));
-	
-	std::vector<Agent*> archive_vector; //TODO: temp until real archive implementation
+	float p_val;
+
+	//p between 2 and 20%
+	//TODO: make ceil header variable as to not recompute
+	float ceil = std::max(double(2.0/this->n), 0.2);
+	p_val = tools.rand_double_unif((2/this->n),ceil);
+
+
+	int p_idx = tools.rand_int_unif(0,std::round(p_val*this->n)+1); //+1 to avoid rounding to 0
+
+	std::vector<Agent*> archive_vector = std::vector<Agent*>(cur_gen.begin(), cur_gen.begin()+1); //TODO: temp until real archive implementation
 	std::vector<Agent*> temp_gen;
+	temp_gen.reserve(cur_gen.size()-2);
 	for (int i = 0; i < cur_gen.size(); ++i){
-	 	if (i != p){
+	 	if (i != p_idx && i != idx){ //exclude p and target
 	 		temp_gen.push_back(cur_gen[i]);
 	 	}	 	
 	} 
@@ -70,15 +76,15 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 	std::vector<Agent*> chosen_vectors;
 	do{
 		chosen_vectors = tools.pick_random(temp_gen, 2, false);
-	}while(std::find(cur_gen.begin(), cur_gen.end(), chosen_vectors[0]) != cur_gen.end());
-
+	}while((this->archive && std::find(archive_vector.begin(), archive_vector.end(), chosen_vectors[0]) != archive_vector.end()) /*if b is from archive*/);
+	//TODO does the 2nd term always evaluate as true?
 
 	//TODO
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		double self = cur_gen[idx]->get_position()[j];
-		double p = cur_gen[p]->get_position()[j];
+		double p = cur_gen[p_idx]->get_position()[j];
 		double b = chosen_vectors[0]->get_position()[j];
 		double c = chosen_vectors[1]->get_position()[j];
 		donor_vec[j] = self + (this->F * (p - self)) + (this->F * (b - c));
