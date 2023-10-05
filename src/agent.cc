@@ -75,9 +75,7 @@ void Agent::crossover(std::vector<Agent*> next_gen, size_t idx){
 	next_gen[idx]->set_position(new_position);
 }
 
-CROSSOVER Agent::get_crossover(){return this->crossover_operator->get_type();}
-MUTATION Agent::get_mutation(){return this->mutation_operator->get_type();}
-BOUNDARY Agent::get_boundary(){return this->boundary_correction->get_type();}
+
 
 //TODO: budget
 void Agent::calculate_fitness() {
@@ -146,4 +144,20 @@ bool Agent::check_position_oob(const std::vector<double>& given_position){
 		}
 	}
 	return false;
+}
+
+void Agent::update_history(){
+	if (fitness_uptodate){
+		std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> t = 
+			std::make_tuple(this->position, this->fitness, this->mutation_operator->get_F(), this->crossover_operator->get_Cr(),
+				get_crossover(), get_mutation(), get_boundary());
+		this->history.push_back(t);
+	}else{
+		std::cerr << "Hey, the fitness isn't up to date. Why?" << std::endl;
+	}
+	
+}
+
+void Agent::add_history(std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> snapshot){
+	history.push_back(snapshot);
 }

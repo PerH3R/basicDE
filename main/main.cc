@@ -157,11 +157,12 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 			// pop->print_fitness();
 			// std::cout << "==================" << std::endl;
 
+			// // update vector pool using previous bestfitness
 			// if (pop->get_mutation() == DIRMUT){
 				pop->update_vector_pool(best_fitness);  /////TODO: IF DIRMUT IS A POSSIBLE OPERATOR
 			// }
 
-			best_fitness = pop->get_current_generation()[0]->get_fitness();
+			best_fitness = pop->get_current_generation()[0]->get_fitness(); //update best fitness
 			best_location = pop->get_current_generation()[0]->get_position();
 			
 		}

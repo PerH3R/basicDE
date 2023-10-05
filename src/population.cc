@@ -5,10 +5,10 @@
 Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function,
 					   Boundary* boundary_correction, size_t pop_size, unsigned int* budget, int archive_size) {
 	std::cout << "creating Population...";
-	this->crossover_operator = crossover_operator;
+	this->base_crossover_operator = crossover_operator;
 	this->selection_operator = selection_operator;
-	this->mutation_operator = mutation_operator;
-	this->boundary_correction = boundary_correction;
+	this->base_mutation_operator = mutation_operator;
+	this->base_boundary_correction = boundary_correction;
 	this->target_function = target_function;
 	this->n = pop_size;
 	this->dim = target_function->meta_data().n_variables;
@@ -35,14 +35,15 @@ Population::~Population() {
 		delete i;
 		i = NULL;
 	}
-	for(Agent* i : archive){
-		delete i;
-		i = NULL;
-	}
+	//TODO remove?
+	// for(Agent* i : archive){
+		// delete i;
+		// i = NULL;
+	// }
 }
 
 Agent* Population::create_agent(){
-	return new Agent(dim, mutation_operator, crossover_operator, boundary_correction, target_function, budget);
+	return new Agent(dim, base_mutation_operator, base_crossover_operator, base_boundary_correction, target_function, budget);
 }
 
 size_t Population::get_population_size(){
@@ -58,6 +59,13 @@ void Population::print_fitness(){
 
 void Population::apply_mutation() {
 	for (size_t i = 0; i < this->n; i++) {
+		if (this->cur_gen[i]->get_mutation() == DIRMUT){
+			this->cur_gen[i]->get_mutation_ptr()->pass_vector_pool(this->vector_pool);
+			if (this->improved){
+				this->cur_gen[i]->get_mutation_ptr()->improved_to_true();
+			}			
+			this->cur_gen[i]->mutate(this->cur_gen, i);
+		}
 		this->cur_gen[i]->mutate(this->cur_gen, i);
 	}
 		
@@ -87,7 +95,7 @@ void Population::randomise_population(){
 
 void Population::repopulate_next_gen() {
 	for (size_t i = 0; i < this->n; i++) {
-		if (mutation_operator->use_archive() == false)		{
+		if (next_gen[i]->get_mutation_ptr()->use_archive() == false){
 			delete next_gen[i];
 			next_gen[i] = NULL;
 		}
@@ -97,18 +105,16 @@ void Population::repopulate_next_gen() {
 }
 
 void Population::add_to_archive(){
-	int ra_idx = 0; //keeps track of rejected agent to add from next_gen
-	while (archive.size() < archive_size){
-		archive.push_back(next_gen[ra_idx]);
-		ra_idx++;
+	int reject_idx = 0; //keeps track of rejected agent to add from next_gen
+	while (this->archive.size() < this->archive_size){
+		archive.push_back(next_gen[reject_idx]->get_history().back());
+		reject_idx++;
 	}
-	while (ra_idx < next_gen.size()){
-		//TODO: randomly generate number
-		std::default_random_engine int_generator;
-		std::uniform_int_distribution<size_t> distribution(0, archive_size);
-		delete archive[distribution(int_generator)];
-		archive[distribution(int_generator)] = next_gen[ra_idx];
-		ra_idx++;
+	while (reject_idx < next_gen.size()){
+		int rand_idx = tools.rand_int_unif(0, archive_size);
+		// delete archive[rand_idx];
+		this->archive[rand_idx] = next_gen[reject_idx]->get_history().back();
+		reject_idx++;
 	}
 
 }
@@ -116,17 +122,10 @@ void Population::add_to_archive(){
 void Population::apply_selection() {
 	selection_operator->apply(this->cur_gen, this->next_gen);
 
-	if (mutation_operator->use_archive()){ add_to_archive(); }
-
-	// for (size_t i = 0; i < n; ++i)
-	// {
-	// 	// delete cur_gen[i];
-	// 	// delete next_gen[i];
-	// }
-	// cur_gen = selected_agents;
-	// for (size_t i = 0; i < n; i++) {
-	// 	this->next_gen[i] = new Agent(dim, mutation_operator, crossover_operator, target_function);
-	// }
+	//TODO set to true 
+	if (false){ 
+		add_to_archive(); 
+	}
 }
 
 void Population::sort(){
@@ -163,7 +162,6 @@ void Population::set_individual_crossover(Crossover* new_crossover, int idx){
 			cur_gen[i]->set_crossover(new_crossover);
 			next_gen[i]->set_crossover(new_crossover);
 		}
-		/* code */
 	} else if(idx > -1 && idx < this->n){
 		//change single individual
 		cur_gen[idx]->set_crossover(new_crossover);
@@ -180,7 +178,6 @@ void Population::set_individual_mutation(Mutation* new_mutation, int idx){
 			cur_gen[i]->set_mutation(new_mutation);
 			next_gen[i]->set_mutation(new_mutation);
 		}
-		/* code */
 	} else if(idx > -1 && idx < this->n){
 		//change single individual
 		cur_gen[idx]->set_mutation(new_mutation);
@@ -197,7 +194,6 @@ void Population::set_individual_boundary(Boundary* new_boundary, int idx){
 			cur_gen[i]->set_boundary(new_boundary);
 			next_gen[i]->set_boundary(new_boundary);
 		}
-		/* code */
 	} else if(idx > -1 && idx < this->n){
 		//change single individual
 		cur_gen[idx]->set_boundary(new_boundary);
@@ -215,7 +211,7 @@ void Population::write_population(std::string filename){
 		filename = std::to_string(target_function->meta_data().problem_id) + "_";
 		filename += target_function->meta_data().name + "_";
 		filename += std::to_string(target_function->meta_data().n_variables) + "_";
-		filename += std::to_string(this->mutation_operator->get_type());
+		filename += std::to_string(this->base_mutation_operator->get_type());
 		filename += std::to_string(target_function->meta_data().instance);
 	}
 	// filename = file_location + filename;
@@ -232,4 +228,16 @@ void Population::write_population(std::string filename){
 	positionfile << '\n';
 	positionfile.close();
 	
+}
+
+void Population::update_vector_pool(double previous_best_fitness){
+	for (int i = 0; i < this->n; ++i){
+		if (cur_gen[i]->get_fitness() < previous_best_fitness){
+			//next_gen contains previous generation at this point in the loop
+			auto diff = tools.vec_sub(cur_gen[i]->get_position(), next_gen[i]->get_position());
+			this->vector_pool.push_back(diff); 
+		}
+	}
+	// std::cout << "vector pool size: " << vector_pool.size() << std::endl;
+	this->improved = true;
 }

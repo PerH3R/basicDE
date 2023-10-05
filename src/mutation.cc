@@ -296,21 +296,13 @@ std::vector<double> Bea::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 //DIRMUT
-void DirMut::update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen){
-	for (int i = 0; i < this->n; ++i){
-		if (cur_gen[i]->get_fitness() < best_fitness){
-			//next_gen contains previous generation at this point in the loop
-			auto diff = tools.vec_sub(cur_gen[i]->get_position(), next_gen[i]->get_position());
-			this->vector_pool.push_back(diff); 
-		}
-	}
-	// std::cout << "vector pool size: " <<vector_pool.size() << std::endl;
-	this->improved = true;
-}
-
 std::vector<double> DirMut::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::vector<double> donor_vec(this->dim, 0.0);
-	if(this->improved){
+	if (this->vector_pool_ptr == NULL){
+			std::cerr << "NO VEctor pool found. Prepare for errors." << std::endl;
+		}
+		std::vector<std::vector<double>> vector_pool = *vector_pool_ptr;
+	if(this->improved){		
 		size_t r1, r2;
 		do {
 			r1 = tools.rand_int_unif(0, this->n);
@@ -324,7 +316,7 @@ std::vector<double> DirMut::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 	//clear vector pool after each iteration
-	if(idx == this->n - 1){
+	if(idx < this->n == false){
 		vector_pool.clear();
 		this->improved = false;
 	}

@@ -35,13 +35,23 @@ public:
 	std::vector<double> get_position();
 	void set_position(std::vector<double> new_position);
 
-	CROSSOVER get_crossover();
-	MUTATION get_mutation();
-	BOUNDARY get_boundary();
+
+	//TODO Move to .cc
+	CROSSOVER get_crossover(){return this->crossover_operator->get_type();}
+	MUTATION get_mutation(){return this->mutation_operator->get_type();}
+	BOUNDARY get_boundary(){return this->boundary_correction->get_type();}
 
 	void set_crossover(Crossover* new_crossover){this->crossover_operator = new_crossover;};
 	void set_mutation(Mutation* new_mutation){this->mutation_operator = new_mutation;};
 	void set_boundary(Boundary* new_boundary){this->boundary_correction = new_boundary;};
+
+	Crossover* get_crossover_ptr(){return this->crossover_operator;};
+	Mutation* get_mutation_ptr(){return this->mutation_operator;};
+	Boundary* get_boundary_ptr(){return this->boundary_correction;};
+
+	void update_history();
+	void add_history(std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> snapshot);
+	std::vector< std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> > get_history() {return this->history;};
 
 
 private:
@@ -62,6 +72,9 @@ private:
 	bool fitness_uptodate;
 
 	int resample_limit; //10+ln(dim)^2
+
+	// position, fitness, F, Cr, crossover operator*, mutation operator*, boundary operator*. *an int indicating type only, not a pointer or sometthing
+	std::vector< std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> > history;
 
 
 

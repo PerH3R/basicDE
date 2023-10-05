@@ -19,6 +19,8 @@ public:
     virtual CROSSOVER get_type() = 0;
     virtual std::vector<double> apply(std::vector<double> cur_pos, std::vector<double> donor_vec) = 0;
 
+    float get_Cr(){return this->Cr;}
+
 protected:
     const size_t dim;
     const float Cr;
