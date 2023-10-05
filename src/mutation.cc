@@ -189,6 +189,8 @@ std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 
+
+
 	// std::default_random_engine float_generator;
 	// std::uniform_real_distribution<float> float_distribution(0.0, 1.0);
 	float scale_factor;
@@ -207,7 +209,7 @@ std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 //Bea
-void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2, int x3,
+void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
 		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_index, int end_index){
 
 	//change segment using Bea or TTR/1
@@ -223,9 +225,9 @@ void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2
 				//calculate segment using TTR/1
 				for (size_t j = start_index; j < end_index; j++) {
 					double self = clones[i][j];
-					double a = cur_gen[x1]->get_position()[j];
-					double b = cur_gen[x2]->get_position()[j];
-					double c = cur_gen[x3]->get_position()[j];
+					double a = chosen_vectors[0]->get_position()[j];
+					double b = chosen_vectors[1]->get_position()[j];
+					double c = chosen_vectors[2]->get_position()[j];
 					clones[i][j] = self + (this->F * (c - self)) + (this->F * (a - b));
 				}
 			}
@@ -262,26 +264,27 @@ std::vector<double> Bea::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 	//select 3 uniform random vectors in advance for consistency TODO:ambiguous if each segment should have new random idx's
-	size_t x1, x2, x3;
-	do {
-		x1 = tools.rand_int_unif(0, this->n);
-	} while (x1 == idx);		
-	do {
-		x2 = tools.rand_int_unif(0, this->n);
-	} while (x2 == x1 || x2 == idx);
-	do {
-		x3 = tools.rand_int_unif(0, this->n);
-	} while (x3 == x2 || x3 == x1 || x3 == idx);
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
+	// size_t x1, x2, x3;
+	// do {
+	// 	x1 = tools.rand_int_unif(0, this->n);
+	// } while (x1 == idx);		
+	// do {
+	// 	x2 = tools.rand_int_unif(0, this->n);
+	// } while (x2 == x1 || x2 == idx);
+	// do {
+	// 	x3 = tools.rand_int_unif(0, this->n);
+	// } while (x3 == x2 || x3 == x1 || x3 == idx);
 
 	for (int i = 0; i < Nsegments; ++i){
 		if (remainder == 0){
 			int start_index = (i*segment_size) + remainder_settled;
 			int end_index = ((i+1) * segment_size) + remainder_settled;
-			mutate_segment(cur_gen, idx, x1, x2, x3, clones, fitness, start_index, end_index);
+			mutate_segment(cur_gen, idx, chosen_vectors, clones, fitness, start_index, end_index);
 		} else {
 			int start_index = (i*segment_size) + remainder_settled + 1;
 			int end_index = ((i+1) * segment_size) + remainder_settled + 1;
-			mutate_segment(cur_gen, idx, x1, x2, x3, clones, fitness, start_index, end_index);
+			mutate_segment(cur_gen, idx, chosen_vectors, clones, fitness, start_index, end_index);
 			remainder--;
 			remainder_settled++;
 		}

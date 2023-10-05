@@ -106,7 +106,7 @@ public:
     std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
 
 private:
-	void mutate_segment(std::vector<Agent*> cur_gen, size_t idx, int x1, int x2, int x3,
+	void mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
 		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_gene, int end_gene);
 
 	Boundary* boundary_correction; //clamp seems like a very bad option
