@@ -25,6 +25,17 @@ double Tools::rand_double_norm(double const mean, double const stdDev){
 	return N(rng);
 }
 
+double Tools::rand_mantegna(double const u, double const v, double const alpha){
+	double a_gamma = std::tgamma(1+alpha);
+	double sig_u = std::pow(a_gamma * std::sin(M_PI * (alpha/2)) / alpha * std::tgamma((1+alpha)/2) * std::pow(2,(alpha-1)/2), 1/alpha );
+	double sig_v = 1.0;
+
+	double u_dist = this->rand_double_unif(0, std::pow(sig_u,2));
+	double v_dist = this->rand_double_unif(0, std::pow(sig_v,2));
+
+	return u_dist / std::pow(std::abs(v_dist), (1/alpha));
+}
+
 std::vector<double> Tools::vec_sub(std::vector<double> first, std::vector<double> second){
 	if (first.size() == second.size()){
 		std::vector<double> result;

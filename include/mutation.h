@@ -96,6 +96,8 @@ public:
     ~Desmu() {};
     MUTATION get_type(){return DESMU;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+private:
+	double alpha = 0.2;
 };
 
 class Bea : public Mutation {

@@ -25,6 +25,8 @@ public:
 			
 	double rand_double_norm(double const mean, double const stdDev);
 
+	double rand_mantegna(double const u, double const v, double const alpha);
+
 	//calculate difference in position
 	std::vector<double> vec_sub(std::vector<double> first, std::vector<double> second);
 
