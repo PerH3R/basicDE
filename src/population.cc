@@ -130,17 +130,17 @@ void Population::apply_selection() {
 
 void Population::sort(){
 	bool sorted;
-	//TODO: more efficient sorting?
+	//TODO: is there a more efficient sorting?
 	// reverse bubble sort
 	do{
 		sorted = true;
-		for (size_t i = this->n-1; i > 0; --i){ //looping backwards might be faster
+		for (size_t i = this->n-1; i > 0; --i){ //looping backwards sounds faster
 			double cur = cur_gen[i]->get_fitness();
 			double next = cur_gen[i-1]->get_fitness();
 			if (cur < next){
 				sorted = false;
 				std::swap(cur_gen[i], cur_gen[i-1]);
-				std::swap(next_gen[i], next_gen[i-1]); //keeping indexes matched is important for some operators
+				std::swap(next_gen[i], next_gen[i-1]); //keeping indexes matched is important for keeping track of history
 			}
 		}
 	}while(sorted == false);
