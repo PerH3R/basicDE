@@ -37,9 +37,9 @@ public:
 
 
 	//TODO Move to .cc
-	CROSSOVER get_crossover(){return this->crossover_operator->get_type();}
-	MUTATION get_mutation(){return this->mutation_operator->get_type();}
-	BOUNDARY get_boundary(){return this->boundary_correction->get_type();}
+	CROSSOVER get_crossover();
+	MUTATION get_mutation();
+	BOUNDARY get_boundary();
 
 	void set_crossover(Crossover* new_crossover){this->crossover_operator = new_crossover;};
 	void set_mutation(Mutation* new_mutation){this->mutation_operator = new_mutation;};

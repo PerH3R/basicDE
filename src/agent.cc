@@ -99,6 +99,10 @@ std::vector<double> Agent::get_position() {
 	return position;
 }
 
+CROSSOVER Agent::get_crossover(){return this->crossover_operator->get_type();}
+MUTATION Agent::get_mutation(){return this->mutation_operator->get_type();}
+BOUNDARY Agent::get_boundary(){return this->boundary_correction->get_type();}
+
 void Agent::set_position(std::vector<double> new_position) {
 	//if dimension fits
 	if (new_position.size() == this->dim) {
