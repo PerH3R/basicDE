@@ -282,6 +282,18 @@ int main(int argc, char* argv[]) {
 		results result = single_problem(pop, budget, problem_dim, problem, argparser, boundary_correction);
 		std::cout << "final result" << std::endl;
 		pop->print_fitness();
+		auto best_history = pop->get_current_generation()[0]->get_history();
+		for (auto snapshot : best_history){
+			std::string hist_string= "";
+			const auto [top_pos, top_fitness, top_F, top_Cr, top_CrOp, top_MutOp, top_BoundOp] = snapshot;
+			for(double i : top_pos){
+				std::cout << i <<',';
+			}
+
+			std::cout << " " << top_fitness << " " << top_F << " " << top_Cr << " " << top_CrOp << " " << top_MutOp << " " << top_BoundOp << std::endl;
+			
+			std::cout << hist_string;
+		}
 		std::cout << "=================" << std::endl;
 		
 
