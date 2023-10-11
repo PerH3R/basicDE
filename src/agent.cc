@@ -150,16 +150,17 @@ bool Agent::check_position_oob(const std::vector<double>& given_position){
 	return false;
 }
 
-void Agent::update_history(){
+std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> Agent::update_history(){
+	std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> t;
 	if (fitness_uptodate){
-		std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> t = 
-			std::make_tuple(this->position, this->fitness, this->mutation_operator->get_F(), this->crossover_operator->get_Cr(),
+		t = std::make_tuple(this->position, this->fitness, this->mutation_operator->get_F(), this->crossover_operator->get_Cr(),
 				get_crossover(), get_mutation(), get_boundary());
 		this->history.push_back(t);
+		
 	}else{
 		std::cerr << "Hey, the fitness isn't up to date. Why?" << std::endl;
-	}
-	
+	}	
+	return t;
 }
 
 void Agent::add_history(std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> snapshot){

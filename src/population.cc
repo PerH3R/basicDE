@@ -120,7 +120,14 @@ void Population::add_to_archive(){
 }
 
 void Population::apply_selection() {
-	selection_operator->apply(this->cur_gen, this->next_gen);
+	//swap outperforming trial vectors to cur_gen
+	auto kept_indexes = selection_operator->apply(this->cur_gen, this->next_gen);
+	for (int i = 0; i < this->n; ++i){
+		//record winning strategy
+		auto t = this->cur_gen[i]->update_history();
+		//record winning strategy in counterpart
+		this->next_gen[i]->add_history(t);
+	}
 
 	//TODO set to true 
 	if (false){ 

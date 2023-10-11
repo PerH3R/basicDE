@@ -49,7 +49,7 @@ public:
 	Mutation* get_mutation_ptr(){return this->mutation_operator;};
 	Boundary* get_boundary_ptr(){return this->boundary_correction;};
 
-	void update_history();
+	std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> update_history();
 	void add_history(std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> snapshot);
 	std::vector< std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> > get_history() {return this->history;};
 
