@@ -43,3 +43,12 @@ std::vector<double> Reflect::apply(std::vector<double> pos){
 	}
 	return pos;
 }
+
+std::vector<double> Reinit::apply(std::vector<double> pos){
+	for (size_t i = 0; i < pos.size(); ++i){
+		if (pos[i] < this->target_function->bounds().lb[i] || pos[i] > this->target_function->bounds().ub[i]){
+			pos[i] = tools.rand_double_unif(target_function->bounds().lb[i], target_function->bounds().ub[i]);
+		}
+	}
+	return pos;
+}

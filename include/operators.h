@@ -38,7 +38,8 @@ const std::string MUTATION_NAMES[]  = {
 
 enum BOUNDARY {
 	CLAMP,
-    REFLECT
+    REFLECT,
+    REINIT
 };
 
 
