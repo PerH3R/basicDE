@@ -124,15 +124,19 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
 		pop->apply_mutation();
+		std::cout << "|===";
 
 		//crossover
 		pop->apply_crossover();
+		std::cout << "===";
 
 		//selection
 		pop->apply_selection();
+		std::cout << "===";
 
 		//sort population
 		pop->sort();
+		std::cout << "=| ";
 		if (log_pos){
 			pop->write_population();
 		}
@@ -165,6 +169,8 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 			best_fitness = pop->get_current_generation()[0]->get_fitness(); //update best fitness
 			best_location = pop->get_current_generation()[0]->get_position();
 			
+		} else {
+			std::cout << std::endl;
 		}
 		//additional stopping criteria
 		//...
