@@ -16,7 +16,7 @@ struct results {
 inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> create_suite(int problem, int inst, int dim, const bool using_factory = true)
 {
 	const std::vector<int> problems{1,2,5};
-    const std::vector<int> instances{1,2};
+    const std::vector<int> instances{1};
     // const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
     // const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     std::vector<int> dimensions;
@@ -270,7 +270,7 @@ int main(int argc, char* argv[]) {
     	}//automatic pop_size if not specified or too small
     	
 		// auto problem = get_problem(2, i, dim);		
-		Boundary* boundary_correction = new Reflect(problem);
+		Boundary* boundary_correction = new Reinit(problem);
 		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget, pop_size, m); //new TargetToPBestDiv1(dim, pop_size);
 		Crossover* crossover = new Binomial(problem_dim);
 		Selection* selection = new Elitist(pop_size);
