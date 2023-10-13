@@ -92,7 +92,7 @@ public:
 
 class Desmu : public Mutation {
 public:
-    Desmu(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {};
+    Desmu(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {std::cout << "Warning: dont use this with reflection for now" << std::endl;}; //TODO
     ~Desmu() {};
     MUTATION get_type(){return DESMU;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);

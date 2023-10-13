@@ -34,10 +34,11 @@ std::vector<double> Reflect::apply(std::vector<double> pos){
 	for (size_t i = 0; i < pos.size(); ++i){
 		while (pos[i] < this->target_function->bounds().lb[i] || pos[i] > this->target_function->bounds().ub[i]){
 			if (pos[i] < this->target_function->bounds().lb[i]){
-				pos[i] = this->target_function->bounds().lb[i] + std::abs(this->target_function->bounds().lb[i] - pos[i]);
+				pos[i] = this->target_function->bounds().lb[i] + (this->target_function->bounds().lb[i] - pos[i]);
 			}else if (pos[i] > this->target_function->bounds().ub[i]){
-				pos[i] = this->target_function->bounds().ub[i] - std::abs(this->target_function->bounds().ub[i] - pos[i]);
+				pos[i] = this->target_function->bounds().ub[i] + (this->target_function->bounds().ub[i] - pos[i]);
 			}
+			std::cout << i << " " << pos[i] << std::endl;
 		}
 	}
 	return pos;

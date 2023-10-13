@@ -184,6 +184,7 @@ std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 	double step = tools.rand_mantegna(u,v,alpha);
 	float scale_factor = step * tools.rand_double_unif(0.0, 1.0); //TODO (gdb) print scale_factor $1 = 42889136
 
+	// std::cout << scale_factor << std::endl;
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
