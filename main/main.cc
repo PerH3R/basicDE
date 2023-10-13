@@ -54,10 +54,12 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
 }
 
 Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObjective* problem, Boundary* boundary_correction, 
-									unsigned int* budget, int pop_size, int mut_op = -1){
+									unsigned int* budget, int pop_size, int mut_op = -1, float F = -1.0){
 	// int mut_op = std::stoi(argparser->get_values()["-m"]);
 	size_t dim = problem->meta_data().n_variables;
-	float F = std::stod(argparser->get_values()["-F"]);
+	if (F < 0){
+		float F = std::stod(argparser->get_values()["-F"]);
+	}
 	size_t archive = std::stoi(argparser->get_values()["-archive"]);
 	// if (mutator != -1){
 	// 	mut_op = mutator;
@@ -143,12 +145,11 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 
 		//full random for baselines
 		if (std::stoi(argparser->get_values()["-m"]) == 99){
-			int new_m;
-			do{
-				new_m = tools.rand_int_unif(0,10);
-			}while(new_m == 6); //desmu doesnt work
-			// std::cout << new_m << std::endl;
-			pop->set_individual_mutation( get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m), -1);
+			for (int i = 0; i < pop->get_population_size(); ++i){
+				int new_m = tools.rand_int_unif(0,10);
+				double new_F = tools.rand_double_unif(0.2,0.8);
+				pop->set_individual_mutation( get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m, new_F), i);
+			}
 		}
 		
 
