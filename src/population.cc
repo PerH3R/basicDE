@@ -64,7 +64,7 @@ void Population::apply_mutation() {
 			if (this->improved){
 				this->cur_gen[i]->get_mutation_ptr()->improved_to_true();
 			}			
-			this->cur_gen[i]->mutate(this->cur_gen, i);
+			this->cur_gen[i]->mutate(this->cur_gen, i); //TODO: superfluous?
 		}
 		this->cur_gen[i]->mutate(this->cur_gen, i);
 	}
