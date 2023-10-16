@@ -110,8 +110,8 @@ private:
 class Bea : public Mutation {
 public:
 	Bea(size_t dim, size_t n, Boundary* boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
-			float F = 0.2, float Pbea = 0.8, int Nsegments = 5, int Nclones = 2) : Mutation(dim, n, F), boundary_correction(boundary_correction),
-			target_function(target_function), Nclones(Nclones), Pbea(Pbea), Nsegments(Nsegments), budget(budget){
+			float F = 0.2, float Pbea = 0.8, int Nsegments = 5, int Nclones = 2, float locality = 0.1) : Mutation(dim, n, F), boundary_correction(boundary_correction),
+			target_function(target_function), Nclones(Nclones), Pbea(Pbea), Nsegments(Nsegments), budget(budget), locality(locality){
 
 		if (Nsegments > dim){
 			std::cerr << "WARNING: Nsegments larger than dim. Defaulting to Nsegments = dim (segment_size = 1)." << std::endl;
@@ -131,7 +131,8 @@ private:
 	ioh::problem::RealSingleObjective* target_function;
 
 	int Nclones; //>2 is useless unless x1-x3 are rerolled for each clone
-	float Pbea;
+	float Pbea; //Probability of applying BEA local uniform random search
+	float locality; // [0,1] fraction of the total search space considered local vor BEA l.u.r.s., originally this is not a fraction but why???
 	int Nsegments;
 	int segment_size;
 	unsigned int* budget;

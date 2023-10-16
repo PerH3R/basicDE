@@ -209,7 +209,7 @@ void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Ag
 				//Bea
 				for (size_t j = start_index; j < end_index; j++) {
 					double self = clones[i][j];
-					clones[i][j] = self + tools.rand_double_unif(target_function->bounds().lb[j], target_function->bounds().ub[j]);
+					clones[i][j] = self + (this->locality * tools.rand_double_unif(target_function->bounds().lb[j], target_function->bounds().ub[j]));
 				}
 			} else {
 				//calculate segment using TTR/1
@@ -255,16 +255,6 @@ std::vector<double> Bea::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 	//select 3 uniform random vectors in advance for consistency TODO:ambiguous if each segment should have new random idx's
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
-	// size_t x1, x2, x3;
-	// do {
-	// 	x1 = tools.rand_int_unif(0, this->n);
-	// } while (x1 == idx);		
-	// do {
-	// 	x2 = tools.rand_int_unif(0, this->n);
-	// } while (x2 == x1 || x2 == idx);
-	// do {
-	// 	x3 = tools.rand_int_unif(0, this->n);
-	// } while (x3 == x2 || x3 == x1 || x3 == idx);
 
 	for (int i = 0; i < Nsegments; ++i){
 		if (remainder == 0){
