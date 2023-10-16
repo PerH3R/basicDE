@@ -275,7 +275,7 @@ int main(int argc, char* argv[]) {
 		// auto problem = get_problem(2, i, dim);		
 		Boundary* boundary_correction = new Reinit(problem);
 		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget, pop_size, m); //new TargetToPBestDiv1(dim, pop_size);
-		Crossover* crossover = new Binomial(problem_dim);
+		Crossover* crossover = new Binomial(problem_dim, std::stod(argparser->get_values()["-Cr"]));
 		Selection* selection = new Elitist(pop_size);
 		
 
