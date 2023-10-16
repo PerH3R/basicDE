@@ -150,11 +150,10 @@ bool Agent::check_position_oob(const std::vector<double>& given_position){
 	return false;
 }
 
-std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> Agent::update_history(){
-	std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> t;
+std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> Agent::update_history(){
+	std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> t;
 	if (fitness_uptodate){
-		t = std::make_tuple(this->position, this->fitness, this->mutation_operator->get_F(), this->crossover_operator->get_Cr(),
-				get_crossover(), get_mutation(), get_boundary());
+		t = std::make_tuple(this->position, this->fitness, this->crossover_operator, this->mutation_operator, this->boundary_correction);
 		this->history.push_back(t);
 		
 	}else{
@@ -163,6 +162,6 @@ std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUND
 	return t;
 }
 
-void Agent::add_history(std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> snapshot){
+void Agent::add_history(std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> snapshot){
 	history.push_back(snapshot);
 }

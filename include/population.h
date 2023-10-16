@@ -81,7 +81,7 @@ private:
 	std::vector<Agent*> cur_gen;
 	std::vector<Agent*> next_gen;
 
-	std::vector<std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY>> archive;
+	std::vector<std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*>> archive;
 
 	Crossover* base_crossover_operator;
 	Selection* selection_operator;

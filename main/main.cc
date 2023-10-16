@@ -299,12 +299,16 @@ int main(int argc, char* argv[]) {
 		auto best_history = pop->get_current_generation()[0]->get_history();
 		for (auto snapshot : best_history){
 			std::string hist_string= "";
-			const auto [top_pos, top_fitness, top_F, top_Cr, top_CrOp, top_MutOp, top_BoundOp] = snapshot;
-			for(double i : top_pos){
-				std::cout << i <<',';
-			}
+			const auto [top_pos, top_fitness, top_CrOpPtr, top_MutOpPtr, top_BoundOpPtr] = snapshot;
+			
+			//print position
+			// for(double i : top_pos){
+			// 	std::cout << i <<',';
+			// }
 
-			std::cout << " " << top_fitness << " " << top_F << " " << top_Cr << " " << top_CrOp << " " << top_MutOp << " " << top_BoundOp << std::endl;
+			//print outher information
+			std::cout << " " << top_fitness << " " << top_MutOpPtr->get_F() << " " << top_CrOpPtr->get_Cr() << " " 
+						<< CROSSOVER_NAMES[top_CrOpPtr->get_type()] << " " << MUTATION_NAMES[top_MutOpPtr->get_type()] << " " << BOUNDARY_NAMES[top_BoundOpPtr->get_type()] << std::endl;
 			
 			std::cout << hist_string;
 		}

@@ -49,9 +49,9 @@ public:
 	Mutation* get_mutation_ptr(){return this->mutation_operator;};
 	Boundary* get_boundary_ptr(){return this->boundary_correction;};
 
-	std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> update_history();
-	void add_history(std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> snapshot);
-	std::vector< std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> > get_history() {return this->history;};
+	std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> update_history();
+	void add_history(std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> snapshot);
+	std::vector< std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> > get_history() {return this->history;};
 
 
 private:
@@ -73,8 +73,8 @@ private:
 
 	int resample_limit; //10+ln(dim)^2
 
-	// position, fitness, F, Cr, crossover operator*, mutation operator*, boundary operator*. *an int indicating type only, not a pointer or sometthing
-	std::vector< std::tuple<std::vector<double>, double, float, float, CROSSOVER, MUTATION, BOUNDARY> > history;
+	// position, fitness, crossover operator, mutation operator, boundary operator
+	std::vector< std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> > history;
 
 
 
