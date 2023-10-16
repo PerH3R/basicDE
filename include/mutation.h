@@ -93,7 +93,6 @@ public:
 class Desmu : public Mutation {
 public:
     Desmu(size_t dim, size_t n, float F = 0.2, double alpha = 1.0) : Mutation(dim, n, F) {
-    std::cout << "Warning: dont use Desmu with reflection" << std::endl;
     double a_gamma = std::tgamma(1+alpha);
 	this->sig_u = std::pow(a_gamma * std::sin(M_PI * (alpha/2)) / alpha * std::tgamma((1+alpha)/2) * std::pow(2,(alpha-1)/2), 1/alpha );
 	this->sig_v = 1.0;

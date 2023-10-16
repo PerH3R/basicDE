@@ -215,6 +215,8 @@ int main(int argc, char* argv[]) {
 		std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
 	};
 
+    std::cout << "Warning: dont use Desmu with reflection" << std::endl;
+
 	tools.set_seed();
 
 	//TODO: convert argv to correct type
