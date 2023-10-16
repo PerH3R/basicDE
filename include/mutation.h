@@ -92,12 +92,19 @@ public:
 
 class Desmu : public Mutation {
 public:
-    Desmu(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {std::cout << "Warning: dont use Desmu with reflection" << std::endl;}; //TODO
+    Desmu(size_t dim, size_t n, float F = 0.2, double alpha = 1.0) : Mutation(dim, n, F) {
+    std::cout << "Warning: dont use Desmu with reflection" << std::endl;
+    double a_gamma = std::tgamma(1+alpha);
+	this->sig_u = std::pow(a_gamma * std::sin(M_PI * (alpha/2)) / alpha * std::tgamma((1+alpha)/2) * std::pow(2,(alpha-1)/2), 1/alpha );
+	this->sig_v = 1.0;
+    }; //TODO
     ~Desmu() {};
     MUTATION get_type(){return DESMU;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
 private:
 	double alpha = 1.0; //scale factor values for given alpha->(mean,sig) : 1.5->(~0.4, 0.7); 1.0->(~2.3, 13.6); 0.2->(~2.4e11, 2.5e13)
+	double sig_u;
+	double sig_v;
 };
 
 class Bea : public Mutation {

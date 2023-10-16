@@ -177,11 +177,11 @@ std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
 
 	//TODO: useless? what did the original code mean?
-	double u = tools.rand_double_norm(0.5, 1.0);
-	double v = tools.rand_double_norm(0.5, 1.0);
+	// double u = tools.rand_double_norm(0.5, 1.0);
+	// double v = tools.rand_double_norm(0.5, 1.0);
 
 
-	double step = tools.rand_mantegna(u,v,alpha);
+	double step = tools.rand_mantegna(this->sig_u,this->sig_v,alpha);
 	float scale_factor = step * tools.rand_double_unif(0.0, 1.0); //why is this done?
 
 	// std::cout << scale_factor << std::endl;
