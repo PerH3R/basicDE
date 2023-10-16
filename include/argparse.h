@@ -17,9 +17,9 @@ flag				meaning					default					vals
 -f					function				1						1-24
 -d					dimensions				5						int
 -m					mutation type			1						int (TODO -> string)
--F					mutation rate 			0.2						real
+-F					mutation rate 			0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
 -c					crossover type			1						int (TODO -> string)
--Cr					crossover rate 			0.2						real
+-Cr					crossover rate 			0.5						real
 -runs				repeated runs			1						int
 -budget				mutex with -i			2500					int	
 -pop_size			population size			0						int >4
