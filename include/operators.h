@@ -29,7 +29,7 @@ const std::string MUTATION_NAMES[]  = {
 	"desmu",
 	"BEA",
 	"DIRMUT",
-	"random search"
+	"Random search"
 	};
 
 /*
@@ -42,6 +42,11 @@ enum BOUNDARY {
     REINIT
 };
 
+const std::string BOUNDARY_NAMES[]  = {
+	"Clamp",
+	"Reflect",
+	"Reinitialize"
+};
 
 /*
  * 	CROSSOVER
@@ -52,10 +57,19 @@ enum CROSSOVER {
     EXPONENTIAL
 };
 
+const std::string CROSSOVER_NAMES[] = {
+	"Binomial",
+	"Exponential"
+};
+
 /*
  * 	SELECTION
  */
 
 enum SELECTION {
     ELITIST
+};
+
+const std::string SELECTION_NAMES[] = {
+	"Elitist"
 };
