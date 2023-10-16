@@ -26,8 +26,8 @@ double Tools::rand_double_norm(double const mean, double const stdDev){
 }
 
 double Tools::rand_mantegna(double const sig_u, double const sig_v, double const alpha){
-	double u_dist = this->rand_double_unif(0, std::pow(sig_u,2));
-	double v_dist = this->rand_double_unif(0, std::pow(sig_v,2));
+	double u_dist = this->rand_double_unif(0, sig_u);
+	double v_dist = this->rand_double_unif(0, sig_v);
 
 	return u_dist / std::pow(std::abs(v_dist), (1/alpha));
 }
