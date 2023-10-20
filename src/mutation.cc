@@ -1,10 +1,7 @@
 #include "../include/mutation.h"
 
 // RandDiv1
-
 std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "rand/1" << std::endl;
-
 	//select 3 vectors uniformly at random 
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
@@ -17,16 +14,49 @@ std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 		donor_vec[j] = a + this->F * (b - c);
 	}
 	return donor_vec;
-
-	//}
 }
 
+//RandDiv2
+std::vector<double> RandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+	//select 5 vectors uniformly at random 
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 5, false);
+
+	std::vector<double> donor_vec(this->dim, 0.0);
+
+	for (size_t j = 0; j < this->dim; j++) {
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
+		double d = chosen_vectors[3]->get_position()[j];
+		double e = chosen_vectors[4]->get_position()[j];
+		donor_vec[j] = a + this->F * (b - c) + this->F * (d - e);
+	}
+	return donor_vec;
+}
 
 
 // BestDiv1
 std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "best/1" << std::endl;
+	//exclude optimal (first because sorted) solution from random options
+	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
 
+	//calculate donor vector
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		double a = cur_gen[0]->get_position()[j];
+		double b = chosen_vectors[0]->get_position()[j];
+		double c = chosen_vectors[1]->get_position()[j];		
+		double d = chosen_vectors[2]->get_position()[j];
+		double e = chosen_vectors[3]->get_position()[j];
+		donor_vec[j] = a + this->F * (b - c) + this->F * (d - e);
+	}
+	return donor_vec;	
+}
+
+
+// BestDiv2 TODO
+std::vector<double> BestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 	//exclude optimal (first if sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
@@ -42,7 +72,6 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	return donor_vec;
 	
 }
-
 
 // Target To PBest Div 1
 //TODO: add archive, fix p sampling
@@ -97,6 +126,30 @@ bool TargetToPBestDiv1::use_archive(){
 	return archive;
 }
 
+// Target To Best Div 1
+std::vector<double> TargetToBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+ 	
+	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
+	//if best and self are not the same
+	if(idx != 0){
+		cur_gen_ex_first.erase(cur_gen_ex_first.begin()+(idx-1));
+	}
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
+
+	//calculate donor vector
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		double best = cur_gen[0]->get_position()[j];
+		double self = cur_gen[idx]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		donor_vec[j] = self + (this->F * (best - self)) + (this->F * (a - b));
+	}
+	return donor_vec;
+	
+}
+
+
 // Target To Best Div 2
 std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 	// std::cout << "ttb/2" << std::endl;
@@ -123,6 +176,73 @@ std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 	
 }
 
+// Rand To Best Div 1
+std::vector<double> RandToBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+ 	
+	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
+	//if best and self are not the same
+	if(idx != 0){
+		cur_gen_ex_first.erase(cur_gen_ex_first.begin()+(idx-1));
+	}
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 3, false);
+
+	//calculate donor vector
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		double best = cur_gen[0]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[1]->get_position()[j];
+		donor_vec[j] = a + (this->F * (best - a)) + (this->F * (b - c));
+	}
+	return donor_vec;
+	
+}
+
+
+// Rand To Best Div 2
+std::vector<double> RandToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+ 	
+	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
+	//if best and self are not the same
+	if(idx != 0){
+		cur_gen_ex_first.erase(cur_gen_ex_first.begin()+(idx-1));
+	}
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 5, false);
+
+	//calculate donor vector
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		double best = cur_gen[0]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
+		double d = chosen_vectors[3]->get_position()[j];
+		double e = chosen_vectors[4]->get_position()[j];
+		donor_vec[j] = a + (this->F * (best - a)) + (this->F * (b - c)) + (this->F * (d - e));
+	}
+	return donor_vec;	
+}
+
+
+//Target To Rand Div 1
+std::vector<double> TargetToRandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+
+	std::vector<Agent*> cur_gen_ex_self = std::vector<Agent*>(cur_gen.begin(), cur_gen.end());
+	cur_gen_ex_self.erase(cur_gen_ex_self.begin()+idx);
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_self, 3, false);
+
+	//calculate donor vector
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		double self = cur_gen[idx]->get_position()[j];
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
+		donor_vec[j] = self + (this->F * (a - self)) + (this->F * (b - c));
+	}
+	return donor_vec;	
+}
 
 //Target To Rand Div 2
 std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
@@ -140,10 +260,10 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 		double b = chosen_vectors[1]->get_position()[j];
 		double c = chosen_vectors[2]->get_position()[j];
 		double d = chosen_vectors[3]->get_position()[j];
-		donor_vec[j] = self + (this->F * (a - b)) + (this->F * (c - d));
+		double e = chosen_vectors[3]->get_position()[j];
+		donor_vec[j] = self + (this->F * (a - self)) + (this->F * (b - c)) + (this->F * (d - e));
 	}
-	return donor_vec;
-	
+	return donor_vec;	
 }
 
 //2-OptDiv1
@@ -182,7 +302,7 @@ std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 	double step = tools.rand_mantegna(this->sig_u,this->sig_v,alpha);
-	float scale_factor = step * tools.rand_double_unif(0.0, 1.0); //why is this done?
+	float scale_factor = step * tools.rand_double_unif(0.0, 1.0); //why is this done? TODO:0.5-1.0
 
 	// std::cout << scale_factor << std::endl;
 	//calculate donor vector

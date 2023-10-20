@@ -1,6 +1,5 @@
 #include "../include/tools.h"
-#include "../include/population.h"
-#include "../include/argparse.h"
+#include "../include/adaptation.h"
 // #include "ioh.h"
 //#include "../include/functions.h"
 
@@ -58,7 +57,7 @@ Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObj
 	// int mut_op = std::stoi(argparser->get_values()["-m"]);
 	size_t dim = problem->meta_data().n_variables;
 	if (F < 0){
-		float F = std::stod(argparser->get_values()["-F"]);
+		F = std::stod(argparser->get_values()["-F"]);
 	}
 	size_t archive = std::stoi(argparser->get_values()["-archive"]);
 	// if (mutator != -1){
@@ -296,7 +295,25 @@ int main(int argc, char* argv[]) {
 		results result = single_problem(pop, budget, problem_dim, problem, argparser, boundary_correction);
 		std::cout << "final result" << std::endl;
 		pop->print_fitness();
+		std::cout << "--------------- best result history" << std::endl;
 		auto best_history = pop->get_current_generation()[0]->get_history();
+		for (auto snapshot : best_history){
+			std::string hist_string= "";
+			const auto [top_pos, top_fitness, top_CrOpPtr, top_MutOpPtr, top_BoundOpPtr] = snapshot;
+			
+			//print position
+			// for(double i : top_pos){
+			// 	std::cout << i <<',';
+			// }
+
+			//print outher information
+			std::cout << " " << top_fitness << " " << top_MutOpPtr->get_F() << " " << top_CrOpPtr->get_Cr() << " " 
+						<< CROSSOVER_NAMES[top_CrOpPtr->get_type()] << " " << MUTATION_NAMES[top_MutOpPtr->get_type()] << " " << BOUNDARY_NAMES[top_BoundOpPtr->get_type()] << std::endl;
+			
+			std::cout << hist_string;
+		}
+		std::cout << "--------------- 2nd best result history" << std::endl;
+		best_history = pop->get_current_generation()[1]->get_history();
 		for (auto snapshot : best_history){
 			std::string hist_string= "";
 			const auto [top_pos, top_fitness, top_CrOpPtr, top_MutOpPtr, top_BoundOpPtr] = snapshot;

@@ -14,12 +14,14 @@
 flag				meaning					default					vals
 
 //base
--f					function				1						1-24
+-f					function				1						int 1-24
 -d					dimensions				5						int
--m					mutation type			1						int (TODO -> string)
+-m					mutation operator		1						int 0-15 or 99 (TODO -> string)
 -F					mutation rate 			0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
--c					crossover type			1						int (TODO -> string)
+-c					crossover operator		0						int (TODO -> string)
 -Cr					crossover rate 			0.5						real
+-b					boundary operator		2 						int 0-2
+-s					selection operator		0 						int 0-0
 -runs				repeated runs			1						int
 -budget				mutex with -i			2500					int	
 -pop_size			population size			0						int >4
@@ -54,8 +56,10 @@ private:
 		{"-d","0"}, 
 		{"-m","0"}, 
 		{"-F","0.5"}, 
-		{"-c","1"}, 
+		{"-c","0"}, 
 		{"-Cr","0.5"}, 
+		{"-b", "2"},
+		{"-s", "0"},
 		{"-runs","1"}, 
 		{"-budget", "2500"}, 
 		{"-pop_size", "0"},

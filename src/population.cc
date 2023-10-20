@@ -10,7 +10,12 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 	this->base_mutation_operator = mutation_operator;
 	this->base_boundary_correction = boundary_correction;
 	this->target_function = target_function;
-	this->n = pop_size;
+	if (pop_size <4){
+		pop_size = 4 + 5*target_function->meta_data().n_variables;;
+	} else {
+		this->n = pop_size;
+	}
+	
 	this->dim = target_function->meta_data().n_variables;
 	this->budget=budget;
 	this->archive_size = archive_size;

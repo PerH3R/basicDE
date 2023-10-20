@@ -11,11 +11,12 @@
 //TODO: think about this forward declaration
 class Agent;
 
+//TODO: add rand/2 best/2
 
 class Mutation {
 public:
 	Mutation() = default;
-	Mutation(size_t dim, size_t n, float F = 0.2) : dim(dim), n(n), F(F){};
+	Mutation(size_t dim, size_t n, float F = 0.5) : dim(dim), n(n), F(F){};
 	virtual bool use_archive(){return false;};
 	virtual ~Mutation() { };
 	virtual MUTATION get_type() = 0;
@@ -39,23 +40,39 @@ protected:
 
 class RandDiv1 : public Mutation {
 public:
-    RandDiv1(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {};
+    RandDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~RandDiv1() {};
     MUTATION get_type(){return RANDDIV1;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
 };
 
+class RandDiv2 : public Mutation {
+public:
+    RandDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
+    ~RandDiv2() {};
+    MUTATION get_type(){return RANDDIV2;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
 class BestDiv1 : public Mutation {
 public:
-    BestDiv1(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {};
+    BestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~BestDiv1() {};
     MUTATION get_type(){return BESTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
 };
 
+class BestDiv2 : public Mutation {
+public:
+    BestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
+    ~BestDiv2() {};
+    MUTATION get_type(){return BESTDIV2;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
 class TargetToPBestDiv1 : public Mutation {
 public:
-    TargetToPBestDiv1(size_t dim, size_t n, float F = 0.2, bool archive=false) : Mutation(dim, n, F), archive(archive) {};
+    TargetToPBestDiv1(size_t dim, size_t n, float F = 0.5, bool archive=false) : Mutation(dim, n, F), archive(archive) {};
     ~TargetToPBestDiv1() {};
     MUTATION get_type(){return TTPBESTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
@@ -66,17 +83,49 @@ protected:
 	bool archive;
 };
 
+class RandToBestDiv1 : public Mutation {
+public:
+    RandToBestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
+    ~RandToBestDiv1() {};
+    MUTATION get_type(){return RTBESTDIV1;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
+class RandToBestDiv2 : public Mutation {
+public:
+    RandToBestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
+    ~RandToBestDiv2() {};
+    MUTATION get_type(){return RTBESTDIV2;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
+class TargetToBestDiv1 : public Mutation {
+public:
+    TargetToBestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
+    ~TargetToBestDiv1() {};
+    MUTATION get_type(){return TTBESTDIV1;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
 class TargetToBestDiv2 : public Mutation {
 public:
-    TargetToBestDiv2(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {};
+    TargetToBestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TargetToBestDiv2() {};
     MUTATION get_type(){return TTBESTDIV2;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
 };
 
+class TargetToRandDiv1 : public Mutation {
+public:
+    TargetToRandDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
+    ~TargetToRandDiv1() {};
+    MUTATION get_type(){return TTRANDDIV1;};
+	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+};
+
 class TargetToRandDiv2 : public Mutation {
 public:
-    TargetToRandDiv2(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {};
+    TargetToRandDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TargetToRandDiv2() {};
     MUTATION get_type(){return TTRANDDIV2;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
@@ -84,7 +133,7 @@ public:
 
 class TwoOptDiv1 : public Mutation {
 public:
-    TwoOptDiv1(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {};
+    TwoOptDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TwoOptDiv1() {};
     MUTATION get_type(){return TWOOPTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
@@ -92,7 +141,7 @@ public:
 
 class Desmu : public Mutation {
 public:
-    Desmu(size_t dim, size_t n, float F = 0.2, double alpha = 1.0) : Mutation(dim, n, F) {
+    Desmu(size_t dim, size_t n, float F = 0.5, double alpha = 1.0) : Mutation(dim, n, F) {
     double a_gamma = std::tgamma(1+alpha);
 	this->sig_u = std::pow(a_gamma * std::sin(M_PI * (alpha/2)) / alpha * std::tgamma((1+alpha)/2) * std::pow(2,(alpha-1)/2), 1/alpha );
 	this->sig_v = 1.0;
@@ -109,7 +158,7 @@ private:
 class Bea : public Mutation {
 public:
 	Bea(size_t dim, size_t n, Boundary* boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
-			float F = 0.2, float Pbea = 0.8, int Nsegments = 5, int Nclones = 2, float locality = 0.1) : Mutation(dim, n, F), boundary_correction(boundary_correction),
+			float F = 0.5, float Pbea = 0.8, int Nsegments = 5, int Nclones = 2, float locality = 0.1) : Mutation(dim, n, F), boundary_correction(boundary_correction),
 			target_function(target_function), Nclones(Nclones), Pbea(Pbea), Nsegments(Nsegments), budget(budget), locality(locality){
 
 		if (Nsegments > dim){
@@ -139,7 +188,7 @@ private:
 
 class DirMut : public Mutation {
 public:
-	DirMut(size_t dim, size_t n, float F = 0.2) : Mutation(dim, n, F) {
+	DirMut(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {
 		set_base_operator(new RandDiv1(dim, n, F));
 		vector_pool_ptr = NULL;
 	};
@@ -158,7 +207,7 @@ private:
 
 class RandomSearch : public Mutation {
 public:
-    RandomSearch(size_t dim, size_t n, ioh::problem::RealSingleObjective* target_function, float F = 0.2) : Mutation(dim, n, F), target_function(target_function) {};
+    RandomSearch(size_t dim, size_t n, ioh::problem::RealSingleObjective* target_function, float F = 0.5) : Mutation(dim, n, F), target_function(target_function) {};
     ~RandomSearch() {};
     MUTATION get_type(){return RANDOMSEARCH;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
