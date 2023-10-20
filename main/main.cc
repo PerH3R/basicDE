@@ -52,41 +52,15 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
     );
 }
 
-Mutation* get_mutation_operator(Argparse* argparser, ioh::problem::RealSingleObjective* problem, Boundary* boundary_correction, 
-									unsigned int* budget, int pop_size, int mut_op = -1, float F = -1.0){
-	// int mut_op = std::stoi(argparser->get_values()["-m"]);
-	size_t dim = problem->meta_data().n_variables;
-	if (F < 0){
-		F = std::stod(argparser->get_values()["-F"]);
-	}
-	size_t archive = std::stoi(argparser->get_values()["-archive"]);
-	// if (mutator != -1){
-	// 	mut_op = mutator;
-	// }
-	switch(mut_op){
+AdaptationManager* get_adaptation_manager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, int selection){
+	switch(selection){
 		case 0:
-			return new RandDiv1(dim, pop_size, F);
+			return new FixedManager(argparser, problem, budget);
 		case 1:
-			return new BestDiv1(dim, pop_size, F);
-		case 2:			
-			return new TargetToPBestDiv1(dim, pop_size, F, archive);
-		case 3:
-			return new TargetToBestDiv2(dim, pop_size, F);
-		case 4:
-			return new TargetToRandDiv2(dim, pop_size, F);
-		case 5:
-			return new TwoOptDiv1(dim, pop_size, F);
-		case 6:
-			return new Desmu(dim, pop_size, F);
-		case 7:
-			return new Bea(dim, pop_size, boundary_correction, problem, budget, F);
-		case 8:
-			return new DirMut(dim, pop_size, F);
-		case 9:
-			return new RandomSearch(dim, pop_size, problem, F);
+			return new RandomManager(argparser, problem, budget);
 		default:
-			std::cerr << "Mutation operator " << mut_op << " out of range. Continuing using RandDiv1." << std::endl;
-			return new RandDiv1(dim, pop_size, F);		
+			std::cerr << "Operator manager " << selection << " out of range. Continuing using FixedManager." << std::endl;
+			return new FixedManager(argparser, problem, budget);		
 	}	
 }
 
@@ -101,18 +75,19 @@ results return_value(std::vector<double> location, double fitness, int i){
 
 
 //main loop
-results single_problem(Population* pop, unsigned int* budget, size_t dimension, 
-		ioh::problem::RealSingleObjective* problem, Argparse* argparser, Boundary* boundary_correction) { //this row for random
+results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::problem::RealSingleObjective* problem, Argparse* argparser) {
 	double best_fitness = std::numeric_limits<double>::max();
 	//worst_fitness = std::numeric_limits<double>::max;
-	std::vector<double> best_location(dimension, -1);
+	std::vector<double> best_location(problem->meta_data().n_variables, -1);
 	unsigned int iterations = 0;
 	unsigned int no_movement = 0;
 	unsigned int previous_iteration_budget = *budget;
+	Population* pop = manager->get_population();
 
 	//TODO: do something neat for this
-	bool log_pos = false;
+	bool log_pos  = false;
 	bool first_it = true;
+	// bool  = true;
 	
 	//TODO: budget
 	while (*budget > 0) {
@@ -121,17 +96,17 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 			first_it = false;
 		}
 
-		//full random for baselines
-		if (std::stoi(argparser->get_values()["-m"]) == 99){
-			for (int i = 0; i < pop->get_population_size(); ++i){
-				int new_m = tools.rand_int_unif(0,9); //exclude random search
-				if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ //BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
-					int new_m = tools.rand_int_unif(0,10);
-				}
-				double new_F = tools.rand_double_unif(0.2,0.8);
-				pop->set_individual_mutation( get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m, new_F), i);
-			}
-		}
+		// //full random for baselines
+		// if (std::stoi(argparser->get_values()["-m"]) == 99){
+		// 	for (int i = 0; i < pop->get_population_size(); ++i){
+		// 		int new_m = tools.rand_int_unif(0,9); //exclude random search
+		// 		if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ //BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
+		// 			int new_m = tools.rand_int_unif(0,10);
+		// 		}
+		// 		double new_F = tools.rand_double_unif(0.2,0.8);
+		// 		pop->set_individual_mutation( get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m, new_F), i);
+		// 	}
+		// }
 
 		iterations++;
 		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
@@ -161,14 +136,10 @@ results single_problem(Population* pop, unsigned int* budget, size_t dimension,
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
 			std::cout << "new best is: " << pop->get_current_generation()[0]->get_fitness() << " at iteration " << iterations << std::endl;
-			// std::cout << "==================" << std::endl;
-			// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
-			// pop->print_fitness();
-			// std::cout << "==================" << std::endl;
 
 			// // update vector pool using previous bestfitness
 			// if (pop->get_mutation() == DIRMUT){
-				pop->update_vector_pool(best_fitness);  /////TODO: IF DIRMUT IS A POSSIBLE OPERATOR
+				pop->update_vector_pool(best_fitness);  //TODO: IF DIRMUT IS A POSSIBLE OPERATOR
 			// }
 
 			best_fitness = pop->get_current_generation()[0]->get_fitness(); //update best fitness
@@ -215,21 +186,20 @@ int main(int argc, char* argv[]) {
 
 	auto argparser = new Argparse(argc, argv);
 
-	if (argc != num_args) {
-		std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
-	};
+	// if (argc != num_args) {
+	// 	std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
+	// };
 
     std::cout << "Warning: dont use Desmu with reflection" << std::endl;
 
 	tools.set_seed();
 
-	//TODO: convert argv to correct type
+	
 
 
 
 	//TODO: finish command line params and remove below
 	int function_num = std::stoi(argparser->get_values()["-f"]);
-
 	unsigned int number_of_runs = std::stoi(argparser->get_values()["-runs"]);
 
 	
@@ -266,37 +236,35 @@ int main(int argc, char* argv[]) {
     	unsigned int* budget = &budget_value;
     	std::cout << "setting budget to " << *budget << std::endl;
 
-		//TODO: problem selector
-
 		// set up operators and problem variables
 		int problem_dim = problem->meta_data().n_variables;
-    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//set population size
-    	if (pop_size < 4){
-    		pop_size = 4 + 5*problem_dim;
-    		std::cout << "automatic population size of: " << pop_size << std::endl;
-    	}//automatic pop_size if not specified or too small
+    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size
     	
 		// auto problem = get_problem(2, i, dim);		
-		Boundary* boundary_correction = new Reinit(problem);
-		Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget, pop_size, m); //new TargetToPBestDiv1(dim, pop_size);
-		Crossover* crossover = new Binomial(problem_dim, std::stod(argparser->get_values()["-Cr"]));
-		Selection* selection = new Elitist(pop_size);
+		// Boundary* boundary_correction = new Reinit(problem);
+		// Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget, pop_size, m); //new TargetToPBestDiv1(dim, pop_size);
+		// Crossover* crossover = new Binomial(problem_dim, std::stod(argparser->get_values()["-Cr"]));
+		// Selection* selection = new Elitist(pop_size);
 		
 
 		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
-		std::cout << "optimizing using operator " << mutation->get_type()+1 << std::endl;
 
-		Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget, archive_size);
+		AdaptationManager* manager = get_adaptation_manager(argparser, problem, budget, std::stoi(argparser->get_values()["-a"]));
+		// Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget, archive_size);
+
 
 		// std::cout << "Run " << i << " ";
 		
 
-		results result = single_problem(pop, budget, problem_dim, problem, argparser, boundary_correction);
+		results result = single_problem(manager, budget, problem, argparser);
 		std::cout << "final result" << std::endl;
-		pop->print_fitness();
+		
+
+		//print some results
+		manager->get_population()->print_fitness();
 		std::cout << "--------------- best result history" << std::endl;
-		auto best_history = pop->get_current_generation()[0]->get_history();
+		auto best_history = manager->get_population()->get_current_generation()[0]->get_history();
 		for (auto snapshot : best_history){
 			std::string hist_string= "";
 			const auto [top_pos, top_fitness, top_CrOpPtr, top_MutOpPtr, top_BoundOpPtr] = snapshot;
@@ -313,7 +281,7 @@ int main(int argc, char* argv[]) {
 			std::cout << hist_string;
 		}
 		std::cout << "--------------- 2nd best result history" << std::endl;
-		best_history = pop->get_current_generation()[1]->get_history();
+		best_history = manager->get_population()->get_current_generation()[1]->get_history();
 		for (auto snapshot : best_history){
 			std::string hist_string= "";
 			const auto [top_pos, top_fitness, top_CrOpPtr, top_MutOpPtr, top_BoundOpPtr] = snapshot;
@@ -332,23 +300,11 @@ int main(int argc, char* argv[]) {
 		std::cout << "=================" << std::endl;
 		
 
-		delete pop;
-		pop=NULL;
-		// delete problem;
-		// problem=NULL;
-
-		// delete function;
-		delete mutation;
-		delete crossover;
-		delete selection;
-		delete boundary_correction;
-		// function=NULL;
-		mutation=NULL;
-		crossover=NULL;
-		selection=NULL;
-		boundary_correction=NULL;
+		delete manager;
+		manager=NULL;
 	};
 
-	
+	delete argparser;
+	argparser = NULL;
 	return 0;
 }

@@ -22,9 +22,10 @@ flag				meaning					default					vals
 -Cr					crossover rate 			0.5						real
 -b					boundary operator		2 						int 0-2
 -s					selection operator		0 						int 0-0
+-a					operator adaptor		0 						int 0-...
 -runs				repeated runs			1						int
 -budget				mutex with -i			2500					int	
--pop_size			population size			0						int >4
+-pop_size			population size			0						int >4, lower will use automatic population size based on dimension of problem
 
 //operator specific
 -archive		use archive (ttpb mut)	0						int (0 = no archive)	
@@ -38,7 +39,7 @@ TODO: configurable retry/resample limit
 class Argparse {
 public:
 	Argparse(int argc, char* argv[]);
-	~Argparse();
+	~Argparse(){};
 
 	bool isReal(std::string str);
 	bool isInteger(std::string str);
@@ -60,6 +61,7 @@ private:
 		{"-Cr","0.5"}, 
 		{"-b", "2"},
 		{"-s", "0"},
+		{"-a", "0"},
 		{"-runs","1"}, 
 		{"-budget", "2500"}, 
 		{"-pop_size", "0"},

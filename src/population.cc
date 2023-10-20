@@ -11,10 +11,10 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 	this->base_boundary_correction = boundary_correction;
 	this->target_function = target_function;
 	if (pop_size <4){
-		pop_size = 4 + 5*target_function->meta_data().n_variables;;
+		this->n = 4 + 5*target_function->meta_data().n_variables;;
 	} else {
 		this->n = pop_size;
-	}
+	}//automatic population size if too small or not specified
 	
 	this->dim = target_function->meta_data().n_variables;
 	this->budget=budget;

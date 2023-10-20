@@ -9,7 +9,7 @@ set(CXX_FLAGS  "${CXX_FLAGS} -std=c++17 -g -Wall -Wextra -fopenmp -Wreturn-type 
 add_subdirectory(deps/IOHexperimenter)
 
 
-add_library(simpleDE src/agent.cc  src/population.cc  src/tools.cc src/argparse.cc  src/crossover.cc  src/mutation.cc  src/selection.cc  src/boundary.cc)
+add_library(simpleDE src/agent.cc  src/adaptation.cc src/population.cc  src/tools.cc src/argparse.cc  src/crossover.cc  src/mutation.cc  src/selection.cc  src/boundary.cc)
 target_include_directories(simpleDE PUBLIC include deps/IOHExperimenter/include)
 
 target_link_libraries(simpleDE ioh)
