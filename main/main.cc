@@ -96,17 +96,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			first_it = false;
 		}
 
-		// //full random for baselines
-		// if (std::stoi(argparser->get_values()["-m"]) == 99){
-		// 	for (int i = 0; i < pop->get_population_size(); ++i){
-		// 		int new_m = tools.rand_int_unif(0,9); //exclude random search
-		// 		if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ //BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
-		// 			int new_m = tools.rand_int_unif(0,10);
-		// 		}
-		// 		double new_F = tools.rand_double_unif(0.2,0.8);
-		// 		pop->set_individual_mutation( get_mutation_operator(argparser, problem, boundary_correction, budget, pop->get_population_size(), new_m, new_F), i);
-		// 	}
-		// }
+		manager->adapt(iterations);		
 
 		iterations++;
 		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
@@ -128,8 +118,6 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 		if (log_pos){
 			pop->write_population();
 		}
-
-		
 		
 
 		//on fitness improvement

@@ -11,7 +11,7 @@ public:
 	AdaptationManager() = default;
 	AdaptationManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	~AdaptationManager();
-	virtual void adapt() = 0;
+	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
 protected:
 	Mutation* get_mutation_operator(int mut_op = -1, float F = -1.0);
@@ -45,7 +45,7 @@ class FixedManager : public AdaptationManager{
 public:
 	FixedManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
     ~FixedManager();
-    void adapt(){};	
+    void adapt(unsigned int iterations){};	
 protected:	
 	Population* create_population();
 };
@@ -55,7 +55,7 @@ class RandomManager : public AdaptationManager{
 public:
 	RandomManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF = false);
     ~RandomManager();
-    void adapt(){};
+    void adapt(unsigned int iterations);
 protected:
 	Population* create_population();
 

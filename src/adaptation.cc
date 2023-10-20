@@ -140,8 +140,21 @@ Population* RandomManager::create_population(){
 	this->pop =  new Population(this->base_crossover, this->base_selection, this->base_mutation, this->problem, this->base_boundary, 
 		this->n, this->budget, this->archive_size);
 	for (int i = 0; i < this->pop->get_population_size(); ++i){
-		int new_m = tools.rand_int_unif(0, 14); //TODO: doublecheck values
-		this->pop->get_current_generation()[i]->set_mutation(get_mutation_operator(new_m, this->F));
-		this->pop->get_next_generation()[i]->set_mutation(get_mutation_operator(new_m, this->F));
+		int new_m = tools.rand_int_unif(0, 15); //TODO: doublecheck values
+		this->pop->set_individual_mutation(get_mutation_operator(new_m, this->F), i);
+	}
+}
+
+void RandomManager::adapt(unsigned int iterations){
+	for (int i = 0; i < this->pop->get_population_size(); ++i){
+		int new_m = tools.rand_int_unif(0,9); //exclude random search
+		if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ //BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
+			int new_m = tools.rand_int_unif(0,15);
+		}
+		double new_F = this->F;
+		if (this->RandomizeF){
+			double new_F = tools.rand_double_unif(0.2,0.8);
+		}
+		pop->set_individual_mutation( get_mutation_operator(new_m, new_F), i);
 	}
 }

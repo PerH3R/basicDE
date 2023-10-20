@@ -46,10 +46,8 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	for (size_t j = 0; j < this->dim; j++) {
 		double a = cur_gen[0]->get_position()[j];
 		double b = chosen_vectors[0]->get_position()[j];
-		double c = chosen_vectors[1]->get_position()[j];		
-		double d = chosen_vectors[2]->get_position()[j];
-		double e = chosen_vectors[3]->get_position()[j];
-		donor_vec[j] = a + this->F * (b - c) + this->F * (d - e);
+		double c = chosen_vectors[1]->get_position()[j];
+		donor_vec[j] = a + this->F * (b - c);
 	}
 	return donor_vec;	
 }
@@ -59,15 +57,17 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 std::vector<double> BestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 	//exclude optimal (first if sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
-	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 4, false);
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		double a = cur_gen[0]->get_position()[j];
 		double b = chosen_vectors[0]->get_position()[j];
-		double c = chosen_vectors[1]->get_position()[j];
-		donor_vec[j] = a + this->F * (b - c);
+		double c = chosen_vectors[1]->get_position()[j];		
+		double d = chosen_vectors[2]->get_position()[j];
+		double e = chosen_vectors[3]->get_position()[j];
+		donor_vec[j] = a + this->F * (b - c) + this->F * (d - e);
 	}
 	return donor_vec;
 	
