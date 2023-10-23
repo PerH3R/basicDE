@@ -147,7 +147,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			pop->randomise_population();
 		}
 
-		
+
 		//optimum discovered, stop searching
 		// if (best_fitness == problem->meta_data().optimum){
 		// 	break;
@@ -168,20 +168,11 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 
 
 int main(int argc, char* argv[]) {
-	//check arguments
-	int num_args = 1; //TODO: remove
-
 	auto argparser = new Argparse(argc, argv);
-
-	// if (argc != num_args) {
-	// 	std::cerr << "expected " << num_args << " arguments, got " << argc << " " << argv <<"." <<std::endl;
-	// };
-
+	
     std::cout << "Warning: dont use Desmu with reflection" << std::endl;
 
-	tools.set_seed();
-
-	
+	tools.set_seed();	
 
 
 

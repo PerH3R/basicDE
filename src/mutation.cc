@@ -106,7 +106,6 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 	}while((this->archive && std::find(archive_vector.begin(), archive_vector.end(), chosen_vectors[0]) != archive_vector.end()) /*if b is from archive*/);
 	//TODO does the 2nd term always evaluate as true?
 
-	//TODO
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
@@ -269,7 +268,6 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 	// std::cout << "2opt/1" << std::endl;
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
-	//TODO: check if swap swaps correctly
 	//use the fittest vector as base for donor
 	if (chosen_vectors[0]->get_fitness() < chosen_vectors[1]->get_fitness()){
 		std::swap(chosen_vectors[0], chosen_vectors[1]);
