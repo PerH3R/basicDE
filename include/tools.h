@@ -36,8 +36,7 @@ public:
 
 	std::vector<double> vec_sum(std::vector<double> first, std::vector<double> second);
 
-	//TODO: function that returns a veector of n randomly chosen values from a given vector
-	//taken from rick boks auto-DE
+	//taken from github->rickboks/auto-DE
 	template<typename T>
 	std::vector<T> pick_random(std::vector<T> possibilities, int const n, bool const replace){
 		std::vector<T> picked;

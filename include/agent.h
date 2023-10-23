@@ -7,8 +7,6 @@
 #include "boundary.h"
 #include "operators.h"
 
-//TODO: double/float consistency
-
 //TODO: look at this
 // #include "functions.h"
 // class Crossover;
@@ -36,7 +34,6 @@ public:
 	void set_position(std::vector<double> new_position);
 
 
-	//TODO Move to .cc
 	CROSSOVER get_crossover();
 	MUTATION get_mutation();
 	BOUNDARY get_boundary();
@@ -52,6 +49,7 @@ public:
 	std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> update_history();
 	void add_history(std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> snapshot);
 	std::vector< std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> > get_history() {return this->history;};
+	void print_history(bool print_positions = false);
 
 
 private:

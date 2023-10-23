@@ -11,8 +11,6 @@
 //TODO: think about this forward declaration
 class Agent;
 
-//TODO: add rand/2 best/2
-
 class Mutation {
 public:
 	Mutation() = default;
@@ -72,7 +70,9 @@ public:
 
 class TargetToPBestDiv1 : public Mutation {
 public:
-    TargetToPBestDiv1(size_t dim, size_t n, float F = 0.5, bool archive=false) : Mutation(dim, n, F), archive(archive) {};
+    TargetToPBestDiv1(size_t dim, size_t n, float F = 0.5, bool archive=false) : Mutation(dim, n, F), archive(archive) {
+    	this->p_ceil = std::max(double(2.0/this->n), 0.2);
+    };
     ~TargetToPBestDiv1() {};
     MUTATION get_type(){return TTPBESTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
@@ -81,6 +81,7 @@ public:
 	bool use_archive();
 protected:	
 	bool archive;
+	float p_ceil;
 };
 
 class RandToBestDiv1 : public Mutation {
@@ -142,10 +143,10 @@ public:
 class Desmu : public Mutation {
 public:
     Desmu(size_t dim, size_t n, float F = 0.5, double alpha = 1.0) : Mutation(dim, n, F) {
-    double a_gamma = std::tgamma(1+alpha);
-	this->sig_u = std::pow(a_gamma * std::sin(M_PI * (alpha/2)) / alpha * std::tgamma((1+alpha)/2) * std::pow(2,(alpha-1)/2), 1/alpha );
-	this->sig_v = 1.0;
-    }; //TODO
+	    double a_gamma = std::tgamma(1+alpha);
+		this->sig_u = std::pow(a_gamma * std::sin(M_PI * (alpha/2)) / alpha * std::tgamma((1+alpha)/2) * std::pow(2,(alpha-1)/2), 1/alpha );
+		this->sig_v = 1.0;
+    };
     ~Desmu() {};
     MUTATION get_type(){return DESMU;};
 	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);

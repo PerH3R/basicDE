@@ -13,7 +13,7 @@
 class Population {
 public:
 	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function, 
-				Boundary* boundary_correction, size_t pop_size, unsigned int* budget, int archive_size);
+				Boundary* boundary_correction, size_t pop_size, unsigned int* budget, int archive_size = 0);
 	~Population();
 
 	std::vector<Agent*> get_current_generation();

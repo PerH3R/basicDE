@@ -53,7 +53,7 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 
-// BestDiv2 TODO
+// BestDiv2
 std::vector<double> BestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 	//exclude optimal (first if sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
@@ -79,13 +79,11 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 	// std::cout << "ttpb/1" << std::endl;
 	float p_val;
 
-	//p between 2 and 20%
-	//TODO: make ceil header variable as to not recompute
-	float ceil = std::max(double(2.0/this->n), 0.2);
-	p_val = tools.rand_double_unif((2/this->n),ceil);
+	//p between idx=2 and 20%	
+	p_val = tools.rand_double_unif((2/this->n), this->p_ceil);
 
 
-	int p_idx = tools.rand_int_unif(0,std::round(p_val*this->n)+1); //+1 to avoid rounding to 0
+	int p_idx = tools.rand_int_unif(0, std::round(p_val*this->n) + 1); //+1 to avoid rounding to 0
 
 	std::vector<Agent*> archive_vector = std::vector<Agent*>(cur_gen.begin(), cur_gen.begin()+1); //TODO: temp until real archive implementation
 	std::vector<Agent*> temp_gen;
@@ -290,21 +288,16 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 // Desmu (stochastic levy-flight)
-//TODO
 std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
 	// std::cout << "desmu" << std::endl;
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
 
-	//TODO: useless? what did the original code mean?
-	// double u = tools.rand_double_norm(0.5, 1.0);
-	// double v = tools.rand_double_norm(0.5, 1.0);
-
-
+	//calculate stepsize
 	double step = tools.rand_mantegna(this->sig_u,this->sig_v,alpha);
-	float scale_factor = step * tools.rand_double_unif(0.0, 1.0); //why is this done? TODO:0.5-1.0
+	//do this because the paper said so
+	float scale_factor = step * tools.rand_double_unif(0.5, 1.0); 
 
-	// std::cout << scale_factor << std::endl;
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
@@ -341,7 +334,7 @@ void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Ag
 					clones[i][j] = self + (this->F * (c - self)) + (this->F * (a - b));
 				}
 			}
-			clones[i] = boundary_correction->apply(clones[i]); //TODO NOT MENTIONED IN PAPER BUT WEIRD NOT TO INCLUDE
+			clones[i] = boundary_correction->apply(clones[i]); //not mentioned in paper but should probably be included if we are evaluating
 			//evaluate		
 			fitness[i] = (*target_function)(clones[i]);
 			*budget -= 1;

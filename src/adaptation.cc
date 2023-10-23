@@ -147,9 +147,9 @@ Population* RandomManager::create_population(){
 
 void RandomManager::adapt(unsigned int iterations){
 	for (int i = 0; i < this->pop->get_population_size(); ++i){
-		int new_m = tools.rand_int_unif(0,9); //exclude random search
-		if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ //BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
-			int new_m = tools.rand_int_unif(0,15);
+		int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS-1); //exclude random search
+		if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ 		// BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
+			int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS);	// in order to keep iterations/operator the same
 		}
 		double new_F = this->F;
 		if (this->RandomizeF){

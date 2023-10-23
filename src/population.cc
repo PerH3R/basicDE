@@ -1,7 +1,6 @@
 #include "../include/population.h"
 
 
-//TODO: change variable assignment
 Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function,
 					   Boundary* boundary_correction, size_t pop_size, unsigned int* budget, int archive_size) {
 	std::cout << "creating Population...";
@@ -68,8 +67,7 @@ void Population::apply_mutation() {
 			this->cur_gen[i]->get_mutation_ptr()->pass_vector_pool(this->vector_pool);
 			if (this->improved){
 				this->cur_gen[i]->get_mutation_ptr()->improved_to_true();
-			}			
-			this->cur_gen[i]->mutate(this->cur_gen, i); //TODO: superfluous?
+			}
 		}
 		this->cur_gen[i]->mutate(this->cur_gen, i);
 	}
@@ -135,14 +133,14 @@ void Population::apply_selection() {
 	}
 
 	//TODO set to true 
-	if (false){ 
+	if (this->archive_size > 0){ 
+		std::cout << "ARCHIVE" << std::endl;
 		add_to_archive(); 
 	}
 }
 
 void Population::sort(){
 	bool sorted;
-	//TODO: is there a more efficient sorting?
 	// reverse bubble sort
 	do{
 		sorted = true;

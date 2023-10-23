@@ -11,9 +11,6 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 	this->fitness = std::numeric_limits<double>::max();
 	this->fitness_uptodate = false;
 
-	//TODO:remove sleep
-	// std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
 
 	// std::cout << target_function->meta_data() << std::endl;
     // std::cout << "bounds of variables :  " << target_function->bounds().lb << std::endl;
@@ -164,4 +161,24 @@ std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> Agent:
 
 void Agent::add_history(std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> snapshot){
 	history.push_back(snapshot);
+}
+
+void Agent::print_history(bool print_positions){
+	for (auto snapshot : this->history){
+		std::string hist_string= "";
+		const auto [pos, fitness, CrOpPtr, MutOpPtr, BoundOpPtr] = snapshot;
+		
+		// print position
+		if (print_positions){
+			for(double i : pos){
+			std::cout << i <<',';
+			}
+		}
+				
+		//print outher information
+		std::cout << " " << fitness << " " << MutOpPtr->get_F() << " " << CrOpPtr->get_Cr() << " " 
+					<< CROSSOVER_NAMES[CrOpPtr->get_type()] << " " << MUTATION_NAMES[MutOpPtr->get_type()] << " " << BOUNDARY_NAMES[BoundOpPtr->get_type()] << std::endl;
+		
+		std::cout << hist_string;
+	}
 }

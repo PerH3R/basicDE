@@ -22,7 +22,8 @@ enum MUTATION {
 	DESMU,
 	BEA,
 	DIRMUT,
-	RANDOMSEARCH
+	RANDOMSEARCH,
+	NUM_MUTATION_OPERATORS = RANDOMSEARCH,
 	};
 
 const std::string MUTATION_NAMES[]  = {
@@ -51,7 +52,8 @@ const std::string MUTATION_NAMES[]  = {
 enum BOUNDARY {
 	CLAMP,
     REFLECT,
-    REINIT
+    REINIT,
+    NUM_BOUNDARY_OPERATORS = REINIT,
 };
 
 const std::string BOUNDARY_NAMES[]  = {
@@ -66,7 +68,8 @@ const std::string BOUNDARY_NAMES[]  = {
 
 enum CROSSOVER {
 	BINOMIAL,
-    EXPONENTIAL
+    EXPONENTIAL,
+    NUM_CROSSOVER_OPERATORS = EXPONENTIAL,
 };
 
 const std::string CROSSOVER_NAMES[] = {
@@ -79,7 +82,8 @@ const std::string CROSSOVER_NAMES[] = {
  */
 
 enum SELECTION {
-    ELITIST
+    ELITIST,
+    NUM_SELECTION_OPERATORS = ELITIST,
 };
 
 const std::string SELECTION_NAMES[] = {

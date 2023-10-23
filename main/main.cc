@@ -73,11 +73,9 @@ results return_value(std::vector<double> location, double fitness, int i){
 }
 
 
-
 //main loop
 results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::problem::RealSingleObjective* problem, Argparse* argparser) {
 	double best_fitness = std::numeric_limits<double>::max();
-	//worst_fitness = std::numeric_limits<double>::max;
 	std::vector<double> best_location(problem->meta_data().n_variables, -1);
 	unsigned int iterations = 0;
 	unsigned int no_movement = 0;
@@ -147,18 +145,19 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 		if (no_movement > 5){
 			std::cerr << "Searching stuck. No movement for >5  iterations. shuffling population. " << std::endl;
 			pop->randomise_population();
-			// return return_value(best_location, best_fitness, iterations);
 		}
 
-		//TODO: optimum reached (value can't be retrieved from ioh?)
-		// if (best_fitness == ){
-		// 	/* code */
+		
+		//optimum discovered, stop searching
+		// if (best_fitness == problem->meta_data().optimum){
+		// 	break;
 		// }
 
 		// std::cout << "==================" << std::endl;
 	}
 	std::cout << "==================" << std::endl;
-	std::cout << "best fitness found: " << best_fitness << std::endl;
+	// std::cout << "best possible fitness: " << problem->meta_data.optimum << std::endl;
+	std::cout << "best fitness found   : " << best_fitness << std::endl;
 	std::cout << "==================" << std::endl;
 	return return_value(best_location, best_fitness, iterations);
 
@@ -226,14 +225,7 @@ int main(int argc, char* argv[]) {
 
 		// set up operators and problem variables
 		int problem_dim = problem->meta_data().n_variables;
-    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size
-    	
-		// auto problem = get_problem(2, i, dim);		
-		// Boundary* boundary_correction = new Reinit(problem);
-		// Mutation* mutation = get_mutation_operator(argparser, problem, boundary_correction, budget, pop_size, m); //new TargetToPBestDiv1(dim, pop_size);
-		// Crossover* crossover = new Binomial(problem_dim, std::stod(argparser->get_values()["-Cr"]));
-		// Selection* selection = new Elitist(pop_size);
-		
+    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size		
 
 		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
@@ -251,40 +243,11 @@ int main(int argc, char* argv[]) {
 
 		//print some results
 		manager->get_population()->print_fitness();
-		std::cout << "--------------- best result history" << std::endl;
-		auto best_history = manager->get_population()->get_current_generation()[0]->get_history();
-		for (auto snapshot : best_history){
-			std::string hist_string= "";
-			const auto [top_pos, top_fitness, top_CrOpPtr, top_MutOpPtr, top_BoundOpPtr] = snapshot;
-			
-			//print position
-			// for(double i : top_pos){
-			// 	std::cout << i <<',';
-			// }
-
-			//print outher information
-			std::cout << " " << top_fitness << " " << top_MutOpPtr->get_F() << " " << top_CrOpPtr->get_Cr() << " " 
-						<< CROSSOVER_NAMES[top_CrOpPtr->get_type()] << " " << MUTATION_NAMES[top_MutOpPtr->get_type()] << " " << BOUNDARY_NAMES[top_BoundOpPtr->get_type()] << std::endl;
-			
-			std::cout << hist_string;
-		}
+		std::cout << "--------------- history of best individual" << std::endl;
+		manager->get_population()->get_current_generation()[0]->print_history();
+		
 		std::cout << "--------------- 2nd best result history" << std::endl;
-		best_history = manager->get_population()->get_current_generation()[1]->get_history();
-		for (auto snapshot : best_history){
-			std::string hist_string= "";
-			const auto [top_pos, top_fitness, top_CrOpPtr, top_MutOpPtr, top_BoundOpPtr] = snapshot;
-			
-			//print position
-			// for(double i : top_pos){
-			// 	std::cout << i <<',';
-			// }
-
-			//print outher information
-			std::cout << " " << top_fitness << " " << top_MutOpPtr->get_F() << " " << top_CrOpPtr->get_Cr() << " " 
-						<< CROSSOVER_NAMES[top_CrOpPtr->get_type()] << " " << MUTATION_NAMES[top_MutOpPtr->get_type()] << " " << BOUNDARY_NAMES[top_BoundOpPtr->get_type()] << std::endl;
-			
-			std::cout << hist_string;
-		}
+		manager->get_population()->get_current_generation()[1]->print_history();
 		std::cout << "=================" << std::endl;
 		
 

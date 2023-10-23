@@ -21,9 +21,7 @@ std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<dou
 	}
 	
 	int crossover_point = tools.rand_int_unif(0,this->dim);
-	//TODO: add the fixed variable
 	for (size_t i = 0; i < this->dim; ++i){
-		//TODO: look at rand generation
 		float chance = tools.rand_double_unif(0.0, 1.0);
 		if ((chance <= Cr) || (i == crossover_point))		{
 			// std::cout << "donated position " << i << std::endl;
