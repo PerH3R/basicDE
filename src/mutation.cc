@@ -83,7 +83,7 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 	p_val = tools.rand_double_unif((2/this->n), this->p_ceil);
 
 
-	int p_idx = tools.rand_int_unif(0, std::round(p_val*this->n) + 1); //+1 to avoid rounding to 0
+	int p_idx = tools.rand_int_unif(0, std::round(p_val*this->n) + 1); //+1 to avoid rounding to 0 since rand_int_unif has range [low,high) 
 
 	std::vector<Agent*> archive_vector = std::vector<Agent*>(cur_gen.begin(), cur_gen.begin()+1); //TODO: temp until real archive implementation
 	std::vector<Agent*> temp_gen;

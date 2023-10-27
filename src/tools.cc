@@ -16,7 +16,7 @@ double Tools::rand_double_unif(double const begin, double const end){
 }
 
 int Tools::rand_int_unif(int const begin, int const end){
-	std::uniform_int_distribution<int> dist(begin, end-1);
+	std::uniform_int_distribution<int> dist(begin, end-1); // for [begin, end) dist
 	return dist(rng);
 }
 			
