@@ -21,7 +21,7 @@ public:
 	double rand_double_unif(double const begin, double const end);
 
 	// [start, end)
-	int rand_int_unif(int const start, int const end);
+	int rand_int_unif(int const begin, int const end);
 			
 	double rand_double_norm(double const mean, double const stdDev);
 
