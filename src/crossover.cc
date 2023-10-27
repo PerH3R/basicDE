@@ -68,7 +68,7 @@ std::vector<double> Exponential::apply(const std::vector<double> cur_pos, std::v
 
 	while (current_index % this->dim < crossover_point){
 		if (tools.rand_double_unif(0.0,1.0) <= this->Cr){
-			new_pos[current_index] = donor_vec[current_index];
+			new_pos[current_index % this->dim] = donor_vec[current_index % this->dim];
 		}else{
 			break;
 		}
