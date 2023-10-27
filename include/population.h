@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../include/argparse.h"
 #include "tools.h"
 // #include "agent.h"
 // #include "boundary.h" //via agent
@@ -12,8 +13,7 @@
 
 class Population {
 public:
-	Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function, 
-				Boundary* boundary_correction, size_t pop_size, unsigned int* budget, int archive_size = 0);
+	Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t pop_size, unsigned int* budget, int archive_size = 0);
 	~Population();
 
 	std::vector<Agent*> get_current_generation();
@@ -28,6 +28,11 @@ public:
 
 	void print_fitness();
 
+	Mutation* get_mutation_operator(int mut_op = -1, float F = -1.0);
+	Selection* get_selection_operator(int sel_op = -1);
+	Crossover* get_crossover_operator(int c_op = -1, float Cr = -1.0);
+	Boundary* get_boundary_operator(int bound_op = -1);
+
 	//writes positions of population to file
 	void write_population(std::string filename = "");
 
@@ -41,9 +46,9 @@ public:
 
 	SELECTION get_selection(){return this->selection_operator->get_type();};
 
-	CROSSOVER get_base_crossover(){return this->base_crossover_operator->get_type();};
-	MUTATION get_base_mutation(){return this->base_mutation_operator->get_type();};
-	BOUNDARY get_base_boundary(){return this->base_boundary_correction->get_type();};
+	// CROSSOVER get_base_crossover(){return this->base_crossover_operator->get_type();};
+	// MUTATION get_base_mutation(){return this->base_mutation_operator->get_type();};
+	// BOUNDARY get_base_boundary(){return this->base_boundary_correction->get_type();};
 
 	CROSSOVER get_individual_crossover(int idx){return this->cur_gen[idx]->get_crossover();};
 	MUTATION get_individual_mutation(int idx){return this->cur_gen[idx]->get_mutation();};
@@ -54,9 +59,9 @@ public:
 	void set_selection(Selection* new_selection){this->selection_operator = new_selection;};
 
 	//change the operator that's passed when creating a new Agent
-	void set_base_crossover(Crossover* new_crossover){this->base_crossover_operator = new_crossover;};
-	void set_base_mutation(Mutation* new_mutation){this->base_mutation_operator = new_mutation;};
-	void set_base_boundary(Boundary* new_boundary){this->base_boundary_correction = new_boundary;};
+	// void set_base_crossover(Crossover* new_crossover){this->base_crossover_operator = new_crossover;};
+	// void set_base_mutation(Mutation* new_mutation){this->base_mutation_operator = new_mutation;};
+	// void set_base_boundary(Boundary* new_boundary){this->base_boundary_correction = new_boundary;};
 
 
 
@@ -77,18 +82,27 @@ private:
 
 	size_t n; //population size
 	size_t dim; //dimension size
+	float F;
+	float Cr;
 	size_t archive_size;
+	int base_boundary;
+	int base_crossover;
+	int base_selection;
+	int base_mutation;
+	unsigned int* budget;
+
 	std::vector<Agent*> cur_gen;
 	std::vector<Agent*> next_gen;
 
 	std::vector<std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*>> archive;
 
-	Crossover* base_crossover_operator;
+	int base_crossover_operator;
+	int base_mutation_operator;
+	int base_boundary_correction;
 	Selection* selection_operator;
-	Mutation* base_mutation_operator;
-	Boundary* base_boundary_correction;
+	Argparse* argparser;
 	ioh::problem::RealSingleObjective* target_function;
-	unsigned int* budget; 
+	// unsigned int* budget; 
 
 	//for DirMut
 	std::vector< std::vector<double> > vector_pool; //pool of difference vectors of improved agents	

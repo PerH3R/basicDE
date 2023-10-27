@@ -13,7 +13,7 @@ class Agent;
 
 class Mutation {
 public:
-	Mutation() = default;
+	// Mutation() = default;
 	Mutation(size_t dim, size_t n, float F = 0.5) : dim(dim), n(n), F(F){};
 	virtual bool use_archive(){return false;};
 	virtual ~Mutation() { };

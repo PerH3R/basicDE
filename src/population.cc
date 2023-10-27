@@ -1,14 +1,31 @@
 #include "../include/population.h"
 
 
-Population::Population(Crossover* crossover_operator, Selection* selection_operator, Mutation* mutation_operator, ioh::problem::RealSingleObjective* target_function,
-					   Boundary* boundary_correction, size_t pop_size, unsigned int* budget, int archive_size) {
+
+Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t pop_size, unsigned int* budget, int archive_size) {
 	std::cout << "creating Population...";
-	this->base_crossover_operator = crossover_operator;
-	this->selection_operator = selection_operator;
-	this->base_mutation_operator = mutation_operator;
-	this->base_boundary_correction = boundary_correction;
 	this->target_function = target_function;
+	this->archive_size = archive_size;
+	this->argparser = argparser;
+	this->target_function = target_function;
+	this->budget = budget;
+	this->F = std::stod(argparser->get_values()["-F"]);
+	this->Cr = std::stod(argparser->get_values()["-Cr"]);
+	this->F = std::stod(argparser->get_values()["-F"]);
+	this->dim = target_function->meta_data().n_variables;
+	this->n = std::stoi(argparser->get_values()["-pop_size"]);
+	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
+	if (this->n <4){
+		this->n = 4 + 5*target_function->meta_data().n_variables;
+	}//automatic population size if too small or not specified
+
+	this->base_selection = std::stoi(argparser->get_values()["-s"]);
+	this->base_crossover = std::stoi(argparser->get_values()["-c"]);
+	this->base_boundary = std::stoi(argparser->get_values()["-b"]);
+	this->base_mutation = std::stoi(argparser->get_values()["-m"]);
+
+	this->selection_operator = get_selection_operator();
+
 	if (pop_size <4){
 		this->n = 4 + 5*target_function->meta_data().n_variables;;
 	} else {
@@ -16,7 +33,7 @@ Population::Population(Crossover* crossover_operator, Selection* selection_opera
 	}//automatic population size if too small or not specified
 	
 	this->dim = target_function->meta_data().n_variables;
-	this->budget=budget;
+	// this->budget=budget;
 	this->archive_size = archive_size;
 
 	this->cur_gen.reserve(pop_size);
@@ -47,7 +64,7 @@ Population::~Population() {
 }
 
 Agent* Population::create_agent(){
-	return new Agent(dim, base_mutation_operator, base_crossover_operator, base_boundary_correction, target_function, budget);
+	return new Agent(dim, get_mutation_operator(), get_crossover_operator(), get_boundary_operator(), target_function, budget);
 }
 
 size_t Population::get_population_size(){
@@ -124,7 +141,7 @@ void Population::add_to_archive(){
 
 void Population::apply_selection() {
 	//swap outperforming trial vectors to cur_gen
-	auto kept_indexes = selection_operator->apply(this->cur_gen, this->next_gen);
+	auto kept_indexes = this->selection_operator->apply(this->cur_gen, this->next_gen);
 	for (int i = 0; i < this->n; ++i){
 		//record winning strategy
 		auto t = this->cur_gen[i]->update_history();
@@ -221,7 +238,8 @@ void Population::write_population(std::string filename){
 		filename = std::to_string(target_function->meta_data().problem_id) + "_";
 		filename += target_function->meta_data().name + "_";
 		filename += std::to_string(target_function->meta_data().n_variables) + "_";
-		filename += std::to_string(this->base_mutation_operator->get_type());
+		filename += MUTATION_NAMES[base_mutation] + "_";
+		filename += argparser->get_values()["-a"] + "_";
 		filename += std::to_string(target_function->meta_data().instance);
 	}
 	// filename = file_location + filename;
@@ -250,4 +268,100 @@ void Population::update_vector_pool(double previous_best_fitness){
 	}
 	// std::cout << "vector pool size: " << vector_pool.size() << std::endl;
 	this->improved = true;
+}
+
+//default mut_op = -1, F = -1.0
+Mutation* Population::get_mutation_operator(int mut_op, float F){
+
+	size_t archive = std::stoi(this->argparser->get_values()["-archive"]);
+
+	if (mut_op == -1){
+		mut_op = base_mutation;
+	}
+
+	switch(mut_op){
+		case 0:
+			return new RandDiv1(this->dim, this->n, this->F);
+		case 1:
+			return new RandDiv2(this->dim, this->n, this->F);
+		case 2:
+			return new BestDiv1(this->dim, this->n, this->F);
+		case 3:
+			return new BestDiv2(this->dim, this->n, this->F);
+		case 4:			
+			return new TargetToPBestDiv1(this->dim, this->n, this->F, archive);
+		case 5:
+			return new RandToBestDiv1(this->dim, this->n, this->F);
+		case 6:
+			return new RandToBestDiv2(this->dim, this->n, this->F);
+		case 7:
+			return new TargetToBestDiv1(this->dim, this->n, this->F);
+		case 8:
+			return new TargetToBestDiv2(this->dim, this->n, this->F);
+		case 9:
+			return new TargetToRandDiv1(this->dim, this->n, this->F);
+		case 10:
+			return new TargetToRandDiv2(this->dim, this->n, this->F);
+		case 11:
+			return new TwoOptDiv1(this->dim, this->n, this->F);
+		case 12:
+			return new Desmu(this->dim, this->n, this->F);
+		case 13:
+			return new Bea(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget, this->F);
+		case 14:
+			return new DirMut(this->dim, this->n, this->F);
+		case 15:
+			return new RandomSearch(this->dim, this->n, this->target_function, this->F);
+		default:
+			std::cerr << "Mutation operator " << mut_op << " out of range. Continuing using RandDiv1." << std::endl;
+			return new RandDiv1(this->dim, this->n, this->F);		
+	}	
+}
+
+//default sel_op = -1
+Selection* Population::get_selection_operator(int sel_op){
+	if (sel_op == -1){
+		sel_op = this->base_selection;
+	}
+	switch(sel_op){
+		case 0:
+			return new Elitist(this->n);
+		default:
+			return new Elitist(this->n);
+	}
+}
+
+//default c_op = -1, Cr = 1.0
+Crossover* Population::get_crossover_operator(int c_op, float Cr){
+	if (Cr == -1.0){
+		Cr = this->Cr;
+	}
+	if (c_op == -1){
+		c_op = base_crossover;
+	}
+	switch(c_op){
+		case 0:
+			return new Binomial(this->dim, Cr);
+		case 1:
+			return new Exponential(this->dim, Cr);
+		default:
+			return new Binomial(this->dim, Cr);
+	}
+}
+
+//default bound_op = -1
+Boundary* Population::get_boundary_operator(int bound_op){
+	if (bound_op == -1){
+		bound_op = base_boundary;
+	}
+	switch(bound_op){
+		case 0:
+			return new Clamp(this->target_function);
+		case 1:
+			return new Reflect(this->target_function);
+		case 2:
+			return new Reinit(this->target_function);
+		default:
+			return new Clamp(this->target_function);
+	}
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../include/argparse.h"
 #include "../include/population.h"
 /*
 
@@ -13,11 +12,14 @@ public:
 	~AdaptationManager();
 	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
-protected:
 	Mutation* get_mutation_operator(int mut_op = -1, float F = -1.0);
 	Selection* get_selection_operator(int sel_op = -1);
 	Crossover* get_crossover_operator(int c_op = -1, float Cr = -1.0);
 	Boundary* get_boundary_operator(int bound_op = -1);
+protected:
+	
+
+	virtual Population* create_population() = 0;
 
 
 	std::vector<float> F_history;
@@ -25,10 +27,10 @@ protected:
 
 	Argparse* argparser;
 	Population* pop;
-	Boundary* base_boundary;
-	Crossover* base_crossover;
-	Selection* base_selection;
-	Mutation* base_mutation;
+	int base_boundary;
+	int base_crossover;
+	int base_selection;
+	int base_mutation;
 	unsigned int* budget;
 	ioh::problem::RealSingleObjective* problem;
 
@@ -44,7 +46,7 @@ protected:
 class FixedManager : public AdaptationManager{
 public:
 	FixedManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
-    ~FixedManager();
+    // ~FixedManager(){};
     void adapt(unsigned int iterations){};	
 protected:	
 	Population* create_population();
@@ -54,7 +56,7 @@ protected:
 class RandomManager : public AdaptationManager{
 public:
 	RandomManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF = false);
-    ~RandomManager();
+    // ~RandomManager(){};
     void adapt(unsigned int iterations);
 protected:
 	Population* create_population();
