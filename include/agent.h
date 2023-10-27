@@ -55,14 +55,6 @@ public:
 private:
 	void print_position(std::vector<double> to_print);
 
-	template <class c>
-	void delete_ptr(c* class_ptr){
-		if class_ptr != NULL{
-			delete class_ptr;
-			class_ptr = NULL;
-		}
-	}
-
 	// std::vector<std::tuple<std::vector<double>, CROSSOVER, MUTATION, BOUNDARY> > history;
 	size_t dim;
 	std::vector<double> position;

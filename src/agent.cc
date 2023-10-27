@@ -34,23 +34,40 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 }
 
 Agent::~Agent() {
-	delete this->crossover_operator;
-	this->crossover_operator = NULL;
-	delete this->mutation_operator;
-	this->mutation_operator = NULL;
-	delete this->boundary_correction;
-	this->boundary_correction = NULL;
-	for (auto snapshot : this->history){
-		std::string hist_string= "";
-		auto [pos, fitness, CrOpPtr, MutOpPtr, BoundOpPtr] = snapshot;
-		
-		delete CrOpPtr;
-		CrOpPtr = NULL;
-		delete MutOpPtr;
-		MutOpPtr = NULL;
-		delete BoundOpPtr;
-		BoundOpPtr = NULL;
-	}
+	// std::vector<Crossover*> CrSeen;
+	// std::vector<Mutation*> MutSeen;
+	// std::vector<Boundary*> BoundSeen;
+	// for (auto snapshot : this->history){
+	// 	auto [pos, fitness, CrOpPtr, MutOpPtr, BoundOpPtr] = snapshot;
+	// 	std::cout << CrOpPtr << std::endl;
+	// 	if (CrOpPtr){
+	// 		CrSeen.push_back(CrOpPtr);
+	// 		CrOpPtr = NULL;
+	// 	}
+	// 	if (MutOpPtr){
+	// 		MutSeen.push_back(MutOpPtr);
+	// 		MutOpPtr = NULL;
+	// 	}
+	// 	if (BoundOpPtr){
+	// 		BoundSeen.push_back(BoundOpPtr);
+	// 		BoundOpPtr = NULL;
+	// 	}
+	// }
+	// for (auto ptr : CrSeen){
+	// 	delete ptr; ptr=NULL;
+	// }
+	// for (auto ptr : MutSeen){
+	// 	delete ptr; ptr=NULL;
+	// }
+	// for (auto ptr : BoundSeen){
+	// 	delete ptr; ptr=NULL;
+	// }
+	// delete this->crossover_operator;
+	// this->crossover_operator = NULL;
+	// delete this->mutation_operator;
+	// this->mutation_operator = NULL;
+	// delete this->boundary_correction;
+	// this->boundary_correction = NULL;
 }
 
 void Agent::print_position(std::vector<double> to_print){
