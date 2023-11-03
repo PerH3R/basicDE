@@ -182,7 +182,7 @@ std::vector<Agent*> Population::get_next_generation(){
 	return next_gen;
 }
 
-void Population::set_individual_crossover(Crossover* new_crossover, int idx){
+void Population::set_individual_crossover(std::shared_ptr<Crossover> new_crossover, int idx){
 	if (idx == -1){
 		//change all
 		for (int i = 0; i < this->n; ++i){
@@ -332,7 +332,7 @@ std::shared_ptr<Selection> Population::get_selection_operator(int sel_op){
 }
 
 //default c_op = -1, Cr = 1.0
-Crossover* Population::get_crossover_operator(int c_op, float Cr){
+std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr){
 	if (Cr == -1.0){
 		Cr = this->Cr;
 	}
@@ -341,11 +341,11 @@ Crossover* Population::get_crossover_operator(int c_op, float Cr){
 	}
 	switch(c_op){
 		case 0:
-			return new Binomial(this->dim, Cr);
+			return std::make_shared<Binomial>(this->dim, Cr);
 		case 1:
-			return new Exponential(this->dim, Cr);
+			return std::make_shared<Exponential>(this->dim, Cr);
 		default:
-			return new Binomial(this->dim, Cr);
+			return std::make_shared<Binomial>(this->dim, Cr);
 	}
 }
 
