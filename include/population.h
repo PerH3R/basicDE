@@ -29,7 +29,7 @@ public:
 	void print_fitness();
 
 	std::shared_ptr<Mutation> get_mutation_operator(int mut_op = -1, float F = -1.0);
-	Selection* get_selection_operator(int sel_op = -1);
+	std::shared_ptr<Selection> get_selection_operator(int sel_op = -1);
 	Crossover* get_crossover_operator(int c_op = -1, float Cr = -1.0);
 	Boundary* get_boundary_operator(int bound_op = -1);
 
@@ -56,7 +56,7 @@ public:
 
 
 	//change selection operator
-	void set_selection(Selection* new_selection){this->selection_operator = new_selection;};
+	void set_selection(std::shared_ptr<Selection> new_selection){this->selection_operator = new_selection;};
 
 	//change the operator that's passed when creating a new Agent
 	// void set_base_crossover(Crossover* new_crossover){this->base_crossover_operator = new_crossover;};
@@ -99,7 +99,7 @@ private:
 	int base_crossover_operator;
 	int base_mutation_operator;
 	int base_boundary_correction;
-	Selection* selection_operator;
+	std::shared_ptr<Selection> selection_operator;
 	Argparse* argparser;
 	ioh::problem::RealSingleObjective* target_function;
 	// unsigned int* budget; 

@@ -319,15 +319,15 @@ std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F)
 }
 
 //default sel_op = -1
-Selection* Population::get_selection_operator(int sel_op){
+std::shared_ptr<Selection> Population::get_selection_operator(int sel_op){
 	if (sel_op == -1){
 		sel_op = this->base_selection;
 	}
 	switch(sel_op){
 		case 0:
-			return new Elitist(this->n);
+			return std::make_shared<Elitist>(this->n);
 		default:
-			return new Elitist(this->n);
+			return std::make_shared<Elitist>(this->n);
 	}
 }
 
