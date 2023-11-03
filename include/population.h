@@ -28,7 +28,7 @@ public:
 
 	void print_fitness();
 
-	Mutation* get_mutation_operator(int mut_op = -1, float F = -1.0);
+	std::shared_ptr<Mutation> get_mutation_operator(int mut_op = -1, float F = -1.0);
 	Selection* get_selection_operator(int sel_op = -1);
 	Crossover* get_crossover_operator(int c_op = -1, float Cr = -1.0);
 	Boundary* get_boundary_operator(int bound_op = -1);
@@ -67,7 +67,7 @@ public:
 
 	//changes operator of a one or all Agents from the current population (idx=-1 to change all, idx between 0 to n to change specific individual)
 	void set_individual_crossover(Crossover* new_crossover, int idx = -1);
-	void set_individual_mutation(Mutation* new_mutation, int idx = -1);
+	void set_individual_mutation(std::shared_ptr<Mutation> new_mutation, int idx = -1);
 	void set_individual_boundary(Boundary* new_boundary, int idx = -1);
 
 	void update_vector_pool(double previous_best_fitness); //DirMut specific
@@ -94,7 +94,7 @@ private:
 	std::vector<Agent*> cur_gen;
 	std::vector<Agent*> next_gen;
 
-	std::vector<std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*>> archive;
+	std::vector<std::tuple<std::vector<double>, double, Crossover*, std::shared_ptr<Mutation>, Boundary*>> archive;
 
 	int base_crossover_operator;
 	int base_mutation_operator;

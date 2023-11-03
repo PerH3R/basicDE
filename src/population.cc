@@ -198,7 +198,7 @@ void Population::set_individual_crossover(Crossover* new_crossover, int idx){
 	}
 }
 
-void Population::set_individual_mutation(Mutation* new_mutation, int idx){
+void Population::set_individual_mutation(std::shared_ptr<Mutation> new_mutation, int idx){
 	if (idx == -1){
 		//change all
 		for (int i = 0; i < this->n; ++i){
@@ -271,7 +271,7 @@ void Population::update_vector_pool(double previous_best_fitness){
 }
 
 //default mut_op = -1, F = -1.0
-Mutation* Population::get_mutation_operator(int mut_op, float F){
+std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F){
 
 	size_t archive = std::stoi(this->argparser->get_values()["-archive"]);
 
@@ -281,40 +281,40 @@ Mutation* Population::get_mutation_operator(int mut_op, float F){
 
 	switch(mut_op){
 		case 0:
-			return new RandDiv1(this->dim, this->n, this->F);
+			return std::make_shared<RandDiv1>(this->dim, this->n, this->F);
 		case 1:
-			return new RandDiv2(this->dim, this->n, this->F);
+			return std::make_shared<RandDiv2>(this->dim, this->n, this->F);
 		case 2:
-			return new BestDiv1(this->dim, this->n, this->F);
+			return std::make_shared<BestDiv1>(this->dim, this->n, this->F);
 		case 3:
-			return new BestDiv2(this->dim, this->n, this->F);
+			return std::make_shared<BestDiv2>(this->dim, this->n, this->F);
 		case 4:			
-			return new TargetToPBestDiv1(this->dim, this->n, this->F, archive);
+			return std::make_shared<TargetToPBestDiv1>(this->dim, this->n, this->F, archive);
 		case 5:
-			return new RandToBestDiv1(this->dim, this->n, this->F);
+			return std::make_shared<RandToBestDiv1>(this->dim, this->n, this->F);
 		case 6:
-			return new RandToBestDiv2(this->dim, this->n, this->F);
+			return std::make_shared<RandToBestDiv2>(this->dim, this->n, this->F);
 		case 7:
-			return new TargetToBestDiv1(this->dim, this->n, this->F);
+			return std::make_shared<TargetToBestDiv1>(this->dim, this->n, this->F);
 		case 8:
-			return new TargetToBestDiv2(this->dim, this->n, this->F);
+			return std::make_shared<TargetToBestDiv2>(this->dim, this->n, this->F);
 		case 9:
-			return new TargetToRandDiv1(this->dim, this->n, this->F);
+			return std::make_shared<TargetToRandDiv1>(this->dim, this->n, this->F);
 		case 10:
-			return new TargetToRandDiv2(this->dim, this->n, this->F);
+			return std::make_shared<TargetToRandDiv2>(this->dim, this->n, this->F);
 		case 11:
-			return new TwoOptDiv1(this->dim, this->n, this->F);
+			return std::make_shared<TwoOptDiv1>(this->dim, this->n, this->F);
 		case 12:
-			return new Desmu(this->dim, this->n, this->F);
+			return std::make_shared<Desmu>(this->dim, this->n, this->F);
 		case 13:
-			return new Bea(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget, this->F);
+			return std::make_shared<Bea>(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget, this->F);
 		case 14:
-			return new DirMut(this->dim, this->n, this->F);
+			return std::make_shared<DirMut>(this->dim, this->n, this->F);
 		case 15:
-			return new RandomSearch(this->dim, this->n, this->target_function, this->F);
+			return std::make_shared<RandomSearch>(this->dim, this->n, this->target_function, this->F);
 		default:
 			std::cerr << "Mutation operator " << mut_op << " out of range. Continuing using RandDiv1." << std::endl;
-			return new RandDiv1(this->dim, this->n, this->F);		
+			return std::make_shared<RandDiv1>(this->dim, this->n, this->F);		
 	}	
 }
 

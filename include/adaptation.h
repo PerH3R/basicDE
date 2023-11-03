@@ -12,10 +12,10 @@ public:
 	~AdaptationManager();
 	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
-	Mutation* get_mutation_operator(int mut_op = -1, float F = -1.0);
-	Selection* get_selection_operator(int sel_op = -1);
-	Crossover* get_crossover_operator(int c_op = -1, float Cr = -1.0);
-	Boundary* get_boundary_operator(int bound_op = -1);
+	// Mutation* get_mutation_operator(int mut_op = -1, float F = -1.0);
+	// Selection* get_selection_operator(int sel_op = -1);
+	// Crossover* get_crossover_operator(int c_op = -1, float Cr = -1.0);
+	// Boundary* get_boundary_operator(int bound_op = -1);
 protected:
 	
 

@@ -1,6 +1,6 @@
 #include "../include/agent.h"
 
-Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover_operator, Boundary* boundary_correction, 
+Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, Crossover* crossover_operator, Boundary* boundary_correction, 
 				ioh::problem::RealSingleObjective* target_function, unsigned int* budget) : 
 			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), boundary_correction(boundary_correction),
 				target_function(target_function), budget(budget){
@@ -35,7 +35,7 @@ Agent::Agent(size_t dimension, Mutation* mutation_operator, Crossover* crossover
 
 Agent::~Agent() {
 	// std::vector<Crossover*> CrSeen;
-	// std::vector<Mutation*> MutSeen;
+	// std::vector<std::shared_ptr<Mutation>> MutSeen;
 	// std::vector<Boundary*> BoundSeen;
 	// for (auto snapshot : this->history){
 	// 	auto [pos, fitness, CrOpPtr, MutOpPtr, BoundOpPtr] = snapshot;
@@ -180,8 +180,8 @@ bool Agent::check_position_oob(const std::vector<double>& given_position){
 	return false;
 }
 
-std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> Agent::update_history(){
-	std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> t;
+std::tuple<std::vector<double>, double, Crossover*, std::shared_ptr<Mutation>, Boundary*> Agent::update_history(){
+	std::tuple<std::vector<double>, double, Crossover*, std::shared_ptr<Mutation>, Boundary*> t;
 	if (fitness_uptodate){
 		t = std::make_tuple(this->position, this->fitness, this->crossover_operator, this->mutation_operator, this->boundary_correction);
 		this->history.push_back(t);
@@ -192,7 +192,7 @@ std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> Agent:
 	return t;
 }
 
-void Agent::add_history(std::tuple<std::vector<double>, double, Crossover*, Mutation*, Boundary*> snapshot){
+void Agent::add_history(std::tuple<std::vector<double>, double, Crossover*, std::shared_ptr<Mutation>, Boundary*> snapshot){
 	history.push_back(snapshot);
 }
 
