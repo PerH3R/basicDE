@@ -158,7 +158,7 @@ private:
 
 class Bea : public Mutation {
 public:
-	Bea(size_t dim, size_t n, Boundary* boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
+	Bea(size_t dim, size_t n, std::shared_ptr<Boundary> boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
 			float F = 0.5, float Pbea = 0.8, int Nsegments = 5, int Nclones = 2, float locality = 0.1) : Mutation(dim, n, F), boundary_correction(boundary_correction),
 			target_function(target_function), Nclones(Nclones), Pbea(Pbea), Nsegments(Nsegments), budget(budget), locality(locality){
 
@@ -176,7 +176,7 @@ private:
 	void mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
 		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_gene, int end_gene);
 
-	Boundary* boundary_correction; //clamp seems like a very bad option
+	std::shared_ptr<Boundary> boundary_correction; //clamp seems like a very bad option
 	ioh::problem::RealSingleObjective* target_function;
 
 	int Nclones; //>2 is useless unless x1-x3 are rerolled for each clone

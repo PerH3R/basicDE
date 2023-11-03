@@ -214,7 +214,7 @@ void Population::set_individual_mutation(std::shared_ptr<Mutation> new_mutation,
 	}
 }
 
-void Population::set_individual_boundary(Boundary* new_boundary, int idx){
+void Population::set_individual_boundary(std::shared_ptr<Boundary> new_boundary, int idx){
 	if (idx == -1){
 		//change all
 		for (int i = 0; i < this->n; ++i){
@@ -350,18 +350,18 @@ std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr
 }
 
 //default bound_op = -1
-Boundary* Population::get_boundary_operator(int bound_op){
+std::shared_ptr<Boundary> Population::get_boundary_operator(int bound_op){
 	if (bound_op == -1){
 		bound_op = base_boundary;
 	}
 	switch(bound_op){
 		case 0:
-			return new Clamp(this->target_function);
+			return std::make_shared<Clamp>(this->target_function);
 		case 1:
-			return new Reflect(this->target_function);
+			return std::make_shared<Reflect>(this->target_function);
 		case 2:
-			return new Reinit(this->target_function);
+			return std::make_shared<Reinit>(this->target_function);
 		default:
-			return new Clamp(this->target_function);
+			return std::make_shared<Clamp>(this->target_function);
 	}
 }
