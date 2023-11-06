@@ -5,7 +5,7 @@ project (simpleDE
 set(CMAKE_CXX_STANDARD 17)
 link_libraries(stdc++fs)
 add_compile_definitions(FSEXPERIMENTAL)
-set(CXX_FLAGS  "${CXX_FLAGS} -std=c++17 -g -Wall -Wextra -fopenmp -Wreturn-type -lstdc++fs  ")
+set(CXX_FLAGS  "${CXX_FLAGS} -std=c++17 -g -Wall -Wextra -fopenmp -Wreturn-type -lstdc++fs -ggdb ")
 add_subdirectory(deps/IOHexperimenter)
 
 
