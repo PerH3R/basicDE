@@ -72,7 +72,15 @@ private:
 	int resample_limit; //10+ln(dim)^2
 
 	// position, fitness, crossover operator, mutation operator, boundary operator
-	std::vector< std::tuple<std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>> > history;
+	std::vector<
+		std::tuple<
+			std::vector<double>, 			//position
+			double, 						//fitness
+			std::shared_ptr<Crossover>, 	
+			std::shared_ptr<Mutation>, 
+			std::shared_ptr<Boundary>
+		> 
+	> history;
 
 
 

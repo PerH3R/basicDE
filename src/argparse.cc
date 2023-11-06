@@ -12,11 +12,8 @@ Argparse::Argparse(int argc, char* argv[]) : argc(argc), argv(argv)//,
 		std::cout << i << " " << argv[i] << std::endl;		
 		//is a flag
 		if (argv[i][0] == '-'){
-			// if (argv[i] == "-archive"){ //bools
-				// flag_vals[argv[i]] = "1";
-				// i++; //next flag
-			// }else 
 			std::string argument(argv[i]);
+
 			if ( (argument == "-F" || argument == "-Cr") && (this->isReal(argv[i+1]) ) ){ //doubles
 				flag_vals[argv[i]] = argv[i+1];
 				i+=2; //skip associated value
@@ -42,17 +39,21 @@ std::map<std::string, std::string> Argparse::get_values() const{
 }
 
 bool Argparse::isReal(std::string str){
+	std::cout << str;
 	for (char& c : str){
-		if (!(std::isdigit(c) || c == '.')){
+		if (!(std::isdigit(c) || c == '.' || c == '-')){
+			std::cout << "f" << std::endl;
 			return false;
 		}
 	}
+	std::cout << "t" << std::endl;
 	return true;
 }
 
 bool Argparse::isInteger(std::string str){
 	for (char& c : str){
-		if (!std::isdigit(c)){
+		std::cout << str << " " << c << " " << (std::isdigit(c)) << (c == '-') << std::endl;
+		if (!((std::isdigit(c)) || c == '-')){
 			return false;
 		}
 	}

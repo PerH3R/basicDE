@@ -33,9 +33,7 @@ Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* t
 	}//automatic population size if too small or not specified
 	
 	this->dim = target_function->meta_data().n_variables;
-	// this->budget=budget;
-	this->archive_size = archive_size;
-
+	this->archive.resize(archive_size);
 	this->cur_gen.reserve(pop_size);
 	this->next_gen.reserve(pop_size);
 	for (size_t i = 0; i < pop_size; i++) {
@@ -97,7 +95,6 @@ void Population::apply_crossover() {
 		//this->next_gen[i] = 
 		this->cur_gen[i]->crossover(this->next_gen, i);
 	}
-	
 }
 
 void Population::randomise_population(){
@@ -124,19 +121,27 @@ void Population::repopulate_next_gen() {
 	
 }
 
-void Population::add_to_archive(){
-	int reject_idx = 0; //keeps track of rejected agent to add from next_gen
-	while (this->archive.size() < this->archive_size){
-		archive.push_back(next_gen[reject_idx]->get_history().back());
-		reject_idx++;
+void Population::add_to_archive(std::vector<bool> kept_indexes){
+	for (auto i : kept_indexes){
+		std::cout << i;
+	}std::cout << std::endl;
+	std::cout << &(this->archive) << std::endl;
+	for (int i = 0; i < kept_indexes.size(); ++i){
+		if (kept_indexes[i] == 0){ //if child usurped parent
+			if (this->archive.size() < this->archive_size){ //if archive full
+				archive.push_back(std::get<0>(next_gen[i]->get_history().back())); //put parent position in archive
+			} else{
+				int rand_idx = tools.rand_int_unif(0, this->archive_size);
+				this->archive[rand_idx] = std::get<0>(next_gen[i]->get_history().back()); //replace random spot in archive
+			}
+		}
 	}
-	while (reject_idx < next_gen.size()){
-		int rand_idx = tools.rand_int_unif(0, archive_size);
-		// delete archive[rand_idx];
-		this->archive[rand_idx] = next_gen[reject_idx]->get_history().back();
-		reject_idx++;
+	for (auto i : this->archive){
+		for(auto j : i){
+			std::cout << j << " ";
+		}
+		std::cout << std::endl;
 	}
-
 }
 
 void Population::apply_selection() {
@@ -150,9 +155,8 @@ void Population::apply_selection() {
 	}
 
 	//TODO set to true 
-	if (this->archive_size > 0){ 
-		std::cout << "ARCHIVE" << std::endl;
-		add_to_archive(); 
+	if (this->archive_size > 0){
+		add_to_archive(kept_indexes); 
 	}
 }
 
@@ -288,8 +292,9 @@ std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F)
 			return std::make_shared<BestDiv1>(this->dim, this->n, this->F);
 		case 3:
 			return std::make_shared<BestDiv2>(this->dim, this->n, this->F);
-		case 4:			
-			return std::make_shared<TargetToPBestDiv1>(this->dim, this->n, this->F, archive);
+		case 4:	
+			return std::make_shared<TargetToPBestDiv1>(this->dim, this->n, 
+				&(this->archive), this->F, this->archive_size);
 		case 5:
 			return std::make_shared<RandToBestDiv1>(this->dim, this->n, this->F);
 		case 6:

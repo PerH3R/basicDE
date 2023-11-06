@@ -11,24 +11,24 @@
 // #include <cctype>
 
 /*
-flag				meaning					default					vals
+flag				meaning						default					vals
 
 //base
--f					function				1						int 1-24
--d					dimensions				5						int
--m					mutation operator		1						int 0-15 or 99 (TODO -> string)
--F					mutation rate 			0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
--c					crossover operator		0						int (TODO -> string)
--Cr					crossover rate 			0.5						real
--b					boundary operator		2 						int 0-2
--s					selection operator		0 						int 0-0
--a					operator adaptor		0 						int 0-...
--runs				repeated runs			1						int
--budget				mutex with -i			2500					int	
--pop_size			population size			0						int >4, lower will use automatic population size based on dimension of problem
+-f					function					1						int 1-24
+-d					dimensions					5						int
+-m					base mutation operator		1						int 0-15 or 99 (TODO -> string)
+-F					mutation rate 				0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
+-c					base crossover operator		0						int (TODO -> string)
+-Cr					crossover rate 				0.5						real
+-b					base boundary operator		2 						int 0-2
+-s					selection operator			0 						int 0-0
+-a					operator adaptor			0 						int 0-...
+-runs				repeated runs				1						int
+-budget				mutex with -i				2500					int	
+-pop_size			population size				0						int >4, lower will use automatic population size based on dimension of problem
 
 //operator specific
--archive		use archive (ttpb mut)	0						int (0 = no archive)	
+-archive		use archive (ttpb mut)			0						int (if negative, archive size = pop_size)	
 
 */
 
@@ -65,7 +65,7 @@ private:
 		{"-runs","1"}, 
 		{"-budget", "2500"}, 
 		{"-pop_size", "0"},
-		{"-archive","0"}
+		{"-archive","0"},
 	};
 
 

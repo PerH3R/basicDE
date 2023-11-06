@@ -72,8 +72,10 @@ public:
 
 	void update_vector_pool(double previous_best_fitness); //DirMut specific
 
+	
+
 private:
-	void add_to_archive();
+	void add_to_archive(std::vector<bool> kept_indexes);
 	void repopulate_next_gen();
 	Agent* create_agent();
 	bool agent_in_use(Agent* target);
@@ -94,7 +96,9 @@ private:
 	std::vector<Agent*> cur_gen;
 	std::vector<Agent*> next_gen;
 
-	std::vector<std::tuple<std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>>> archive;
+	std::vector<
+		std::vector<double>
+	> archive;
 
 	int base_crossover_operator;
 	int base_mutation_operator;

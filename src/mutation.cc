@@ -85,34 +85,45 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 
 	int p_idx = tools.rand_int_unif(0, std::round(p_val*this->n) + 1); //+1 to avoid rounding to 0 since rand_int_unif has range [low,high) 
 
-	std::vector<Agent*> archive_vector = std::vector<Agent*>(cur_gen.begin(), cur_gen.begin()+1); //TODO: temp until real archive implementation
-	std::vector<Agent*> temp_gen;
+	// std::vector<Agent*> archive_vector = std::vector<Agent*>(cur_gen.begin(), cur_gen.begin()+1); //TODO: temp until real archive implementation
+	std::vector<std::vector<double>> temp_gen;
 	temp_gen.reserve(cur_gen.size()-2);
 	for (int i = 0; i < cur_gen.size(); ++i){
 	 	if (i != p_idx && i != idx){ //exclude p and target
-	 		temp_gen.push_back(cur_gen[i]);
+	 		temp_gen.push_back(cur_gen[i]->get_position());
 	 	}	 	
 	} 
-	if (this->archive){
-		for (int i = 0; i < archive_vector.size(); ++i){
-		 	temp_gen.push_back(archive_vector[i]);
+	if (this->use_archive()){
+		for (int i = 0; i < (*archive).size(); ++i){
+			if (!(*archive)[i].empty()){
+				temp_gen.push_back((*archive)[i]);
+			}
+		 	
 		}
 	}
-
-	//only last index can be chosen from archive
-	std::vector<Agent*> chosen_vectors;
+	std::cout << temp_gen.size() << " " << (*archive).size() << " " << cur_gen.size() << std::endl;
+	//only last index (c) can be chosen from archive
+	std::vector<std::vector<double>> chosen_vectors;
 	do{
 		chosen_vectors = tools.pick_random(temp_gen, 2, false);
-	}while((this->archive && std::find(archive_vector.begin(), archive_vector.end(), chosen_vectors[0]) != archive_vector.end()) /*if b is from archive*/);
-	//TODO does the 2nd term always evaluate as true?
+	}while((this->use_archive() && std::find(archive.get()->begin(), archive.get()->end(), chosen_vectors[0]) != archive.get()->end()) /*if c is from archive*/);
+
+	// std::cout << chosen_vectors.size();
+	std::cout << this->archive;
+	for (auto i : *(this->archive)){
+		for(auto j : i){
+			std::cout << j << " ";
+		}
+		std::cout << std::endl;
+	}
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		double self = cur_gen[idx]->get_position()[j];
 		double p = cur_gen[p_idx]->get_position()[j];
-		double b = chosen_vectors[0]->get_position()[j];
-		double c = chosen_vectors[1]->get_position()[j];
+		double b = chosen_vectors[0][j];
+		double c = chosen_vectors[1][j];
 		donor_vec[j] = self + (this->F * (p - self)) + (this->F * (b - c));
 	}
 	return donor_vec;
@@ -120,7 +131,7 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 }
 
 bool TargetToPBestDiv1::use_archive(){
-	return archive;
+	return this->archive_bool;
 }
 
 // Target To Best Div 1
