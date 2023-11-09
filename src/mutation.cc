@@ -76,7 +76,7 @@ std::vector<double> BestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 // Target To PBest Div 1
 //TODO: add archive, fix p sampling
 std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "ttpb/1" << std::endl;
+	// std::cout << "ttpb/1" << " " << this->archive << std::endl;
 	float p_val;
 
 	//p between idx=2 and 20%	
@@ -87,7 +87,7 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 
 	// std::vector<Agent*> archive_vector = std::vector<Agent*>(cur_gen.begin(), cur_gen.begin()+1); //TODO: temp until real archive implementation
 	std::vector<std::vector<double>> temp_gen;
-	temp_gen.reserve(cur_gen.size()-2);
+	temp_gen.reserve(cur_gen.size()-2 + (*archive).size());
 	for (int i = 0; i < cur_gen.size(); ++i){
 	 	if (i != p_idx && i != idx){ //exclude p and target
 	 		temp_gen.push_back(cur_gen[i]->get_position());
@@ -101,21 +101,19 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 		 	
 		}
 	}
-	std::cout << temp_gen.size() << " " << (*archive).size() << " " << cur_gen.size() << std::endl;
+	// std::cout << temp_gen.size() << " " << (*archive).size() << " " << cur_gen.size() << std::endl;
 	//only last index (c) can be chosen from archive
 	std::vector<std::vector<double>> chosen_vectors;
 	do{
 		chosen_vectors = tools.pick_random(temp_gen, 2, false);
-	}while((this->use_archive() && std::find(archive.get()->begin(), archive.get()->end(), chosen_vectors[0]) != archive.get()->end()) /*if c is from archive*/);
+	}while((this->use_archive() && std::find(archive->begin(), archive->end(), chosen_vectors[0]) != archive->end()) /*if c is from archive*/);
 
-	// std::cout << chosen_vectors.size();
-	std::cout << this->archive;
-	for (auto i : *(this->archive)){
-		for(auto j : i){
-			std::cout << j << " ";
-		}
-		std::cout << std::endl;
-	}
+	// for (auto i : *(this->archive)){
+	// 	for(auto j : i){
+	// 		std::cout << j << " ";
+	// 	}
+	// 	std::cout << std::endl;
+	// }
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);
@@ -131,7 +129,7 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t
 }
 
 bool TargetToPBestDiv1::use_archive(){
-	return this->archive_bool;
+	return archive_size != 0;
 }
 
 // Target To Best Div 1
@@ -160,7 +158,6 @@ std::vector<double> TargetToBestDiv1::apply(std::vector<Agent*> cur_gen, size_t 
 
 // Target To Best Div 2
 std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "ttb/2" << std::endl;
  	
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	//if best and self are not the same
@@ -254,7 +251,6 @@ std::vector<double> TargetToRandDiv1::apply(std::vector<Agent*> cur_gen, size_t 
 
 //Target To Rand Div 2
 std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "ttr/2" << std::endl;
 
 	std::vector<Agent*> cur_gen_ex_self = std::vector<Agent*>(cur_gen.begin(), cur_gen.end());
 	cur_gen_ex_self.erase(cur_gen_ex_self.begin()+idx);
@@ -276,7 +272,6 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 
 //2-OptDiv1
 std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "2opt/1" << std::endl;
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
 	//use the fittest vector as base for donor
@@ -298,7 +293,6 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 // Desmu (stochastic levy-flight)
 std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
-	// std::cout << "desmu" << std::endl;
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
 

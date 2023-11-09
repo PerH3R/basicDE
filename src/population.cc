@@ -33,7 +33,7 @@ Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* t
 	}//automatic population size if too small or not specified
 	
 	this->dim = target_function->meta_data().n_variables;
-	this->archive.resize(archive_size);
+	// this->archive.resize(archive_size);
 	this->cur_gen.reserve(pop_size);
 	this->next_gen.reserve(pop_size);
 	for (size_t i = 0; i < pop_size; i++) {
@@ -122,10 +122,10 @@ void Population::repopulate_next_gen() {
 }
 
 void Population::add_to_archive(std::vector<bool> kept_indexes){
-	for (auto i : kept_indexes){
-		std::cout << i;
-	}std::cout << std::endl;
-	std::cout << &(this->archive) << std::endl;
+	// for (auto i : kept_indexes){
+	// 	std::cout << i;
+	// }std::cout << std::endl;
+	// std::cout << &(this->archive) << std::endl;
 	for (int i = 0; i < kept_indexes.size(); ++i){
 		if (kept_indexes[i] == 0){ //if child usurped parent
 			if (this->archive.size() < this->archive_size){ //if archive full
@@ -136,12 +136,12 @@ void Population::add_to_archive(std::vector<bool> kept_indexes){
 			}
 		}
 	}
-	for (auto i : this->archive){
-		for(auto j : i){
-			std::cout << j << " ";
-		}
-		std::cout << std::endl;
-	}
+	// for (auto i : this->archive){
+	// 	for(auto j : i){
+	// 		std::cout << j << " ";
+	// 	}
+	// 	std::cout << std::endl;
+	// }
 }
 
 void Population::apply_selection() {

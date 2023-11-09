@@ -70,8 +70,8 @@ public:
 
 class TargetToPBestDiv1 : public Mutation {
 public:
-    TargetToPBestDiv1(size_t dim, size_t n, const std::vector<std::vector<double>>* archive, float F = 0.5, bool archive_bool=false) : Mutation(dim, n, F), 
-    					archive(archive), archive_bool(archive_bool){
+    TargetToPBestDiv1(size_t dim, size_t n, std::vector<std::vector<double>>* archive, float F = 0.5, int archive_size = 0) : Mutation(dim, n, F), 
+    					archive(archive), archive_size(archive_size){
     	this->p_ceil = std::max(double(2.0/this->n), 0.2);
     };
     ~TargetToPBestDiv1() {};
@@ -81,9 +81,9 @@ public:
 	using Mutation::use_archive;
 	bool use_archive();
 protected:	
-	const std::vector< std::vector<double> >* archive;
+	std::vector< std::vector<double> >* archive;
 	float p_ceil;
-	bool archive_bool;
+	int archive_size;
 };
 
 class RandToBestDiv1 : public Mutation {
