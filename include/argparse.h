@@ -16,7 +16,7 @@ flag				meaning						default					vals
 //base
 -f					function					1						int 1-24
 -d					dimensions					5						int
--m					base mutation operator		1						int 0-15 or 99 (TODO -> string)
+-m					base mutation operator		1						int 0-15 
 -F					mutation rate 				0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
 -c					base crossover operator		0						int (TODO -> string)
 -Cr					crossover rate 				0.5						real

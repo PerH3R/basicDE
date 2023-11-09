@@ -122,26 +122,16 @@ void Population::repopulate_next_gen() {
 }
 
 void Population::add_to_archive(std::vector<bool> kept_indexes){
-	// for (auto i : kept_indexes){
-	// 	std::cout << i;
-	// }std::cout << std::endl;
-	// std::cout << &(this->archive) << std::endl;
 	for (int i = 0; i < kept_indexes.size(); ++i){
 		if (kept_indexes[i] == 0){ //if child usurped parent
 			if (this->archive.size() < this->archive_size){ //if archive full
 				archive.push_back(std::get<0>(next_gen[i]->get_history().back())); //put parent position in archive
-			} else{
+			}else{
 				int rand_idx = tools.rand_int_unif(0, this->archive_size);
 				this->archive[rand_idx] = std::get<0>(next_gen[i]->get_history().back()); //replace random spot in archive
 			}
 		}
 	}
-	// for (auto i : this->archive){
-	// 	for(auto j : i){
-	// 		std::cout << j << " ";
-	// 	}
-	// 	std::cout << std::endl;
-	// }
 }
 
 void Population::apply_selection() {

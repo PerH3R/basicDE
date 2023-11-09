@@ -47,7 +47,7 @@ class FixedManager : public AdaptationManager{
 public:
 	FixedManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
     // ~FixedManager(){};
-    void adapt(unsigned int iterations){};	
+    void adapt(unsigned int iterations){};	//no adaptation
 protected:	
 	Population* create_population();
 };
