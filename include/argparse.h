@@ -38,11 +38,11 @@ TODO: configurable retry/resample limit
 
 class Argparse {
 public:
-	Argparse(int argc, char* argv[]);
+	Argparse(const int argc, char* argv[]);
 	~Argparse(){};
 
-	bool isReal(std::string str);
-	bool isInteger(std::string str);
+	bool isReal(const std::string str);
+	bool isInteger(const std::string str);
 	void printArgs();
 	std::string getArgsAsString();
 	std::map<std::string, std::string> get_values() const;

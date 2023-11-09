@@ -6,7 +6,7 @@ CROSSOVER Binomial::get_type() {
 }
 
 // Apply crossover on all agents, returns selection
-std::vector<double> Binomial::apply(std::vector<double> cur_pos, std::vector<double> donor_vec){
+std::vector<double> Binomial::apply(const std::vector<double> cur_pos, const std::vector<double> donor_vec){
 	// std::cout << "co apply dim: " << this->dim << std::endl;
 
 	std::vector<double> new_pos;
@@ -47,7 +47,7 @@ CROSSOVER Exponential::get_type() {
 }
 
 // Apply crossover on all agents, returns selection
-std::vector<double> Exponential::apply(const std::vector<double> cur_pos, std::vector<double> donor_vec){
+std::vector<double> Exponential::apply(const std::vector<double> cur_pos, const std::vector<double> donor_vec){
 	// std::cout << "co apply dim: " << this->dim << std::endl;
 
 	std::vector<double> new_pos = cur_pos;

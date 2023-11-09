@@ -17,7 +17,7 @@ public:
     Crossover(size_t dim, float Cr = 0.2) : dim(dim), Cr(Cr){ };
 	virtual ~Crossover() { };
     virtual CROSSOVER get_type() = 0;
-    virtual std::vector<double> apply(std::vector<double> cur_pos, std::vector<double> donor_vec) = 0;
+    virtual std::vector<double> apply(const std::vector<double> cur_pos, const std::vector<double> donor_vec) = 0;
 
     float get_Cr(){return this->Cr;}
 
@@ -31,7 +31,7 @@ public:
     Binomial(size_t dim, float Cr = 0.2) : Crossover(dim, Cr){ };// = default();
     ~Binomial(){};
     CROSSOVER get_type();
-    std::vector<double> apply(std::vector<double> cur_pos, std::vector<double> donor_vec);
+    std::vector<double> apply(const std::vector<double> cur_pos, const std::vector<double> donor_vec);
 };
 
 
@@ -40,5 +40,5 @@ public:
     Exponential(size_t dim, float Cr = 0.2) : Crossover(dim, Cr){ };// = default();
     ~Exponential(){};
     CROSSOVER get_type();
-    std::vector<double> apply(std::vector<double> cur_pos, std::vector<double> donor_vec);
+    std::vector<double> apply(const std::vector<double> cur_pos, const std::vector<double> donor_vec);
 };

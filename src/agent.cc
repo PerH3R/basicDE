@@ -119,7 +119,7 @@ void Agent::calculate_fitness() {
 double Agent::get_fitness() {
 	if (fitness_uptodate == false && *budget > 0) {
 		// std::cout << "calculating fitness... ";
-		this->calculate_fitness();
+		calculate_fitness();
 		*budget -= 1;
 	}
 	return fitness;

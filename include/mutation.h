@@ -15,7 +15,7 @@ class Mutation {
 public:
 	// Mutation() = default;
 	Mutation(size_t dim, size_t n, float F = 0.5) : dim(dim), n(n), F(F){};
-	virtual bool use_archive(){return false;};
+	virtual bool use_archive() {return false;} ;
 	virtual ~Mutation() { };
 	virtual MUTATION get_type() = 0;
 	virtual std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx) = 0;
