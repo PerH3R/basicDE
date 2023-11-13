@@ -31,11 +31,12 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
 inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = true) //false
 {
 	std::string algname;
-	if (std::stoi(argparser->get_values()["-m"]) != 99)
+	if (std::stoi(argparser->get_values()["-a"]) != 1)
 	{
 		algname = MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])];
-		algname += 'F' + MUTATION_NAMES[std::stoi(argparser->get_values()["-F"])];
-		algname += "Cr" + MUTATION_NAMES[std::stoi(argparser->get_values()["-Cr"])];
+		algname += 'F' + std::stoi(argparser->get_values()["-F"]);
+		algname += CROSSOVER_NAMES[std::stoi(argparser->get_values()["-c"])];
+		algname += "Cr" + std::stoi(argparser->get_values()["-Cr"]);
 	} else {
 		algname = "random operators";
 	}
@@ -191,8 +192,12 @@ int main(int argc, char* argv[]) {
 	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
 	// unsigned int* budget = &budget_value;
 
-	auto logger = get_logger(argparser, "results/results-m"+argparser->get_values()["-m"]+"-d"+argparser->get_values()["-d"]
-		+"-pop_size"+argparser->get_values()["-pop_size"]+"-F"+argparser->get_values()["-F"]+"-Cr"+argparser->get_values()["-Cr"]);
+	auto logger = get_logger(argparser, "results/results-m"+argparser->get_values()["-m"]+
+			"-d"+argparser->get_values()["-d"]+
+			"-pop_size"+argparser->get_values()["-pop_size"]+
+			"-F"+argparser->get_values()["-F"]+
+			"-Cr"+argparser->get_values()["-Cr"]+
+			"-b"+argparser->get_values()["-b"]);
     /// Instatiate a bbob suite of problem {1,2}, instance {1, 2} and dimension {5,10}.
     // const auto &suite_factory = ioh::suite::SuiteRegistry<ioh::problem::RealSingleObjective>::instance();
     // const auto suite = suite_factory.create("BBOB", {1, 20}, {1, 2}, {dim});
