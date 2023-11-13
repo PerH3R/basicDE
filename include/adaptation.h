@@ -19,7 +19,7 @@ public:
 protected:
 	
 
-	virtual Population* create_population() = 0;
+	virtual void create_population() = 0;
 
 
 	std::vector<float> F_history;
@@ -49,7 +49,7 @@ public:
     // ~FixedManager(){};
     void adapt(unsigned int iterations){};	//no adaptation
 protected:	
-	Population* create_population();
+	void create_population();
 };
 
 //Randomizes the mutation operator for each individual for each generation
@@ -59,7 +59,7 @@ public:
     // ~RandomManager(){};
     void adapt(unsigned int iterations);
 protected:
-	Population* create_population();
+	void create_population();
 
 	bool RandomizeF;
 };

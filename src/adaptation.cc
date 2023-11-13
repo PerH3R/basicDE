@@ -33,7 +33,7 @@ FixedManager::FixedManager(Argparse* argparser, ioh::problem::RealSingleObjectiv
 	this->create_population();
 }
 
-Population* FixedManager::create_population(){
+void FixedManager::create_population(){
 	this->pop = new Population(this->argparser, this->problem, this->n, this->budget, this->archive_size);
 }
 
@@ -42,7 +42,7 @@ RandomManager::RandomManager(Argparse* argparser, ioh::problem::RealSingleObject
 	this->create_population();
 }
 
-Population* RandomManager::create_population(){
+void RandomManager::create_population(){
 	this->pop =  new Population(this->argparser, this->problem, this->n, this->budget, this->archive_size);
 	for (int i = 0; i < this->pop->get_population_size(); ++i){
 		int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS); //TODO: doublecheck values

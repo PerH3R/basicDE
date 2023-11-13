@@ -34,6 +34,8 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
 	if (std::stoi(argparser->get_values()["-m"]) != 99)
 	{
 		algname = MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])];
+		algname += 'F' + MUTATION_NAMES[std::stoi(argparser->get_values()["-F"])];
+		algname += "Cr" + MUTATION_NAMES[std::stoi(argparser->get_values()["-Cr"])];
 	} else {
 		algname = "random operators";
 	}
