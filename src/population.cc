@@ -16,7 +16,7 @@ Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* t
 	this->n = std::stoi(argparser->get_values()["-pop_size"]);
 	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
 	if (this->n <4){
-		this->n = 4 + 5*target_function->meta_data().n_variables;
+		this->n = 5*target_function->meta_data().n_variables;
 	}//automatic population size if too small or not specified
 
 	this->base_selection = std::stoi(argparser->get_values()["-s"]);
@@ -27,7 +27,7 @@ Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* t
 	this->selection_operator = get_selection_operator();
 
 	if (pop_size <4){
-		this->n = 4 + 5*target_function->meta_data().n_variables;;
+		this->n = 5*target_function->meta_data().n_variables;;
 	} else {
 		this->n = pop_size;
 	}//automatic population size if too small or not specified

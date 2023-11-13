@@ -15,7 +15,7 @@ flag				meaning						default					vals
 
 //base
 -f					function					1						int 1-24
--d					dimensions					5						int
+-d					dimensions					5						positive int
 -m					base mutation operator		1						int 0-15 
 -F					mutation rate 				0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
 -c					base crossover operator		0						int (TODO -> string)
@@ -24,10 +24,10 @@ flag				meaning						default					vals
 -s					selection operator			0 						int 0-0
 -a					operator adaptor			0 						int 0-...
 -runs				repeated runs				1						int
--budget				--mutex with -i--			2500					int, also lowest value budget can go
+-budget				base allowed funtion evals	2500					int, also lowest value budget can go
 -budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
--pop_size			population size				0						int >4, lower will use automatic population size based on dimension of problem
-
+-pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on dimension of problem
+	
 //operator specific
 -archive		use archive (ttpb mut)			0						int (if negative, archive size = pop_size)	
 

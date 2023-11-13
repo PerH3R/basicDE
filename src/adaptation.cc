@@ -11,7 +11,7 @@ AdaptationManager::AdaptationManager(Argparse* argparser, ioh::problem::RealSing
 	this->n = std::stoi(argparser->get_values()["-pop_size"]);
 	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
 	if (this->n <4){
-		this->n = 4 + 5*problem->meta_data().n_variables;
+		this->n = 5*problem->meta_data().n_variables;
 	}//automatic population size if too small or not specified
 	if (std::stoi(argparser->get_values()["-archive"]) < 0){
 		this->archive_size = this->n;
