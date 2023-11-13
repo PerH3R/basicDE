@@ -24,7 +24,8 @@ flag				meaning						default					vals
 -s					selection operator			0 						int 0-0
 -a					operator adaptor			0 						int 0-...
 -runs				repeated runs				1						int
--budget				mutex with -i				2500					int	
+-budget				--mutex with -i--			2500					int, also lowest value budget can go
+-budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
 -pop_size			population size				0						int >4, lower will use automatic population size based on dimension of problem
 
 //operator specific
@@ -63,7 +64,8 @@ private:
 		{"-s", "0"},
 		{"-a", "0"},
 		{"-runs","1"}, 
-		{"-budget", "2500"}, 
+		{"-budget", "10000"}, 
+		{"-budget_multiplier","1"},
 		{"-pop_size", "0"},
 		{"-archive","0"},
 	};

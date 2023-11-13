@@ -14,10 +14,10 @@ struct results {
 
 inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> create_suite(int problem, int inst, int dim, const bool using_factory = true)
 {
-	const std::vector<int> problems{1,2,5};
-    const std::vector<int> instances{1};
-    // const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
-    // const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	// const std::vector<int> problems{1,2,5};
+    // const std::vector<int> instances{1};
+    const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
+    const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     std::vector<int> dimensions;
     if (dim == 0){ dimensions = {5,20}; }
     else{ dimensions = {dim}; }
@@ -186,8 +186,8 @@ int main(int argc, char* argv[]) {
 
 	int m = std::stoi(argparser->get_values()["-m"]);
 	size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
-	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
-	unsigned int* budget = &budget_value;
+	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
+	// unsigned int* budget = &budget_value;
 
 	auto logger = get_logger(argparser, "results/results-m"+argparser->get_values()["-m"]+"-d"+argparser->get_values()["-d"]
 		+"-pop_size"+argparser->get_values()["-pop_size"]+"-F"+argparser->get_values()["-F"]+"-Cr"+argparser->get_values()["-Cr"]);
@@ -209,14 +209,20 @@ int main(int argc, char* argv[]) {
     	auto problem = problem_shr.get();
     	tools.set_seed(problem->meta_data().instance);
 
+    	// set up operators and problem variables
+		int problem_dim = problem->meta_data().n_variables;
+    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size	
+
     	//reset budget
-    	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
+    	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]) * (std::stod(argparser->get_values()["-budget_multiplier"]) * problem_dim);
+    	if (budget_value < std::stoi(argparser->get_values()["-budget"]))
+    	{
+    		budget_value = std::stoi(argparser->get_values()["-budget"]);
+    	}
     	unsigned int* budget = &budget_value;
     	std::cout << "setting budget to " << *budget << std::endl;
 
-		// set up operators and problem variables
-		int problem_dim = problem->meta_data().n_variables;
-    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size		
+			
 
 		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
