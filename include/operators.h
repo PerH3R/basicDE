@@ -73,8 +73,8 @@ enum CROSSOVER {
 };
 
 const std::string CROSSOVER_NAMES[] = {
-	"Binomial",
-	"Exponential"
+	"Bin",
+	"Exp"
 };
 
 /*

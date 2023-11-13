@@ -20,7 +20,7 @@ flag				meaning						default					vals
 -F					mutation rate 				0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
 -c					base crossover operator		0						int (TODO -> string)
 -Cr					crossover rate 				0.5						real
--b					base boundary operator		2 						int 0-2
+-b					base boundary operator		0 						int 0-2
 -s					selection operator			0 						int 0-0
 -a					operator adaptor			0 						int 0-...
 -runs				repeated runs				1						int
@@ -60,7 +60,7 @@ private:
 		{"-F","0.5"}, 
 		{"-c","0"}, 
 		{"-Cr","0.5"}, 
-		{"-b", "2"},
+		{"-b", "0"},
 		{"-s", "0"},
 		{"-a", "0"},
 		{"-runs","1"}, 
