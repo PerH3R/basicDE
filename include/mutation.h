@@ -18,8 +18,8 @@ public:
 	virtual bool use_archive() {return false;} ;
 	virtual ~Mutation() { };
 	virtual MUTATION get_type() = 0;
-	virtual std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx) = 0;
-	// virtual std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx, std::vector<std::vector<double>>& vector_pool) = 0;
+	virtual std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx) = 0;
+	// virtual std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx, std::vector<std::vector<double>>& vector_pool) = 0;
 	// virtual void update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen){};
 	virtual void improved_to_true(){};
 	virtual void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){};
@@ -41,7 +41,7 @@ public:
     RandDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~RandDiv1() {};
     MUTATION get_type(){return RANDDIV1;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class RandDiv2 : public Mutation {
@@ -49,7 +49,7 @@ public:
     RandDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~RandDiv2() {};
     MUTATION get_type(){return RANDDIV2;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class BestDiv1 : public Mutation {
@@ -57,7 +57,7 @@ public:
     BestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~BestDiv1() {};
     MUTATION get_type(){return BESTDIV1;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class BestDiv2 : public Mutation {
@@ -65,7 +65,7 @@ public:
     BestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~BestDiv2() {};
     MUTATION get_type(){return BESTDIV2;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class TargetToPBestDiv1 : public Mutation {
@@ -76,7 +76,7 @@ public:
     };
     ~TargetToPBestDiv1() {};
     MUTATION get_type(){return TTPBESTDIV1;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 	//TODO check if 'using' is needed \/
 	using Mutation::use_archive;
 	bool use_archive();
@@ -91,7 +91,7 @@ public:
     RandToBestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~RandToBestDiv1() {};
     MUTATION get_type(){return RTBESTDIV1;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class RandToBestDiv2 : public Mutation {
@@ -99,7 +99,7 @@ public:
     RandToBestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~RandToBestDiv2() {};
     MUTATION get_type(){return RTBESTDIV2;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class TargetToBestDiv1 : public Mutation {
@@ -107,7 +107,7 @@ public:
     TargetToBestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TargetToBestDiv1() {};
     MUTATION get_type(){return TTBESTDIV1;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class TargetToBestDiv2 : public Mutation {
@@ -115,7 +115,7 @@ public:
     TargetToBestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TargetToBestDiv2() {};
     MUTATION get_type(){return TTBESTDIV2;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class TargetToRandDiv1 : public Mutation {
@@ -123,7 +123,7 @@ public:
     TargetToRandDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TargetToRandDiv1() {};
     MUTATION get_type(){return TTRANDDIV1;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class TargetToRandDiv2 : public Mutation {
@@ -131,7 +131,7 @@ public:
     TargetToRandDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TargetToRandDiv2() {};
     MUTATION get_type(){return TTRANDDIV2;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class TwoOptDiv1 : public Mutation {
@@ -139,7 +139,7 @@ public:
     TwoOptDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
     ~TwoOptDiv1() {};
     MUTATION get_type(){return TWOOPTDIV1;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
 class Desmu : public Mutation {
@@ -151,7 +151,7 @@ public:
     };
     ~Desmu() {};
     MUTATION get_type(){return DESMU;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 private:
 	double alpha = 1.0; //scale factor values for given alpha->(mean,sig) : 1.5->(~0.4, 0.7); 1.0->(~2.3, 13.6); 0.2->(~2.4e11, 2.5e13)
 	double sig_u;
@@ -172,7 +172,7 @@ public:
 	};
     ~Bea() {};
     MUTATION get_type(){return BEA;};
-    std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+    std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 
 private:
 	void mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
@@ -200,7 +200,7 @@ public:
     // void update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen, std::vector< std::vector<double> >& vector_pool);
     void improved_to_true(){this->improved = true;};
     MUTATION get_type(){return DIRMUT;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 	void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){this->vector_pool_ptr = &vector_pool;}
 private:
 	Mutation* base_operator;
@@ -213,7 +213,7 @@ public:
     RandomSearch(size_t dim, size_t n, ioh::problem::RealSingleObjective* target_function, float F = 0.5) : Mutation(dim, n, F), target_function(target_function) {};
     ~RandomSearch() {};
     MUTATION get_type(){return RANDOMSEARCH;};
-	std::vector<double> apply(std::vector<Agent*> cur_gen, size_t idx);
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 private:
 	ioh::problem::RealSingleObjective* target_function;
 };

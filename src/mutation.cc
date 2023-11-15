@@ -1,7 +1,7 @@
 #include "../include/mutation.h"
 
 // RandDiv1
-std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> RandDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	//select 3 vectors uniformly at random 
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
@@ -17,7 +17,7 @@ std::vector<double> RandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 //RandDiv2
-std::vector<double> RandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> RandDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	//select 5 vectors uniformly at random 
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 5, false);
 
@@ -36,7 +36,7 @@ std::vector<double> RandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 // BestDiv1
-std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> BestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	//exclude optimal (first because sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
@@ -54,7 +54,7 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 
 // BestDiv2
-std::vector<double> BestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> BestDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	//exclude optimal (first if sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 4, false);
@@ -75,7 +75,7 @@ std::vector<double> BestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
 
 // Target To PBest Div 1
 //TODO: add archive, fix p sampling
-std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	// std::cout << "ttpb/1" << " " << this->archive << std::endl;
 	float p_val;
 
@@ -133,7 +133,7 @@ bool TargetToPBestDiv1::use_archive(){
 }
 
 // Target To Best Div 1
-std::vector<double> TargetToBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> TargetToBestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
  	
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	//if best and self are not the same
@@ -157,7 +157,7 @@ std::vector<double> TargetToBestDiv1::apply(std::vector<Agent*> cur_gen, size_t 
 
 
 // Target To Best Div 2
-std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
  	
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	//if best and self are not the same
@@ -182,7 +182,7 @@ std::vector<double> TargetToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 }
 
 // Rand To Best Div 1
-std::vector<double> RandToBestDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> RandToBestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
  	
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	//if best and self are not the same
@@ -206,7 +206,7 @@ std::vector<double> RandToBestDiv1::apply(std::vector<Agent*> cur_gen, size_t id
 
 
 // Rand To Best Div 2
-std::vector<double> RandToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> RandToBestDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
  	
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	//if best and self are not the same
@@ -231,7 +231,7 @@ std::vector<double> RandToBestDiv2::apply(std::vector<Agent*> cur_gen, size_t id
 
 
 //Target To Rand Div 1
-std::vector<double> TargetToRandDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> TargetToRandDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 
 	std::vector<Agent*> cur_gen_ex_self = std::vector<Agent*>(cur_gen.begin(), cur_gen.end());
 	cur_gen_ex_self.erase(cur_gen_ex_self.begin()+idx);
@@ -250,7 +250,7 @@ std::vector<double> TargetToRandDiv1::apply(std::vector<Agent*> cur_gen, size_t 
 }
 
 //Target To Rand Div 2
-std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 
 	std::vector<Agent*> cur_gen_ex_self = std::vector<Agent*>(cur_gen.begin(), cur_gen.end());
 	cur_gen_ex_self.erase(cur_gen_ex_self.begin()+idx);
@@ -271,7 +271,7 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> cur_gen, size_t 
 }
 
 //2-OptDiv1
-std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
 	//use the fittest vector as base for donor
@@ -292,7 +292,7 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 // Desmu (stochastic levy-flight)
-std::vector<double> Desmu::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> Desmu::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
 
@@ -357,7 +357,7 @@ void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Ag
 	}
 }
 
-std::vector<double> Bea::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> Bea::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	int remainder = this->dim % this->Nsegments;
 	int remainder_settled = 0;
 
@@ -392,7 +392,7 @@ std::vector<double> Bea::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 //DIRMUT
-std::vector<double> DirMut::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> DirMut::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	std::vector<double> donor_vec(this->dim, 0.0);
 	if (this->vector_pool_ptr == NULL){
 			std::cerr << "NO VEctor pool found. Prepare for errors." << std::endl;
@@ -421,7 +421,7 @@ std::vector<double> DirMut::apply(std::vector<Agent*> cur_gen, size_t idx){
 }
 
 //RandomSearch
-std::vector<double> RandomSearch::apply(std::vector<Agent*> cur_gen, size_t idx){
+std::vector<double> RandomSearch::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		donor_vec[j] = tools.rand_double_unif(this->target_function->bounds().lb[j], this->target_function->bounds().ub[j]);
