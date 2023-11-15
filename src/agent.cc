@@ -34,40 +34,6 @@ Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std:
 }
 
 Agent::~Agent() {
-	// std::vector<std::shared_ptr<Crossover>> CrSeen;
-	// std::vector<std::shared_ptr<Mutation>> MutSeen;
-	// std::vector<std::shared_ptr<Boundary>> BoundSeen;
-	// for (auto snapshot : this->history){
-	// 	auto [pos, fitness, CrOpPtr, MutOpPtr, BoundOpPtr] = snapshot;
-	// 	std::cout << CrOpPtr << std::endl;
-	// 	if (CrOpPtr){
-	// 		CrSeen.push_back(CrOpPtr);
-	// 		CrOpPtr = NULL;
-	// 	}
-	// 	if (MutOpPtr){
-	// 		MutSeen.push_back(MutOpPtr);
-	// 		MutOpPtr = NULL;
-	// 	}
-	// 	if (BoundOpPtr){
-	// 		BoundSeen.push_back(BoundOpPtr);
-	// 		BoundOpPtr = NULL;
-	// 	}
-	// }
-	// for (auto ptr : CrSeen){
-	// 	delete ptr; ptr=NULL;
-	// }
-	// for (auto ptr : MutSeen){
-	// 	delete ptr; ptr=NULL;
-	// }
-	// for (auto ptr : BoundSeen){
-	// 	delete ptr; ptr=NULL;
-	// }
-	// delete this->crossover_operator;
-	// this->crossover_operator = NULL;
-	// delete this->mutation_operator;
-	// this->mutation_operator = NULL;
-	// delete this->boundary_correction;
-	// this->boundary_correction = NULL;
 }
 
 void Agent::print_position(std::vector<double> to_print){
