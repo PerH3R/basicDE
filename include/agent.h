@@ -22,7 +22,7 @@ public:
 	Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, std::shared_ptr<Boundary> boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget);
 	~Agent();
 
-	void mutate(std::vector<Agent*> cur_gen, size_t idx);
+	void mutate(const std::vector<Agent*>& cur_gen, size_t idx);
 	void crossover(std::vector<Agent*> next_gen, size_t idx);
 
 	void calculate_fitness();
@@ -30,7 +30,7 @@ public:
 
 	bool check_position_oob(const std::vector<double>& given_position);
 
-	std::vector<double> get_position();
+	const std::vector<double>& get_position();
 	void set_position(std::vector<double> new_position);
 
 

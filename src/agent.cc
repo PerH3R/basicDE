@@ -77,13 +77,13 @@ void Agent::print_position(std::vector<double> to_print){
 	std::cout << to_print.size() << std::endl;
 }
 
-void Agent::mutate(std::vector<Agent*> cur_gen, size_t idx){
+void Agent::mutate(const std::vector<Agent*>& cur_gen, size_t idx){
 	std::vector<double> donor_vec = this->mutation_operator->apply(cur_gen, idx);
 	int retries = 0;
 	// std::cout << "dv" << std::endl;
 	// print_position(donor_vec);
 	//attempt generation of donor vector within bounds
-	while(check_position_oob(donor_vec) == true && retries < this->resample_limit){
+	while((check_position_oob(donor_vec) == true) && (retries < this->resample_limit)){
 		retries++;
 		std::vector<double> donor_vec = this->mutation_operator->apply(cur_gen, idx);
 		// print_position(donor_vec);
@@ -125,7 +125,7 @@ double Agent::get_fitness() {
 	return fitness;
 }
 
-std::vector<double> Agent::get_position() {
+const std::vector<double>& Agent::get_position() {
 	return position;
 }
 
