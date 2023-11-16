@@ -19,7 +19,8 @@ class Mutation;
 
 class Agent {
 public:
-	Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, std::shared_ptr<Boundary> boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget);
+	Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, 
+			std::shared_ptr<Boundary> boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget, int resample_limit);
 	~Agent();
 
 	void mutate(const std::vector<Agent*>& cur_gen, size_t idx);

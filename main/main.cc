@@ -124,25 +124,21 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 		std::chrono::time_point t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_mutation();
 		mut_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
-		std::cout << "|===";		
 
 		//crossover
 		t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_crossover();
 		cr_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
-		std::cout << "===";
 
 		//selection
 		t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_selection();
 		sel_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
-		std::cout << "===";
 
 		//sort population
 		t1 = std::chrono::high_resolution_clock::now();
 		pop->sort();
 		sort_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
-		std::cout << "=| ";
 		if (log_pos){
 			pop->write_population();
 		}
@@ -161,8 +157,6 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			best_fitness = pop->get_current_generation()[0]->get_fitness(); //update best fitness
 			best_location = pop->get_current_generation()[0]->get_position();
 			
-		} else {
-			std::cout << std::endl;
 		}
 		//additional stopping criteria
 		//...

@@ -2,7 +2,7 @@
 
 
 
-Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t pop_size, unsigned int* budget, int archive_size) {
+Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t pop_size, unsigned int* budget, int archive_size, int resample_limit) {
 	std::cout << "creating Population...";
 	this->target_function = target_function;
 	this->archive_size = archive_size;
@@ -31,6 +31,8 @@ Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* t
 	} else {
 		this->n = pop_size;
 	}//automatic population size if too small or not specified
+
+	this->resample_limit = resample_limit;
 	
 	this->dim = target_function->meta_data().n_variables;
 	// this->archive.resize(archive_size);
@@ -54,15 +56,10 @@ Population::~Population() {
 		delete i;
 		i = NULL;
 	}
-	//TODO remove?
-	// for(Agent* i : archive){
-		// delete i;
-		// i = NULL;
-	// }
 }
 
 Agent* Population::create_agent(){
-	return new Agent(dim, get_mutation_operator(), get_crossover_operator(), get_boundary_operator(), target_function, budget);
+	return new Agent(dim, get_mutation_operator(), get_crossover_operator(), get_boundary_operator(), target_function, budget, this->resample_limit);
 }
 
 size_t Population::get_population_size(){
@@ -266,8 +263,6 @@ void Population::update_vector_pool(double previous_best_fitness){
 
 //default mut_op = -1, F = -1.0
 std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F){
-
-	size_t archive = std::stoi(this->argparser->get_values()["-archive"]);
 
 	if (mut_op == -1){
 		mut_op = base_mutation;

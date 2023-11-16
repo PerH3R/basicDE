@@ -13,7 +13,8 @@
 
 class Population {
 public:
-	Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t pop_size, unsigned int* budget, int archive_size = 0);
+	Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t pop_size, unsigned int* budget, int archive_size = 0,
+		int resample_limit = -1);
 	~Population();
 
 	std::vector<Agent*> get_current_generation();
@@ -57,6 +58,7 @@ public:
 
 	//change selection operator
 	void set_selection(std::shared_ptr<Selection> new_selection){this->selection_operator = new_selection;};
+	void set_resample_limit(int new_limit){this->resample_limit = new_limit;};
 
 	//change the operator that's passed when creating a new Agent
 	// void set_base_crossover(Crossover* new_crossover){this->base_crossover_operator = new_crossover;};
@@ -91,6 +93,7 @@ private:
 	int base_crossover;
 	int base_selection;
 	int base_mutation;
+	int resample_limit;
 	unsigned int* budget;
 
 	std::vector<Agent*> cur_gen;

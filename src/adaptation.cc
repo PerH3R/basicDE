@@ -10,8 +10,8 @@ AdaptationManager::AdaptationManager(Argparse* argparser, ioh::problem::RealSing
 	this->dim = problem->meta_data().n_variables;
 	this->n = std::stoi(argparser->get_values()["-pop_size"]);
 	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
-	if (this->n <4){
-		this->n = 5*problem->meta_data().n_variables;
+	if (this->n < 4){
+		this->n = 5 * problem->meta_data().n_variables;
 	}//automatic population size if too small or not specified
 	if (std::stoi(argparser->get_values()["-archive"]) < 0){
 		this->archive_size = this->n;
@@ -20,6 +20,12 @@ AdaptationManager::AdaptationManager(Argparse* argparser, ioh::problem::RealSing
 	this->base_crossover = std::stoi(argparser->get_values()["-c"]);
 	this->base_boundary = std::stoi(argparser->get_values()["-b"]);
 	this->base_mutation = std::stoi(argparser->get_values()["-m"]);
+	if (std::stoi(argparser->get_values()["-archive"]) < 0){
+		this->resample_limit = 10+std::pow((std::log(this->dim)),2);
+	}else{
+		this->resample_limit = std::stoi(argparser->get_values()["-archive"]);
+	}
+	
 }
 
 AdaptationManager::~AdaptationManager(){
@@ -34,7 +40,7 @@ FixedManager::FixedManager(Argparse* argparser, ioh::problem::RealSingleObjectiv
 }
 
 void FixedManager::create_population(){
-	this->pop = new Population(this->argparser, this->problem, this->n, this->budget, this->archive_size);
+	this->pop = new Population(this->argparser, this->problem, this->n, this->budget, this->archive_size, this->resample_limit);
 }
 
 RandomManager::RandomManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF) : 
@@ -43,7 +49,7 @@ RandomManager::RandomManager(Argparse* argparser, ioh::problem::RealSingleObject
 }
 
 void RandomManager::create_population(){
-	this->pop =  new Population(this->argparser, this->problem, this->n, this->budget, this->archive_size);
+	this->pop =  new Population(this->argparser, this->problem, this->n, this->budget, this->archive_size, this->resample_limit);
 	for (int i = 0; i < this->pop->get_population_size(); ++i){
 		int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS); //TODO: doublecheck values
 		this->pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, this->F), i);

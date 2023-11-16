@@ -74,9 +74,7 @@ std::vector<double> BestDiv2::apply(std::vector<Agent*> const& cur_gen, size_t i
 }
 
 // Target To PBest Div 1
-//TODO: add archive, fix p sampling
 std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
-	// std::cout << "ttpb/1" << " " << this->archive << std::endl;
 	float p_val;
 
 	//p between idx=2 and 20%	
@@ -85,7 +83,6 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> const& cur_gen,
 
 	int p_idx = tools.rand_int_unif(0, std::round(p_val*this->n) + 1); //+1 to avoid rounding to 0 since rand_int_unif has range [low,high) 
 
-	// std::vector<Agent*> archive_vector = std::vector<Agent*>(cur_gen.begin(), cur_gen.begin()+1); //TODO: temp until real archive implementation
 	std::vector<std::vector<double>> temp_gen;
 	temp_gen.reserve(cur_gen.size()-2 + (*archive).size());
 	for (int i = 0; i < cur_gen.size(); ++i){
@@ -108,12 +105,6 @@ std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> const& cur_gen,
 		chosen_vectors = tools.pick_random(temp_gen, 2, false);
 	}while((this->use_archive() && std::find(archive->begin(), archive->end(), chosen_vectors[0]) != archive->end()) /*if c is from archive*/);
 
-	// for (auto i : *(this->archive)){
-	// 	for(auto j : i){
-	// 		std::cout << j << " ";
-	// 	}
-	// 	std::cout << std::endl;
-	// }
 
 	//calculate donor vector
 	std::vector<double> donor_vec(this->dim, 0.0);

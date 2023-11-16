@@ -1,9 +1,9 @@
 #include "../include/agent.h"
 
 Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, std::shared_ptr<Boundary> boundary_correction, 
-				ioh::problem::RealSingleObjective* target_function, unsigned int* budget) : 
+				ioh::problem::RealSingleObjective* target_function, unsigned int* budget, int resample_limit) : 
 			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), boundary_correction(boundary_correction),
-				target_function(target_function), budget(budget){
+				target_function(target_function), budget(budget), resample_limit(resample_limit){
 	// this->dim = dimension;
 	// this->mutation_operator = mutation_operator;
 	// this->crossover_operator = crossover_operator;
@@ -29,7 +29,6 @@ Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std:
 	this->calculate_fitness();
 	// std::cout << "new agent with fitness:" << this->fitness << " at ";
 	// print_position(this->position);
-	this->resample_limit = 10+std::pow((std::log(this->dim)),2);
 
 }
 
