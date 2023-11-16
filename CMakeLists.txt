@@ -5,7 +5,13 @@ project (simpleDE
 set(CMAKE_CXX_STANDARD 17)
 link_libraries(stdc++fs)
 add_compile_definitions(FSEXPERIMENTAL)
-set(CXX_FLAGS  "${CXX_FLAGS} -std=c++17 -g -Wall -Wextra -fopenmp -Wreturn-type -lstdc++fs -ggdb ")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -std=c++17 -lstdc++fs") 
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffast-math -mtune=native")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -fggdb")
+if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0 AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    link_libraries(stdc++fs) 
+    add_compile_definitions(FSEXPERIMENTAL)
+endif() 
 add_subdirectory(deps/IOHexperimenter)
 
 
