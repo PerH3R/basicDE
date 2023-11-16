@@ -75,6 +75,17 @@ results return_value(std::vector<double> location, double fitness, int i){
   return result;
 }
 
+std::chrono::high_resolution_clock::duration avg_duration(std::vector<std::chrono::high_resolution_clock::duration> const& time_array){
+	std::chrono::high_resolution_clock::duration total_time;
+	for(auto i : time_array){
+		total_time += i;
+	}
+	std::cout << total_time.count() << std::size(time_array) << std::endl;
+	std::chrono::high_resolution_clock::duration avg_time = total_time / std::size(time_array);
+	return avg_time;
+
+}
+
 
 //main loop
 results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::problem::RealSingleObjective* problem, Argparse* argparser) {
@@ -90,6 +101,13 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 	bool first_it = true;
 	// bool  = true;
 	
+
+	std::vector<std::chrono::high_resolution_clock::duration> mut_time;
+	std::vector<std::chrono::high_resolution_clock::duration> cr_time;
+	std::vector<std::chrono::high_resolution_clock::duration> sel_time;
+	std::vector<std::chrono::high_resolution_clock::duration> sort_time;
+	std::vector<std::chrono::high_resolution_clock::duration> rest_time;
+
 	//TODO: budget
 	while (*budget > 0) {
 		if (log_pos && first_it){
@@ -102,25 +120,34 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 		iterations++;
 		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
+
+		std::chrono::time_point t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_mutation();
-		std::cout << "|===";
+		mut_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
+		std::cout << "|===";		
 
 		//crossover
+		t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_crossover();
+		cr_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
 		std::cout << "===";
 
 		//selection
+		t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_selection();
+		sel_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
 		std::cout << "===";
 
 		//sort population
+		t1 = std::chrono::high_resolution_clock::now();
 		pop->sort();
+		sort_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
 		std::cout << "=| ";
 		if (log_pos){
 			pop->write_population();
 		}
 		
-
+		t1 = std::chrono::high_resolution_clock::now();
 		//on fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
@@ -149,7 +176,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			std::cerr << "Searching stuck. No movement for >5  iterations. shuffling population. " << std::endl;
 			pop->randomise_population();
 		}
-
+		rest_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1));
 
 		//optimum discovered, stop searching
 		// if (best_fitness == problem->meta_data().optimum){
@@ -161,6 +188,11 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 	std::cout << "==================" << std::endl;
 	// std::cout << "best possible fitness: " << problem->meta_data.optimum << std::endl;
 	std::cout << "best fitness found   : " << best_fitness << std::endl;
+	std:: cout << avg_duration(mut_time).count() << std::endl;
+	std:: cout << avg_duration(cr_time).count() << std::endl;
+	std:: cout << avg_duration(sel_time).count() << std::endl;
+	std:: cout << avg_duration(sort_time).count() << std::endl;
+	std:: cout << avg_duration(rest_time).count() << std::endl;
 	std::cout << "==================" << std::endl;
 	return return_value(best_location, best_fitness, iterations);
 
@@ -211,6 +243,12 @@ int main(int argc, char* argv[]) {
     /// for each new problem), the functionality is the same. 
     suite->attach_logger(logger);
 
+    // std::vector<std::chrono::high_resolution_clock::duration> mut_time;
+	// std::vector<std::chrono::high_resolution_clock::duration> cr_time;
+	// std::vector<std::chrono::high_resolution_clock::duration> sel_time;
+	// std::vector<std::chrono::high_resolution_clock::duration> sort_time;
+	// std::vector<std::chrono::high_resolution_clock::duration> rest_time;
+
     /// To access problems of the suite.
     for (const auto &problem_shr : *suite){
     	auto problem = problem_shr.get();
@@ -247,11 +285,11 @@ int main(int argc, char* argv[]) {
 
 		//print some results
 		manager->get_population()->print_fitness();
-		std::cout << "--------------- history of best individual" << std::endl;
-		manager->get_population()->get_current_generation()[0]->print_history();
+		// std::cout << "--------------- history of best individual" << std::endl;
+		// manager->get_population()->get_current_generation()[0]->print_history();
 		
-		std::cout << "--------------- 2nd best result history" << std::endl;
-		manager->get_population()->get_current_generation()[1]->print_history();
+		// std::cout << "--------------- 2nd best result history" << std::endl;
+		// manager->get_population()->get_current_generation()[1]->print_history();
 		std::cout << "=================" << std::endl;
 		
 
