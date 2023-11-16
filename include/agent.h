@@ -23,7 +23,7 @@ public:
 	~Agent();
 
 	void mutate(const std::vector<Agent*>& cur_gen, size_t idx);
-	void crossover(std::vector<Agent*> next_gen, size_t idx);
+	void crossover(std::vector<Agent*>& next_gen, size_t idx);
 
 	void calculate_fitness();
 	double get_fitness();

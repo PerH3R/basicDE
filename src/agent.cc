@@ -65,7 +65,7 @@ void Agent::mutate(const std::vector<Agent*>& cur_gen, size_t idx){
 	}
 }
 
-void Agent::crossover(std::vector<Agent*> next_gen, size_t idx){
+void Agent::crossover(std::vector<Agent*>& next_gen, size_t idx){
 	std::vector<double> new_position = this->crossover_operator->apply(this->position, this->donor);
 
 	next_gen[idx]->set_position(new_position);
