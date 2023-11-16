@@ -4,7 +4,7 @@
 //#include "../include/functions.h"
 
 #include <iostream>
-
+#include<ctime>
 
 struct results {
 	std::vector<double> best_location;
