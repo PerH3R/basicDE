@@ -13,7 +13,7 @@
 
 class Population {
 public:
-	Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t pop_size, unsigned int* budget, int archive_size = 0,
+	Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t n, unsigned int* budget, int archive_size = 0,
 		int resample_limit = -1);
 	~Population();
 
