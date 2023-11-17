@@ -184,15 +184,15 @@ int main(int argc, char* argv[]) {
 
 
 	//TODO: finish command line params and remove below
-	int function_num = std::stoi(argparser->get_values()["-f"]);
-	unsigned int number_of_runs = std::stoi(argparser->get_values()["-runs"]);
+	// int function_num = std::stoi(argparser->get_values()["-f"]);
+	// unsigned int number_of_runs = std::stoi(argparser->get_values()["-runs"]);
 
 	
 
 	// int dim = std::stoi(argparser->get_values()["-d"]);
 
-	int m = std::stoi(argparser->get_values()["-m"]);
-	size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
+	// int m = std::stoi(argparser->get_values()["-m"]);
+	// size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
 	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
 	// unsigned int* budget = &budget_value;
 
@@ -228,7 +228,7 @@ int main(int argc, char* argv[]) {
 
     	// set up operators and problem variables
 		int problem_dim = problem->meta_data().n_variables;
-    	int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size	
+    	// int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size	
 
     	//reset budget
     	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]) * (std::stod(argparser->get_values()["-budget_multiplier"]) * problem_dim);
