@@ -10,7 +10,9 @@ Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std:
 
 	this->position.reserve(dim);
 	this->donor.reserve(dim);
-	for (size_t i = 0; i < dim; ++i)	{
+
+	//random initialization
+	for (size_t i = 0; i < dim; ++i){
 		double value = tools.rand_double_unif(target_function->bounds().lb[i], target_function->bounds().ub[i]);
 		this->position.push_back(value);
 		this->donor.push_back(value);
@@ -37,7 +39,7 @@ void Agent::mutate(const std::vector<Agent*>& cur_gen, size_t idx){
 		tries++;
 		this->donor = this->mutation_operator->apply(cur_gen, idx);
 		// print_position(donor_vec);
-	}while((check_position_oob(donor) == true) && (tries < this->resample_limit));
+	}while((check_position_oob(donor) == true) && (tries <= this->resample_limit));
 	
 	//apply correction if no donor vector within bounds could be generated
 	if (check_position_oob(donor) == true){
