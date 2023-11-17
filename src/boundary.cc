@@ -8,9 +8,6 @@ Boundary::Boundary(ioh::problem::RealSingleObjective* target_function) : target_
 
 // Clamp
 
-// target_function->bounds().lb
-// target_function->bounds().ub
-
 // Receives a possibly o.o.b. position and return an in-bounds position
 std::vector<double> Clamp::apply(std::vector<double> pos){
 	for (size_t i = 0; i < pos.size(); ++i){
@@ -25,9 +22,6 @@ std::vector<double> Clamp::apply(std::vector<double> pos){
 
 
 // Reflect
-
-// target_function->bounds().lb
-// target_function->bounds().ub
 
 // Receives a possibly o.o.b. position and return an in-bounds position
 std::vector<double> Reflect::apply(std::vector<double> pos){

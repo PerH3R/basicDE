@@ -3,8 +3,7 @@
 // #include "ioh.h"
 //#include "../include/functions.h"
 
-#include <iostream>
-#include<ctime>
+#include <iostream> //genral output
 
 struct results {
 	std::vector<double> best_location;
@@ -101,13 +100,6 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 	bool first_it = true;
 	// bool  = true;
 	
-
-	std::vector<std::chrono::high_resolution_clock::duration> mut_time;
-	std::vector<std::chrono::high_resolution_clock::duration> cr_time;
-	std::vector<std::chrono::high_resolution_clock::duration> sel_time;
-	std::vector<std::chrono::high_resolution_clock::duration> sort_time;
-	std::vector<std::chrono::high_resolution_clock::duration> rest_time;
-
 	//TODO: budget
 	while (*budget > 0) {
 		if (log_pos && first_it){
@@ -120,34 +112,25 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 		iterations++;
 		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
-
-		std::chrono::time_point t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_mutation();
-		mut_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
 
 		//crossover
-		t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_crossover();
-		cr_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
 
 		//selection
-		t1 = std::chrono::high_resolution_clock::now();
 		pop->apply_selection();
-		sel_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
 
 		//sort population
-		t1 = std::chrono::high_resolution_clock::now();
 		pop->sort();
-		sort_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()- t1));
 		if (log_pos){
 			pop->write_population();
 		}
 		
-		t1 = std::chrono::high_resolution_clock::now();
+		// t1 = std::chrono::high_resolution_clock::now();
 		//on fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
-			std::cout << "new best is: " << pop->get_current_generation()[0]->get_fitness() << " at iteration " << iterations << std::endl;
+			std::cout << "new best is: " << fmt::format("{}", pop->get_current_generation()[0]->get_fitness()) << " at iteration " << iterations << std::endl;
 
 			// // update vector pool using previous bestfitness
 			// if (pop->get_mutation() == DIRMUT){
@@ -170,23 +153,18 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			std::cerr << "Searching stuck. No movement for >5  iterations. shuffling population. " << std::endl;
 			pop->randomise_population();
 		}
-		rest_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1));
+		// rest_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1));
 
 		//optimum discovered, stop searching
-		// if (best_fitness == problem->meta_data().optimum){
-		// 	break;
-		// }
+		if (best_fitness <= problem->optimum().y){
+			*budget = 0;
+		}
 
 		// std::cout << "==================" << std::endl;
 	}
 	std::cout << "==================" << std::endl;
-	// std::cout << "best possible fitness: " << problem->meta_data.optimum << std::endl;
+	std::cout << "best possible fitness: " << problem->optimum().y << std::endl;
 	std::cout << "best fitness found   : " << best_fitness << std::endl;
-	std:: cout << avg_duration(mut_time).count() << std::endl;
-	std:: cout << avg_duration(cr_time).count() << std::endl;
-	std:: cout << avg_duration(sel_time).count() << std::endl;
-	std:: cout << avg_duration(sort_time).count() << std::endl;
-	std:: cout << avg_duration(rest_time).count() << std::endl;
 	std::cout << "==================" << std::endl;
 	return return_value(best_location, best_fitness, iterations);
 
@@ -265,6 +243,7 @@ int main(int argc, char* argv[]) {
 
 		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
+		std::cout << "optimal y: " << problem->optimum().y << std::endl;
 
 		AdaptationManager* manager = get_adaptation_manager(argparser, problem, budget, std::stoi(argparser->get_values()["-a"]));
 		// Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget, archive_size);

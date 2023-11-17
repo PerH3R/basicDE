@@ -55,8 +55,7 @@ public:
 
 private:
 	void print_position(std::vector<double> to_print);
-
-	// std::vector<std::tuple<std::vector<double>, CROSSOVER, MUTATION, BOUNDARY> > history;
+	
 	size_t dim;
 	std::vector<double> position;
 	std::vector<double> donor;

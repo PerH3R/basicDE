@@ -48,18 +48,9 @@ CROSSOVER Exponential::get_type() {
 
 // Apply crossover on all agents, returns selection
 std::vector<double> Exponential::apply(const std::vector<double> cur_pos, const std::vector<double> donor_vec){
-	// std::cout << "co apply dim: " << this->dim << std::endl;
 
 	std::vector<double> new_pos = cur_pos;
 	new_pos.reserve(this->dim);
-
-	//TODO:sanity check, are cur_pos and donor vec same dim as 'n'
-	if (cur_pos.size() != this->dim){
-		std::cerr << "co apply invalid posiiton size\n";
-	}
-	if (donor_vec.size() != this->dim){
-		std::cerr << "co apply invalid donor size\n";
-	}
 
 	int crossover_point = tools.rand_int_unif(0,this->dim);
 	new_pos[crossover_point] = donor_vec[crossover_point];
@@ -76,14 +67,6 @@ std::vector<double> Exponential::apply(const std::vector<double> cur_pos, const 
 	}
 
 
-	if (cur_pos.size() != this->dim){
-		std::cerr << "co apply invalid posiiton size\n";
-	}
-	if (donor_vec.size() != this->dim){
-		std::cerr << "co apply invalid donor size\n";
-	}if (new_pos.size() != this->dim){
-		std::cerr << "co apply invalid posiiton size\n";
-	}
 	return new_pos;
 }
 

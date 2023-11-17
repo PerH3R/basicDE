@@ -47,10 +47,6 @@ public:
 
 	SELECTION get_selection(){return this->selection_operator->get_type();};
 
-	// CROSSOVER get_base_crossover(){return this->base_crossover_operator->get_type();};
-	// MUTATION get_base_mutation(){return this->base_mutation_operator->get_type();};
-	// BOUNDARY get_base_boundary(){return this->base_boundary_correction->get_type();};
-
 	CROSSOVER get_individual_crossover(int idx){return this->cur_gen[idx]->get_crossover();};
 	MUTATION get_individual_mutation(int idx){return this->cur_gen[idx]->get_mutation();};
 	BOUNDARY get_individual_boundary(int idx){return this->cur_gen[idx]->get_boundary();};
@@ -59,12 +55,6 @@ public:
 	//change selection operator
 	void set_selection(std::shared_ptr<Selection> new_selection){this->selection_operator = new_selection;};
 	void set_resample_limit(int new_limit){this->resample_limit = new_limit;};
-
-	//change the operator that's passed when creating a new Agent
-	// void set_base_crossover(Crossover* new_crossover){this->base_crossover_operator = new_crossover;};
-	// void set_base_mutation(Mutation* new_mutation){this->base_mutation_operator = new_mutation;};
-	// void set_base_boundary(std::shared_ptr<Boundary> new_boundary){this->base_boundary_correction = new_boundary;};
-
 
 
 	//changes operator of a one or all Agents from the current population (idx=-1 to change all, idx between 0 to n to change specific individual)
@@ -109,7 +99,6 @@ private:
 	std::shared_ptr<Selection> selection_operator;
 	Argparse* argparser;
 	ioh::problem::RealSingleObjective* target_function;
-	// unsigned int* budget; 
 
 	//for DirMut
 	std::vector< std::vector<double> > vector_pool; //pool of difference vectors of improved agents	
