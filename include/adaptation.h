@@ -37,6 +37,8 @@ protected:
 	float Cr;
 	float F;
 	size_t archive_size;
+	bool available_mutops[NUM_MUTATION_OPERATORS];
+	int iteration_counter = 0;
 };
 
 
@@ -44,7 +46,7 @@ protected:
 class FixedManager : public AdaptationManager{
 public:
 	FixedManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
-    // ~FixedManager(){};
+    ~FixedManager(){};
     void adapt(unsigned int iterations){};	//no adaptation
 protected:	
 	void create_population();
@@ -54,7 +56,7 @@ protected:
 class RandomManager : public AdaptationManager{
 public:
 	RandomManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF = false);
-    // ~RandomManager(){};
+    ~RandomManager(){};
     void adapt(unsigned int iterations);
 protected:
 	void create_population();
