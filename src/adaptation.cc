@@ -1,12 +1,14 @@
 #include "../include/adaptation.h"
 
 AdaptationManager::AdaptationManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget){
+	for (int i = 0; i < NUM_MUTATION_OPERATORS; ++i){
+	  this->available_mutops[i] = 1;
+	}
 	this->argparser = argparser;
 	this->problem = problem;
 	this->budget = budget;
 	this->F = std::stod(argparser->get_values()["-F"]);
 	this->Cr = std::stod(argparser->get_values()["-Cr"]);
-	// this->F = std::stod(argparser->get_values()["-F"]);
 	this->dim = problem->meta_data().n_variables;
 	this->n = std::stoi(argparser->get_values()["-pop_size"]);
 	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
@@ -57,15 +59,18 @@ void RandomManager::create_population(){
 }
 
 void RandomManager::adapt(unsigned int iterations){
-	for (int i = 0; i < this->pop->get_population_size(); ++i){
-		int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS); 	//exclude random search
-		if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ 		// BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
-			int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS);	// in order to keep iterations/operator the same
+	iteration_counter++;
+	if (iteration_counter % 1 == 0){ // how often is adaptation applied	
+		for (int i = 0; i < this->pop->get_population_size(); ++i){
+			int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS); 	//exclude random search
+			if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ 		// BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
+				int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS);	// in order to keep iterations/operator the same
+			}
+			double new_F = this->F;
+			if (this->RandomizeF){
+				double new_F = tools.rand_double_unif(0.2,0.8);
+			}
+			pop->set_individual_mutation( this->pop->get_mutation_operator(new_m, new_F), i);
 		}
-		double new_F = this->F;
-		if (this->RandomizeF){
-			double new_F = tools.rand_double_unif(0.2,0.8);
-		}
-		pop->set_individual_mutation( this->pop->get_mutation_operator(new_m, new_F), i);
 	}
 }
