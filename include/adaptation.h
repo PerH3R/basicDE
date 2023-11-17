@@ -9,7 +9,7 @@ class AdaptationManager{
 public:
 	AdaptationManager() = default;
 	AdaptationManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
-	~AdaptationManager();
+	virtual ~AdaptationManager();
 	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
 
