@@ -24,11 +24,9 @@ public:
 	virtual void improved_to_true(){};
 	virtual void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){};
 
-	float get_F(){return this->F;}
+	const float get_F(){return this->F;}
 	size_t get_n(){return this->n;}
-	size_t get_dim(){return this->dim;}
-
-	float set_F(float new_F){return this->F;}
+	float set_F(float new_F){this->F = new_F}
 
 protected:
 	float F; //mutation rate
