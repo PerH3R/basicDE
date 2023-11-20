@@ -1,7 +1,14 @@
-cmake_minimum_required (VERSION 3.15)
-project (simpleDE
-		VERSION "0.3.9"
-)
+cmake_minimum_required(VERSION 3.15) 
+file(READ VERSION VERSION_STRING)
+string(STRIP ${VERSION_STRING} ${VERSION_STRING})
+string(REGEX REPLACE "\n$" "" VERSION_STRING "${VERSION_STRING}")
+project(ioh    
+    VERSION "${VERSION_STRING}"
+    LANGUAGES CXX  
+) 
+add_compile_definitions(PROJECT_VER="${CMAKE_PROJECT_VERSION}")
+
+
 set(CMAKE_CXX_STANDARD 17)
 link_libraries(stdc++fs)
 add_compile_definitions(FSEXPERIMENTAL)

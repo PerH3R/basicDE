@@ -6,9 +6,6 @@
 #include "operators.h"
 #include "tools.h"
 
-//TODO: remove
-#include <iostream>
-
 
 
 class Boundary {
