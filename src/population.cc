@@ -2,7 +2,7 @@
 
 
 
-Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t n, unsigned int* budget, int archive_size, int resample_limit) :
+Population::Population(const Argparse* argparser, ioh::problem::RealSingleObjective* target_function, const size_t n, unsigned int* budget, int archive_size, int resample_limit) :
 	argparser(argparser), target_function(target_function), n(n), budget(budget), archive_size(archive_size) {
 	std::cout << "creating Population...";
 
@@ -10,11 +10,6 @@ Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* t
 	this->Cr = std::stod(argparser->get_values()["-Cr"]);
 	this->F = std::stod(argparser->get_values()["-F"]);
 	this->dim = target_function->meta_data().n_variables;
-	this->n = std::stoi(argparser->get_values()["-pop_size"]);
-	
-	if (this->n < 4){
-		this->n = 5*target_function->meta_data().n_variables;
-	}//automatic population size if too small or not specified
 
 	this->base_selection = std::stoi(argparser->get_values()["-s"]);
 	this->base_crossover = std::stoi(argparser->get_values()["-c"]);
@@ -23,11 +18,11 @@ Population::Population(Argparse* argparser, ioh::problem::RealSingleObjective* t
 
 	this->selection_operator = get_selection_operator();
 
-	if (n <4){
-		this->n = 5*target_function->meta_data().n_variables;;
-	} else {
-		this->n = n;
-	}//automatic population size if too small or not specified
+	// if (n <4){
+	// 	this->n = 5*ta-rget_function->meta_data().n_variables;;
+	// } else {
+	// 	this->n = n;
+	// }//automatic population size if too small or not specified
 
 	this->resample_limit = resample_limit;
 	

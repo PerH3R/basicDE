@@ -8,21 +8,26 @@
 class AdaptationManager{
 public:
 	AdaptationManager() = default;
-	AdaptationManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
+	AdaptationManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	virtual ~AdaptationManager();
 	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
 
 protected:
 	
-
+	unsigned int calc_population_size(const Argparse* argparser) const{
+		if (std::stoi(argparser->get_values()["-pop_size"]) <= 4){
+			return 5 * problem->meta_data().n_variables;
+		}//automatic population size if too small or not specified
+		return std::stoi(argparser->get_values()["-pop_size"]);
+	};
 	virtual void create_population() = 0;
 
 
 	std::vector<float> F_history;
 	std::vector<float> Cr_history;
 
-	Argparse* argparser;
+	const Argparse* argparser;
 	Population* pop;
 	int base_boundary;
 	int base_crossover;
@@ -32,8 +37,8 @@ protected:
 	unsigned int* budget;
 	ioh::problem::RealSingleObjective* problem;
 
-	size_t n;
-	size_t dim;
+	const size_t n;
+	const size_t dim;
 	float Cr;
 	float F;
 	size_t archive_size;
@@ -45,7 +50,7 @@ protected:
 //no adaptation
 class FixedManager : public AdaptationManager{
 public:
-	FixedManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
+	FixedManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
     ~FixedManager(){};
     void adapt(unsigned int iterations){};	//no adaptation
 protected:	
@@ -55,11 +60,20 @@ protected:
 //Randomizes the mutation operator for each individual for each generation
 class RandomManager : public AdaptationManager{
 public:
-	RandomManager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF = false);
+	RandomManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF = false);
     ~RandomManager(){};
     void adapt(unsigned int iterations);
 protected:
 	void create_population();
 
 	bool RandomizeF;
+};
+
+class AdaptiveBoks : public AdaptationManager{
+public:
+	AdaptiveBoks(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
+	~AdaptiveBoks(){};
+    void adapt(unsigned int iterations){};	//no adaptation
+protected:	
+	void create_population();
 };

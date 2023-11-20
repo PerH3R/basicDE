@@ -13,7 +13,7 @@
 
 class Population {
 public:
-	Population(Argparse* argparser, ioh::problem::RealSingleObjective* target_function, size_t n, unsigned int* budget, int archive_size = 0,
+	Population(const Argparse* argparser, ioh::problem::RealSingleObjective* target_function, const size_t n, unsigned int* budget, int archive_size = 0,
 		int resample_limit = -1);
 	~Population();
 
@@ -74,7 +74,7 @@ private:
 	bool improved = false;
 	
 
-	size_t n; //population size
+	const size_t n; //population size
 	size_t dim; //dimension size
 	float F;
 	float Cr;
@@ -97,7 +97,7 @@ private:
 	int base_mutation_operator;
 	int base_boundary_correction;
 	std::shared_ptr<Selection> selection_operator;
-	Argparse* argparser;
+	const Argparse* argparser;
 	ioh::problem::RealSingleObjective* target_function;
 
 	//for DirMut
