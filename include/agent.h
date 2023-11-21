@@ -26,7 +26,6 @@ public:
 	void mutate(const std::vector<Agent*>& cur_gen, size_t idx);
 	void crossover(std::vector<Agent*>& next_gen, size_t idx);
 
-	void calculate_fitness();
 	double get_fitness();
 
 	bool check_position_oob(const std::vector<double>& given_position);
@@ -55,6 +54,7 @@ public:
 
 private:
 	void print_position(std::vector<double> to_print);
+	void calculate_fitness();
 	
 	size_t dim;
 	std::vector<double> position;
