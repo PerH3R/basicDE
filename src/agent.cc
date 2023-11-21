@@ -88,20 +88,12 @@ void Agent::set_position(std::vector<double> new_position) {
 	}
 	
 
-	//track if new position is different from current position
-	bool change = false;
-	
 	//update position
 	for (size_t i = 0; i < this->dim; ++i){
 		if (this->position[i] != new_position[i]){
 			this->position[i] = new_position[i];
-			change = true;					
+			this->fitness_uptodate = false;			//recalculate fitness when asked		
 		}
-	}
-
-	//tell agent to update fitness if position has changed
-	if (change){
-		fitness_uptodate = false;
 	}
 }
 
