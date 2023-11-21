@@ -26,7 +26,7 @@ public:
 
 	const float get_F(){return this->F;}
 	size_t get_n(){return this->n;}
-	float set_F(float new_F){this->F = new_F}
+	float set_F(float new_F){this->F = new_F;}
 
 protected:
 	float F; //mutation rate
