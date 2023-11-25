@@ -140,6 +140,14 @@ public:
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 };
 
+class TwoOptDiv2 : public Mutation {
+public:
+    TwoOptDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
+    ~TwoOptDiv2() {};
+    MUTATION get_type(){return TWOOPTDIV2;};
+	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+};
+
 class Desmu : public Mutation {
 public:
     Desmu(size_t dim, size_t n, float F = 0.5, double alpha = 1.0) : Mutation(dim, n, F) {
@@ -206,6 +214,13 @@ private:
 	bool improved = false;
 };
 
+
+
+
+
+
+//RANDOMSEARCH
+
 class RandomSearch : public Mutation {
 public:
     RandomSearch(size_t dim, size_t n, ioh::problem::RealSingleObjective* target_function, float F = 0.5) : Mutation(dim, n, F), target_function(target_function) {};
@@ -215,3 +230,4 @@ public:
 private:
 	ioh::problem::RealSingleObjective* target_function;
 };
+

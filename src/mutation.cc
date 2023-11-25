@@ -266,7 +266,7 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> const& cur_gen, size_t
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
 	//use the fittest vector as base for donor
-	if (chosen_vectors[0]->get_fitness() < chosen_vectors[1]->get_fitness()){
+	if (chosen_vectors[1]->get_fitness() < chosen_vectors[0]->get_fitness()){
 		std::swap(chosen_vectors[0], chosen_vectors[1]);
 	}
 
@@ -278,8 +278,29 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> const& cur_gen, size_t
 		double c = chosen_vectors[2]->get_position()[j];
 		donor_vec[j] = a + (this->F * (b - c));
 	}
-	return donor_vec;
-	
+	return donor_vec;	
+}
+
+//2-OptDiv2
+std::vector<double> TwoOptDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 5, false);
+
+	//use the fittest vector as base for donor
+	if (chosen_vectors[1]->get_fitness() < chosen_vectors[0]->get_fitness()){
+		std::swap(chosen_vectors[0], chosen_vectors[1]);
+	}
+
+	//calculate donor vector
+	std::vector<double> donor_vec(this->dim, 0.0);
+	for (size_t j = 0; j < this->dim; j++) {
+		double a = chosen_vectors[0]->get_position()[j];
+		double b = chosen_vectors[1]->get_position()[j];
+		double c = chosen_vectors[2]->get_position()[j];
+		double d = chosen_vectors[3]->get_position()[j];
+		double e = chosen_vectors[4]->get_position()[j];
+		donor_vec[j] = a + (this->F * (b - c)) + (this->F * (d - e));
+	}
+	return donor_vec;	
 }
 
 // Desmu (stochastic levy-flight)
