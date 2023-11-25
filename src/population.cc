@@ -254,50 +254,94 @@ void Population::update_vector_pool(double previous_best_fitness){
 }
 
 //default mut_op = -1, F = -1.0
-std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F){
+std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F=0.0){
 
 	if (mut_op == -1){
 		mut_op = base_mutation;
 	}
-
-	switch(mut_op){
-		case 0:
-			return std::make_shared<RandDiv1>(this->dim, this->n, this->F);
-		case 1:
-			return std::make_shared<RandDiv2>(this->dim, this->n, this->F);
-		case 2:
-			return std::make_shared<BestDiv1>(this->dim, this->n, this->F);
-		case 3:
-			return std::make_shared<BestDiv2>(this->dim, this->n, this->F);
-		case 4:	
-			return std::make_shared<TargetToPBestDiv1>(this->dim, this->n, 
-				&(this->archive), this->F, this->archive_size);
-		case 5:
-			return std::make_shared<RandToBestDiv1>(this->dim, this->n, this->F);
-		case 6:
-			return std::make_shared<RandToBestDiv2>(this->dim, this->n, this->F);
-		case 7:
-			return std::make_shared<TargetToBestDiv1>(this->dim, this->n, this->F);
-		case 8:
-			return std::make_shared<TargetToBestDiv2>(this->dim, this->n, this->F);
-		case 9:
-			return std::make_shared<TargetToRandDiv1>(this->dim, this->n, this->F);
-		case 10:
-			return std::make_shared<TargetToRandDiv2>(this->dim, this->n, this->F);
-		case 11:
-			return std::make_shared<TwoOptDiv1>(this->dim, this->n, this->F);
-		case 12:
-			return std::make_shared<Desmu>(this->dim, this->n, this->F);
-		case 13:
-			return std::make_shared<Bea>(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget, this->F);
-		case 14:
-			return std::make_shared<DirMut>(this->dim, this->n, this->F);
-		case 15:
-			return std::make_shared<RandomSearch>(this->dim, this->n, this->target_function, this->F);
-		default:
-			std::cerr << "Mutation operator " << mut_op << " out of range. Continuing using RandDiv1." << std::endl;
-			return std::make_shared<RandDiv1>(this->dim, this->n, this->F);		
-	}	
+	if(F != 0.0){
+		switch(mut_op){
+			case 0:
+				return std::make_shared<RandDiv1>(this->dim, this->n, F);
+			case 1:
+				return std::make_shared<RandDiv2>(this->dim, this->n, F);
+			case 2:
+				return std::make_shared<BestDiv1>(this->dim, this->n, F);
+			case 3:
+				return std::make_shared<BestDiv2>(this->dim, this->n, F);
+			case 4:	
+				return std::make_shared<TargetToPBestDiv1>(this->dim, this->n, 
+					&(this->archive), F, this->archive_size);
+			case 5:
+				return std::make_shared<RandToBestDiv1>(this->dim, this->n, F);
+			case 6:
+				return std::make_shared<RandToBestDiv2>(this->dim, this->n, F);
+			case 7:
+				return std::make_shared<TargetToBestDiv1>(this->dim, this->n, F);
+			case 8:
+				return std::make_shared<TargetToBestDiv2>(this->dim, this->n, F);
+			case 9:
+				return std::make_shared<TargetToRandDiv1>(this->dim, this->n, F);
+			case 10:
+				return std::make_shared<TargetToRandDiv2>(this->dim, this->n, F);
+			case 11:
+				return std::make_shared<TwoOptDiv1>(this->dim, this->n, F);
+			case 12:
+				return std::make_shared<TwoOptDiv2>(this->dim, this->n, F);
+			case 13:
+				return std::make_shared<Desmu>(this->dim, this->n, F);
+			case 14:
+				return std::make_shared<Bea>(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget, F);
+			case 15:
+				return std::make_shared<DirMut>(this->dim, this->n, F);
+			case 16:
+				return std::make_shared<RandomSearch>(this->dim, this->n, this->target_function, F);
+			default:
+				std::cerr << "Mutation operator " << mut_op << " out of range. Continuing using RandDiv1." << std::endl;
+				return std::make_shared<RandDiv1>(this->dim, this->n, F);		
+		}	
+	} else {
+		switch(mut_op){
+			case 0:
+				return std::make_shared<RandDiv1>(this->dim, this->n);
+			case 1:
+				return std::make_shared<RandDiv2>(this->dim, this->n);
+			case 2:
+				return std::make_shared<BestDiv1>(this->dim, this->n);
+			case 3:
+				return std::make_shared<BestDiv2>(this->dim, this->n);
+			case 4:	
+				return std::make_shared<TargetToPBestDiv1>(this->dim, this->n, 
+					&(this->archive), this->archive_size);
+			case 5:
+				return std::make_shared<RandToBestDiv1>(this->dim, this->n);
+			case 6:
+				return std::make_shared<RandToBestDiv2>(this->dim, this->n);
+			case 7:
+				return std::make_shared<TargetToBestDiv1>(this->dim, this->n);
+			case 8:
+				return std::make_shared<TargetToBestDiv2>(this->dim, this->n);
+			case 9:
+				return std::make_shared<TargetToRandDiv1>(this->dim, this->n);
+			case 10:
+				return std::make_shared<TargetToRandDiv2>(this->dim, this->n);
+			case 11:
+				return std::make_shared<TwoOptDiv1>(this->dim, this->n);
+			case 12:
+				return std::make_shared<TwoOptDiv2>(this->dim, this->n);
+			case 13:
+				return std::make_shared<Desmu>(this->dim, this->n);
+			case 14:
+				return std::make_shared<Bea>(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget);
+			case 15:
+				return std::make_shared<DirMut>(this->dim, this->n);
+			case 16:
+				return std::make_shared<RandomSearch>(this->dim, this->n, this->target_function);
+			default:
+				std::cerr << "Mutation operator " << mut_op << " out of range. Continuing using RandDiv1." << std::endl;
+				return std::make_shared<RandDiv1>(this->dim, this->n);		
+		}	
+	}
 }
 
 //default sel_op = -1
@@ -314,20 +358,31 @@ std::shared_ptr<Selection> Population::get_selection_operator(int sel_op){
 }
 
 //default c_op = -1, Cr = 1.0
-std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr){
-	if (Cr == -1.0){
+std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr = 0.0){
+	if (Cr == 0.0){
 		Cr = this->Cr;
 	}
 	if (c_op == -1){
 		c_op = base_crossover;
 	}
-	switch(c_op){
-		case 0:
-			return std::make_shared<Binomial>(this->dim, Cr);
-		case 1:
-			return std::make_shared<Exponential>(this->dim, Cr);
-		default:
-			return std::make_shared<Binomial>(this->dim, Cr);
+	if(Cr == 0.0){
+		switch(c_op){
+			case 0:
+				return std::make_shared<Binomial>(this->dim);
+			case 1:
+				return std::make_shared<Exponential>(this->dim);
+			default:
+				return std::make_shared<Binomial>(this->dim);
+		}
+	} else {
+		switch(c_op){
+			case 0:
+				return std::make_shared<Binomial>(this->dim, Cr);
+			case 1:
+				return std::make_shared<Exponential>(this->dim, Cr);
+			default:
+				return std::make_shared<Binomial>(this->dim, Cr);
+		}
 	}
 }
 
