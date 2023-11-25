@@ -24,7 +24,7 @@ flag				meaning						default					vals
 -s					selection operator			0 						int 0-0
 -a					operator adaptor			0 						int 0-...
 -r					resample limit				-1						int >= 0, negative will use automatic limit scaled with dimensionality (10+std::pow((std::log(this->dim)),2))
-
+-eps				epsilon						0.0 					real, minimum difference between min and max fitnessfor early stopping
 
 -runs-				repeated runs				1						int
 -budget				base allowed funtion evals	2500					int, also lowest value budget can go
@@ -67,6 +67,7 @@ private:
 		{"-s", "0"},
 		{"-a", "0"},
 		{"-r", "-1"},
+		{"-eps", "0.0"},
 		{"-runs","1"}, 
 		{"-budget", "10000"}, 
 		{"-budget_multiplier","1"},

@@ -153,6 +153,11 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			std::cerr << "Searching stuck. No movement for >5  iterations. shuffling population. " << std::endl;
 			pop->randomise_population();
 		}
+
+		//if the difference between the best and worst individual is smaller than the 
+		if ((get_current_generation()[0] - get_current_generation().back()) < std::stod(argparser.get_values()["epsilon"])){
+			*budget = 0;
+		}
 		// rest_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1));
 
 		//optimum discovered, stop searching
