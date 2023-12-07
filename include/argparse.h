@@ -29,7 +29,7 @@ flag				meaning						default					vals
 -runs-				repeated runs				1						int
 -budget				base allowed funtion evals	2500					int, also lowest value budget can go
 -budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
--pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on dimension of problem
+-pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on 5*dimension of problem
 	
 //operator specific
 -archive		use archive (ttpb mut)			0						int (if negative, archive size = pop_size)	
