@@ -51,7 +51,8 @@ Population::~Population() {
 }
 
 Agent* Population::create_agent(){
-	return new Agent(dim, get_mutation_operator(), get_crossover_operator(), get_boundary_operator(), target_function, budget, this->resample_limit);
+	return new Agent(dim, get_mutation_operator(-1, this->F), 
+						  get_crossover_operator(-1, this->Cr), get_boundary_operator(), target_function, budget, this->resample_limit);
 }
 
 size_t Population::get_population_size(){

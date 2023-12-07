@@ -34,8 +34,8 @@ protected:
 	float F = 0.5;
 	const float fallback_F = 0.5; //fallback mutation rate
 	const float fallback_Cr = 0.5; //fallback Cr rate
-	float base_F[NUM_CROSSOVER_OPERATORS+1] = {fallback_F * (NUM_CROSSOVER_OPERATORS+1)}; //default mutation rate
-	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {fallback_F * (NUM_CROSSOVER_OPERATORS+1)}; //default crossover rate
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {fallback_F, fallback_F};//default mutation rate
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {fallback_Cr, fallback_Cr}; //default crossover rate
 	size_t n; //pop size
 	size_t dim;
 };
