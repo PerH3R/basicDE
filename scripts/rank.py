@@ -18,6 +18,10 @@
 #             DE config 2
 # then avg_ranking ranks 
 
+
+
+# TODO remove Cr=0
+
 import os
 import json
 import copy
@@ -27,12 +31,17 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-locations = ["./m0",
+locations = [
+            "./m0",
             "./m1", "./m2","./m3", "./m4","./m5", 
             "./m6","./m7", "./m8","./m9", "./m10",
-            "./m11", "./m12","./m13", "./m14","./m15"
+            "./m11", "./m12","./m13", "./m14","./m15",
+            "./m16"
             ]
 values = {}
+calc_median = True # else Average
+rank_dims = [20]
+rank_funcs = list(range(1,25))
 
 def avg_ranking(ranks, funcs, dims):
     funcs = [str(i) for i in funcs]
@@ -40,22 +49,26 @@ def avg_ranking(ranks, funcs, dims):
     print(values)
     combined = copy.deepcopy(values[funcs[0]][dims[0]])
     for c in combined.keys():
-        combined[c] = 0
+        combined[c] = []
     print(len(combined.keys()))
 
     for func in ranks.keys():
         for dim in ranks[func].keys():
             if (func in funcs) and (dim in dims):
-                # print(func, dim, len(rankings[func][dim]),'\n')
-                # print(rankings[func][dim])
-                # print('\n')
                 for i in range(len(rankings[func][dim])):
-                    combined[rankings[func][dim][i]] += i
+                    combined[rankings[func][dim][i]].append(i)
 
-    for c in combined.keys():
-        combined[c] /= len(funcs) * len(dims)
-    combined = {k: v for k, v in sorted(combined.items(), key=lambda item: item[1])}
-    return combined
+    combined_final = copy.deepcopy(combined)
+    for c in combined_final.keys():
+        print(c, combined_final[c])
+        if calc_median == True:
+            combined_final[c] = np.median(combined[c])
+        else:
+            combined_final[c] = np.average(combined[c])
+        print(c, combined_final[c], '\n')
+        # combined[c] /= len(funcs) * len(dims)
+    combined_final = {k: v for k, v in sorted(combined_final.items(), key=lambda item: item[1])}
+    return combined_final
 
 
 def combine_into(d: dict, combined: dict) -> None:
@@ -77,36 +90,20 @@ for location in locations:
                 for s in data["scenarios"]:
                     dim = str(s["dimension"])
                     count = 0
-                    # if name == "1" and dim == "5" and func == "1":
-                    #     pass
-                    #     print(s["runs"])
                     res = []
                     for r in s["runs"]:
                         count = max(r["instance"], count)
                         res.append(float(r["best"]["y"]))
-                        if name == "1" and dim == "5" and func == "1":
-                            pass
-                            # print(float(r["best"]["y"]))
-                        # print(r["best"]["y"])
-                    # print(avg, count, name, func, dim)
                     avg = np.average(res)
-                    # print(avg, res)
                     this_dict = {func: {dim: {name: avg}}}
                     combine_into(this_dict, values)
-    				# count = 0
 
     rankings = copy.deepcopy(values)
     for func in rankings.keys():
         for dim in rankings[func].keys():
-            # print("===", func, dim)
-            # print(rankings[func][dim], '\n')
             rankings[func][dim] = {k: v for k, v in sorted(rankings[func][dim].items(), key=lambda item: item[1])}
-            # print(rankings[func][dim], '\n')
             rankings[func][dim] = list(rankings[func][dim].keys())
-            # print(rankings[func][dim])
 
-    rank_dims = [5,20]
-    rank_funcs = list(range(1,25))
     print("dimensions:", rank_dims)
     print("functions:", rank_funcs)
     print("total number of configurations: ", end='')
@@ -119,10 +116,17 @@ for location in locations:
         F_values = []
         Cr_values = []
         framename = ""
+        if calc_median:
+            framename += "Median "
+        else:
+            framename += "Average "
         # gather configuration data to initialize dataframe
+        first_config = True
         for config_name in final_ranking.keys():
             name_split = config_name.split("_")
-            framename = name_split[0]
+            if first_config:
+                framename += name_split[0]
+                first_config = False
             for param in name_split:
                 if param[0] == 'F' and param[1:] not in F_values:
                     F_values.append(param[1:])
@@ -150,9 +154,15 @@ for location in locations:
                     if best_cr == "":
                         best_cr = cr_val
             frame[cr_val][f_val] = float(final_ranking[config_name])
+
+        # filter cr=0.0 #TODO rerun without cr=0.0
+        # if location != "./m16":
+        #     frame = frame.drop('0', axis=1)
         print("Dataframe:")
         print("\\/F \t Cr>")
         print(frame)
+        framename += " " + ','.join([str(d) for d in rank_dims])
+
 
         # generate heatmap
         plt.title(framename)
