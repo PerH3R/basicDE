@@ -11,6 +11,10 @@ Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std:
 	this->position.reserve(dim);
 	this->donor.reserve(dim);
 
+
+	this->mutation_operator->auto_set_F(this->crossover_operator->get_type());
+	this->crossover_operator->set_Cr( this->mutation_operator->get_precalculated_Cr(this->crossover_operator->get_type()) );
+
 	//random initialization
 	for (size_t i = 0; i < dim; ++i){
 		double value = tools.rand_double_unif(target_function->bounds().lb[i], target_function->bounds().ub[i]);
@@ -18,6 +22,8 @@ Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std:
 		this->donor.push_back(value);
 	}
 	this->calculate_fitness();
+
+
 
 }
 

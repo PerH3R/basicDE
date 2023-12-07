@@ -174,6 +174,7 @@ void Population::set_individual_crossover(std::shared_ptr<Crossover> new_crossov
 		}
 	} else if(idx > -1 && idx < this->n){
 		//change single individual
+		//TODO: get Cr value from mutation operator
 		cur_gen[idx]->set_crossover(new_crossover);
 		next_gen[idx]->set_crossover(new_crossover);
 	}else{
@@ -253,8 +254,8 @@ void Population::update_vector_pool(double previous_best_fitness){
 	this->improved = true;
 }
 
-//default mut_op = -1, F = -1.0
-std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F=0.0){
+//default mut_op = -1, F = 0.0
+std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F){
 
 	if (mut_op == -1){
 		mut_op = base_mutation;
@@ -357,15 +358,15 @@ std::shared_ptr<Selection> Population::get_selection_operator(int sel_op){
 	}
 }
 
-//default c_op = -1, Cr = 1.0
-std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr = 0.0){
+//default c_op = -1, Cr = 0.0
+std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr){
 	if (Cr == 0.0){
 		Cr = this->Cr;
 	}
 	if (c_op == -1){
 		c_op = base_crossover;
 	}
-	if(Cr == 0.0){
+	if(Cr == 0.0){ 
 		switch(c_op){
 			case 0:
 				return std::make_shared<Binomial>(this->dim);

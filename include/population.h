@@ -29,9 +29,9 @@ public:
 
 	void print_fitness();
 
-	std::shared_ptr<Mutation> get_mutation_operator(int mut_op = -1, float F = -1.0);
+	std::shared_ptr<Mutation> get_mutation_operator(int mut_op = -1, float F = 0.0);
 	std::shared_ptr<Selection> get_selection_operator(int sel_op = -1);
-	std::shared_ptr<Crossover> get_crossover_operator(int c_op = -1, float Cr = -1.0);
+	std::shared_ptr<Crossover> get_crossover_operator(int c_op = -1, float Cr = 0.0);
 	std::shared_ptr<Boundary> get_boundary_operator(int bound_op = -1);
 
 	//writes positions of population to file

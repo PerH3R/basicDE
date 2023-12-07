@@ -26,10 +26,16 @@ public:
 
 	const float get_F(){return this->F;}
 	size_t get_n(){return this->n;}
-	float set_F(float new_F){this->F = new_F;}
+	void set_F(float new_F){this->F = new_F;}
+	void auto_set_F(CROSSOVER Cr_type){ this->F = base_F[Cr_type];}
+	float get_precalculated_Cr(CROSSOVER Cr_type){return this->base_Cr[Cr_type];}
 
 protected:
-	float F; //mutation rate
+	float F = 0.5;
+	const float fallback_F = 0.5; //fallback mutation rate
+	const float fallback_Cr = 0.5; //fallback Cr rate
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {fallback_F * (NUM_CROSSOVER_OPERATORS+1)}; //default mutation rate
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {fallback_F * (NUM_CROSSOVER_OPERATORS+1)}; //default crossover rate
 	size_t n; //pop size
 	size_t dim;
 };
@@ -40,6 +46,9 @@ public:
     ~RandDiv1() {};
     MUTATION get_type(){return RANDDIV1;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
 class RandDiv2 : public Mutation {
@@ -48,6 +57,9 @@ public:
     ~RandDiv2() {};
     MUTATION get_type(){return RANDDIV2;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.2, fallback_Cr};
 };
 
 class BestDiv1 : public Mutation {
@@ -56,6 +68,9 @@ public:
     ~BestDiv1() {};
     MUTATION get_type(){return BESTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.2, fallback_Cr};
 };
 
 class BestDiv2 : public Mutation {
@@ -64,6 +79,9 @@ public:
     ~BestDiv2() {};
     MUTATION get_type(){return BESTDIV2;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
 class TargetToPBestDiv1 : public Mutation {
@@ -82,6 +100,9 @@ protected:
 	std::vector< std::vector<double> >* archive;
 	float p_ceil;
 	int archive_size;
+
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_Cr};
 };
 
 class RandToBestDiv1 : public Mutation {
@@ -90,6 +111,9 @@ public:
     ~RandToBestDiv1() {};
     MUTATION get_type(){return RTBESTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};	
 };
 
 class RandToBestDiv2 : public Mutation {
@@ -98,6 +122,9 @@ public:
     ~RandToBestDiv2() {};
     MUTATION get_type(){return RTBESTDIV2;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
 class TargetToBestDiv1 : public Mutation {
@@ -106,6 +133,9 @@ public:
     ~TargetToBestDiv1() {};
     MUTATION get_type(){return TTBESTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.2, fallback_Cr};
 };
 
 class TargetToBestDiv2 : public Mutation {
@@ -114,6 +144,9 @@ public:
     ~TargetToBestDiv2() {};
     MUTATION get_type(){return TTBESTDIV2;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
 class TargetToRandDiv1 : public Mutation {
@@ -122,6 +155,9 @@ public:
     ~TargetToRandDiv1() {};
     MUTATION get_type(){return TTRANDDIV1;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.2, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
 class TargetToRandDiv2 : public Mutation {
@@ -130,6 +166,9 @@ public:
     ~TargetToRandDiv2() {};
     MUTATION get_type(){return TTRANDDIV2;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.2, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
 class TwoOptDiv1 : public Mutation {
@@ -138,6 +177,9 @@ public:
     ~TwoOptDiv1() {};
     MUTATION get_type(){return TWOOPTDIV1;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_Cr};
 };
 
 class TwoOptDiv2 : public Mutation {
@@ -146,6 +188,9 @@ public:
     ~TwoOptDiv2() {};
     MUTATION get_type(){return TWOOPTDIV2;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
+protected:
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {1.0, fallback_Cr};
 };
 
 class Desmu : public Mutation {
@@ -162,6 +207,9 @@ private:
 	double alpha = 1.0; //scale factor values for given alpha->(mean,sig) : 1.5->(~0.4, 0.7); 1.0->(~2.3, 13.6); 0.2->(~2.4e11, 2.5e13)
 	double sig_u;
 	double sig_v;
+
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_Cr};
 };
 
 class Bea : public Mutation {
@@ -193,6 +241,9 @@ private:
 	int Nsegments;
 	int segment_size;
 	unsigned int* budget;
+
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
 class DirMut : public Mutation {
@@ -212,6 +263,9 @@ private:
 	Mutation* base_operator;
 	std::vector<std::vector<double>>* vector_pool_ptr;
 	bool improved = false;
+
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.2, fallback_Cr};
 };
 
 
@@ -229,5 +283,8 @@ public:
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx);
 private:
 	ioh::problem::RealSingleObjective* target_function;
+
+	// float base_F[NUM_CROSSOVER_OPERATORS+1] = {fallback_F, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 

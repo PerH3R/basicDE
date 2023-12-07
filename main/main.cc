@@ -13,10 +13,10 @@ struct results {
 
 inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> create_suite(int problem, int inst, int dim, const bool using_factory = true)
 {
-	const std::vector<int> problems{1,2};
-    const std::vector<int> instances{1,2,3};
-    // const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
-    // const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	// const std::vector<int> problems{1,2};
+    // const std::vector<int> instances{1,2,3};
+    const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
+    const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     std::vector<int> dimensions;
     if (dim == 0){ dimensions = {5,20}; }
     else{ dimensions = {dim}; }
@@ -154,10 +154,11 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			pop->randomise_population();
 		}
 
+		//TODO: bugged
 		//if the difference between the best and worst individual is smaller than the 
-		if ((get_current_generation()[0] - get_current_generation().back()) < std::stod(argparser.get_values()["epsilon"])){
-			*budget = 0;
-		}
+		// if ((pop->get_current_generation()[0] - pop->get_current_generation().back()) <= std::stod(argparser->get_values()["epsilon"])){
+		// 	*budget = 0;
+		// }
 		// rest_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1));
 
 		//optimum discovered, stop searching
@@ -201,7 +202,7 @@ int main(int argc, char* argv[]) {
 	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
 	// unsigned int* budget = &budget_value;
 
-	auto logger = get_logger(argparser, "results/results-m"+argparser->get_values()["-m"]+
+	auto logger = get_logger(argparser, "results/m"+argparser->get_values()["-m"]+ "/"
 			"-d"+argparser->get_values()["-d"]+
 			"-pop_size"+argparser->get_values()["-pop_size"]+
 			"-F"+argparser->get_values()["-F"]+
