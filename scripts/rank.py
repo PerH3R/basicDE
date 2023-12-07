@@ -163,10 +163,11 @@ for location in locations:
         print(frame)
         framename += " " + ','.join([str(d) for d in rank_dims])
 
+        num_NaN = frame.isnull().sum().sum()
 
         # generate heatmap
         plt.title(framename)
-        ax = sns.heatmap(frame, annot=True, fmt='.1f', vmin=0.0, vmax=(len(frame.columns)*len(frame.index)-1.0))
+        ax = sns.heatmap(frame, annot=True, fmt='.1f', vmin=0.0, vmax=(len(frame.columns)*len(frame.index)-1.0-num_NaN))
         # highlight lowest value
         ax.add_patch(Rectangle((Cr_values.index(best_cr), F_values.index(best_f)),1,1, fill=False, edgecolor='green', lw=2))
         savename  = location.split('/')[1][1:] + "-" + framename.replace("/", "") + ".png"
