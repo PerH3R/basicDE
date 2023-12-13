@@ -1,7 +1,7 @@
 #include "../include/adaptation.h"
 
 AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget) : argparser(argparser), 
-	problem(problem), budget(budget), n(this->calc_population_size(argparser)), dim(problem->meta_data().n_variables) {
+	problem(problem), budget(budget), n(this->calc_population_size(argparser)), dim(problem->meta_data().n_variables){
 	for (int i = 0; i < NUM_MUTATION_OPERATORS; ++i) {
 	  this->available_mutops[i] = 1;
 	}
@@ -13,6 +13,7 @@ AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::Re
 	// this->dim = problem->meta_data().n_variables;
 	// n = std::stoi(argparser->get_values()["-pop_size"]);
 	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
+	this->lp = std::stoi(argparser->get_values()["-lp"])
 	
 	// if (std::stoi(argparser->get_values()["-archive"]) < 0){
 	// 	this->archive_size = this->n;
@@ -59,7 +60,7 @@ void RandomManager::create_population(){
 
 void RandomManager::adapt(unsigned int iterations){
 	iteration_counter++;
-	if (iteration_counter % 1 == 0){ // how often is adaptation applied	
+	if (iteration_counter % this->lp == 0){ // how often is adaptation applied	
 		for (int i = 0; i < this->pop->get_population_size(); ++i){
 			int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS); 	//exclude random search
 			if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ 		// BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
