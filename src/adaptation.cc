@@ -75,10 +75,10 @@ void RandomManager::adapt(unsigned int iterations){
 	}
 }
 
-AdaptiveBoks::AdaptiveBoks(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget) : AdaptationManager(argparser, problem, budget) {
+MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget) : AdaptationManager(argparser, problem, budget) {
 	this->create_population();
 }
 
-void AdaptiveBoks::create_population(){
+void MABManager::create_population(){
 	this->pop = new Population(this->argparser, this->problem, n, this->budget, this->archive_size, this->resample_limit);
 }
