@@ -14,6 +14,15 @@ public:
 	Population* get_population(){return this->pop;};
 
 protected:
+	struct operator_combination{
+		MUTATION mutation_operator;
+		float F;
+		CROSSOVER crossover_operator;
+		float Cr;
+		float score;
+	}
+
+	std::std::vector<operator_combination> scores;
 	
 	unsigned int calc_population_size(const Argparse* argparser) const{
 		if (std::stoi(argparser->get_values()["-pop_size"]) <= 4){
