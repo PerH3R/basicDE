@@ -25,9 +25,10 @@ flag				meaning						default					vals
 -a					operator adaptor			0 						int 0-...
 -r					resample limit				-1						int >= 0, negative will use automatic limit scaled with dimensionality (10+std::pow((std::log(this->dim)),2))
 -eps				epsilon						0.0 					real, minimum difference between min and max fitnessfor early stopping
+-lp					learning period				20 						int > 0, number of iterations between the updating of each Agents operators
 
 -runs-				repeated runs				1						int
--budget				base allowed funtion evals	2500					int, also lowest value budget can go
+-budget				base allowed funtion evals	10000					int, also lowest value budget can go
 -budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
 -pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on 5*dimension of problem
 	
@@ -36,9 +37,6 @@ flag				meaning						default					vals
 
 */
 
-/*
-TODO: configurable retry/resample limit
-*/
 
 class Argparse {
 public:
@@ -50,6 +48,7 @@ public:
 	void printArgs();
 	std::string getArgsAsString();
 	std::map<std::string, std::string> get_values() const;
+	bool checkValidity();
 
 
 private:
@@ -67,7 +66,8 @@ private:
 		{"-s", "0"},
 		{"-a", "0"},
 		{"-r", "-1"},
-		{"-eps", "0.0"},
+		{"-eps", "0.0"},		
+		{"-lp", "20"},
 		{"-runs","1"}, 
 		{"-budget", "10000"}, 
 		{"-budget_multiplier","1"},
