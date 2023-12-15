@@ -12,9 +12,9 @@ Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std:
 	this->donor.reserve(dim);
 
 
-	auto Cr_type = this->crossover_operator->get_type();
-	// this->mutation_operator->auto_set_F(Cr_type);
-	auto auto_Cr = this->mutation_operator->get_precalculated_Cr(Cr_type);
+	// auto Cr_type = this->crossover_operator->get_type();
+	// // this->mutation_operator->auto_set_F(Cr_type);
+	// auto auto_Cr = this->mutation_operator->get_precalculated_Cr(Cr_type);
 	// this->crossover_operator->set_Cr( auto_Cr );
 
 	//random initialization
