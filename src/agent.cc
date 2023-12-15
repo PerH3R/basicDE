@@ -1,7 +1,7 @@
 #include "../include/agent.h"
 
-Agent::Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, std::shared_ptr<Boundary> boundary_correction, 
-				ioh::problem::RealSingleObjective* target_function, unsigned int* budget, int resample_limit) : 
+Agent::Agent(int id, size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, std::shared_ptr<Boundary> boundary_correction, 
+				ioh::problem::RealSingleObjective* target_function, unsigned int* budget, int resample_limit) : id(id),
 			dim(dimension), mutation_operator(mutation_operator), crossover_operator(crossover_operator), boundary_correction(boundary_correction),
 				target_function(target_function), budget(budget), resample_limit(resample_limit){
 

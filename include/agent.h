@@ -19,7 +19,7 @@ class Mutation;
 
 class Agent {
 public:
-	Agent(size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, 
+	Agent(int id, size_t dimension, std::shared_ptr<Mutation> mutation_operator, std::shared_ptr<Crossover> crossover_operator, 
 			std::shared_ptr<Boundary> boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget, int resample_limit);
 	~Agent();
 
@@ -37,6 +37,7 @@ public:
 	CROSSOVER get_crossover();
 	MUTATION get_mutation();
 	BOUNDARY get_boundary();
+	const int get_id(){return id;};
 
 	void set_crossover(std::shared_ptr<Crossover> new_crossover){this->crossover_operator = new_crossover;};
 	void set_mutation(std::shared_ptr<Mutation> new_mutation){this->mutation_operator = new_mutation;};
@@ -55,6 +56,7 @@ public:
 private:
 	void print_position(std::vector<double> to_print);
 	void calculate_fitness();
+	const int id;
 	
 	size_t dim;
 	std::vector<double> position;

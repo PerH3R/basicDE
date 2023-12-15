@@ -13,7 +13,7 @@ AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::Re
 	// this->dim = problem->meta_data().n_variables;
 	// n = std::stoi(argparser->get_values()["-pop_size"]);
 	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
-	this->lp = std::stoi(argparser->get_values()["-lp"])
+	this->lp = std::stoi(argparser->get_values()["-lp"]);
 	
 	// if (std::stoi(argparser->get_values()["-archive"]) < 0){
 	// 	this->archive_size = this->n;
@@ -88,4 +88,8 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 
 void MABManager::create_population(){
 	this->pop = new Population(this->argparser, this->problem, n, this->budget, this->archive_size, this->resample_limit);
+}
+
+void MABManager::adapt(unsigned int iterations){
+	return;
 }
