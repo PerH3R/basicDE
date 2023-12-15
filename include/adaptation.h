@@ -14,6 +14,15 @@ public:
 	Population* get_population(){return this->pop;};
 
 protected:
+	struct operator_combination{
+		MUTATION mutation_operator;
+		float F;
+		CROSSOVER crossover_operator;
+		float Cr;
+		float score;
+	}
+
+	std::std::vector<operator_combination> scores;
 	
 	unsigned int calc_population_size(const Argparse* argparser) const{
 		if (std::stoi(argparser->get_values()["-pop_size"]) <= 4){
@@ -36,6 +45,7 @@ protected:
 	int resample_limit;
 	unsigned int* budget;
 	ioh::problem::RealSingleObjective* problem;
+	int lp; //learning period, how many iterations between the application of new operators
 
 	const size_t n;
 	const size_t dim;
@@ -60,7 +70,7 @@ protected:
 //Randomizes the mutation operator for each individual for each generation
 class RandomManager : public AdaptationManager{
 public:
-	RandomManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF = false);
+	RandomManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF=false);
     ~RandomManager(){};
     void adapt(unsigned int iterations);
 protected:
@@ -69,10 +79,10 @@ protected:
 	bool RandomizeF;
 };
 
-class AdaptiveBoks : public AdaptationManager{
+class MABManager : public AdaptationManager{
 public:
-	AdaptiveBoks(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
-	~AdaptiveBoks(){};
+	MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
+	~MABManager(){};
     void adapt(unsigned int iterations){};	//no adaptation
 protected:	
 	void create_population();
