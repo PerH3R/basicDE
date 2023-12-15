@@ -9,3 +9,4 @@ build/lib/
 build/
 scripts/pictures/
 scripts/positions/
+debug_build/
