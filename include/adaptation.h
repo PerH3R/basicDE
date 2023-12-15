@@ -20,9 +20,9 @@ protected:
 		CROSSOVER crossover_operator;
 		float Cr;
 		float score;
-	}
+	};
 
-	std::std::vector<operator_combination> scores;
+	std::vector<operator_combination> scores;
 	
 	unsigned int calc_population_size(const Argparse* argparser) const{
 		if (std::stoi(argparser->get_values()["-pop_size"]) <= 4){
@@ -83,7 +83,7 @@ class MABManager : public AdaptationManager{
 public:
 	MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	~MABManager(){};
-    void adapt(unsigned int iterations){};	//no adaptation
+    void adapt(unsigned int iterations);	//no adaptation
 protected:	
 	void create_population();
 };

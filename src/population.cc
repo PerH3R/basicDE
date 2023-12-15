@@ -31,8 +31,10 @@ Population::Population(const Argparse* argparser, ioh::problem::RealSingleObject
 	this->cur_gen.reserve(n);
 	this->next_gen.reserve(n);
 	for (size_t i = 0; i < n; i++) {
-		this->cur_gen.push_back(create_agent());
-		this->next_gen.push_back(create_agent());
+		this->cur_gen.push_back(new Agent(i, dim, get_mutation_operator(-1, this->F), 
+						  get_crossover_operator(-1, this->Cr), get_boundary_operator(), target_function, budget, this->resample_limit));
+		this->next_gen.push_back(new Agent(i, dim, get_mutation_operator(-1, this->F), 
+						  get_crossover_operator(-1, this->Cr), get_boundary_operator(), target_function, budget, this->resample_limit));
 	}
 	std::cout << " Population created!" << std::endl;
 	
@@ -51,8 +53,7 @@ Population::~Population() {
 }
 
 Agent* Population::create_agent(){
-	return new Agent(dim, get_mutation_operator(-1, this->F), 
-						  get_crossover_operator(-1, this->Cr), get_boundary_operator(), target_function, budget, this->resample_limit);
+	return 
 }
 
 size_t Population::get_population_size(){
