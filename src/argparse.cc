@@ -1,5 +1,6 @@
 #include "../include/argparse.h"
 
+
 Argparse::Argparse(const int argc, char* argv[]) : argc(argc), argv(argv)//, 
 		//arg_names{"-f", "-d", "-m", "-F", "-c", "-Cr", "-pop_mult", "-i", "-budget", "-archive"}
 {
@@ -28,7 +29,7 @@ Argparse::Argparse(const int argc, char* argv[]) : argc(argc), argv(argv)//,
 			std::cerr << "invalid formatting at: " << '"' << argv[i] << '"' << std::endl;
 			i++; //
 		}
-	if !checkValidity(){
+	if (!checkValidity()){
 		std::cerr << "Error in passed values " << std::endl;
 	}
 	};
@@ -37,23 +38,23 @@ Argparse::Argparse(const int argc, char* argv[]) : argc(argc), argv(argv)//,
 }
 
 //after correct format check, checks if parameters are in correct range
-checkValidity(){
-	for (auto item : flag_vals){
-		if !((item->first == "-f") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= 24)){return false;}
-		else if !((item->first == "-d") && (std::stoi(item->second) > 0 ){return false;}
-		else if !((item->first == "-m") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_MUTATION_OPERATORS)){return false;}
-		else if !((item->first == "-F") && (std::stod(item->second) > 0.0 ){return false;}
-		else if !((item->first == "-m") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_CROSSOVER_OPERATORS)){return false;}
-		else if !((item->first == "-Cr") && (std::stod(item->second) > 0.0 && std::stod(item->second) =< 1.0)){return false;}
-		else if !((item->first == "-b") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_BOUNDARY_OPERATORS)){return false;}
-		else if !((item->first == "-m") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_SELECTION_OPERATORS)){return false;}
-		else if !((item->first == "-a") && (std::stoi(item->second) > 0 ){return false;} //&& std::stoi(item->second) =< NUM_CROSSOVER_OPERATORS)
-		else if !((item->first == "-r") && (std::stoi(item->second) >= -1 ){return false;}
-		else if !((item->first == "-r") && (std::stod(item->second) >= 0.0 ){return false;}
-		else if !((item->first == "-lp") && (std::stoi(item->second) >= 0 ){return false;}
-		else if !((item->first == "-budget") && (std::stoi(item->second) > 0 ){return false;}
-		else if !((item->first == "-budget_multiplier") && (std::stod(item->second) >= 0.0){return false;}
-		else if !((item->first == "-pop_size") && (std::stoi(item->second) >= 0 ){return false;}
+bool Argparse::checkValidity(){
+	for (auto item = flag_vals.cbegin(); item != flag_vals.cend(); ++item){
+		if (!((item->first == "-f") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= 24))){return false;}
+		else if (!((item->first == "-d") && (std::stoi(item->second) > 0 ))) {return false;}
+		else if (!((item->first == "-m") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_MUTATION_OPERATORS))) {return false;}
+		else if (!((item->first == "-F") && (std::stod(item->second) > 0.0 ))) {return false;}
+		else if (!((item->first == "-m") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_CROSSOVER_OPERATORS))) {return false;}
+		else if (!((item->first == "-Cr") && (std::stod(item->second) > 0.0 && std::stod(item->second) <= 1.0))) {return false;}
+		else if (!((item->first == "-b") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_BOUNDARY_OPERATORS))) {return false;}
+		else if (!((item->first == "-m") && (std::stoi(item->second) > 0 && std::stoi(item->second) <= NUM_SELECTION_OPERATORS))) {return false;}
+		else if (!((item->first == "-a") && (std::stoi(item->second) > 0 ))) {return false;} //&& std::stoi(item->second) =< NUM_CROSSOVER_OPERATORS)
+		else if (!((item->first == "-r") && (std::stoi(item->second) >= -1 ))) {return false;}
+		else if (!((item->first == "-r") && (std::stod(item->second) >= 0.0 ))) {return false;}
+		else if (!((item->first == "-lp") && (std::stoi(item->second) >= 0 ))) {return false;}
+		else if (!((item->first == "-budget") && (std::stoi(item->second) > 0 ))) {return false;}
+		else if (!((item->first == "-budget_multiplier") && (std::stod(item->second) >= 0.0))) {return false;}
+		else if (!((item->first == "-pop_size") && (std::stoi(item->second) >= 0 ))) {return false;}
 	}
 	return true;
 }

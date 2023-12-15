@@ -69,7 +69,7 @@ public:
 private:
 	void add_to_archive(std::vector<bool> kept_indexes);
 	void repopulate_next_gen();
-	Agent* create_agent();
+	Agent* create_agent(int id);
 	bool agent_in_use(Agent* target);
 	bool improved = false;
 	
