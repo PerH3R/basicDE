@@ -45,8 +45,8 @@ public:
 	Argparse(const int argc, char* argv[]);
 	~Argparse(){};
 
-	bool isReal(const std::string str);
-	bool isInteger(const std::string str);
+	bool isReal(const std::string& str);
+	bool isInteger(const std::string& str);
 	void printArgs();
 	std::string getArgsAsString();
 	std::map<std::string, std::string> get_values() const;

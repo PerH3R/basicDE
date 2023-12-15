@@ -327,7 +327,7 @@ std::vector<double> Desmu::apply(std::vector<Agent*> const& cur_gen, size_t idx)
 }
 
 //Bea
-void Bea::mutate_segment(std::vector<Agent*> cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
+void Bea::mutate_segment(const std::vector<Agent*>& cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
 		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_index, int end_index){
 
 	//change segment using Bea or TTR/1

@@ -38,9 +38,9 @@ std::map<std::string, std::string> Argparse::get_values() const{
 	return flag_vals;
 }
 
-bool Argparse::isReal(std::string str){
+bool Argparse::isReal(const std::string& str){
 	std::cout << str;
-	for (char& c : str){
+	for (char c : str){
 		if (!(std::isdigit(c) || c == '.' || c == '-')){
 			std::cout << "f" << std::endl;
 			return false;
@@ -50,8 +50,8 @@ bool Argparse::isReal(std::string str){
 	return true;
 }
 
-bool Argparse::isInteger(std::string str){
-	for (char& c : str){
+bool Argparse::isInteger(const std::string& str){
+	for (char c : str){
 		std::cout << str << " " << c << " " << (std::isdigit(c)) << (c == '-') << std::endl;
 		if (!((std::isdigit(c)) || c == '-')){
 			return false;
