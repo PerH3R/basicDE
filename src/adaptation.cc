@@ -84,6 +84,20 @@ void RandomManager::adapt(unsigned int iterations){
 
 MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget) : AdaptationManager(argparser, problem, budget) {
 	this->create_population();
+	for (int i = 0; i < NUM_MUTATION_OPERATORS; ++i){
+		auto tmp_mutation_ptr = this->pop->get_mutation_operator(i, -1);
+		operator_configuration new_config = {
+			tmp_mutation_ptr->get_type(),
+			tmp_mutation_ptr->get_F(),
+			BINOMIAL,
+			tmp_mutation_ptr->get_predetermined_Cr(BINOMIAL),
+			{0.0},
+			{}
+		};
+		operator_configurations.push_back(new_config);
+
+	}
+
 }
 
 void MABManager::create_population(){
@@ -91,5 +105,46 @@ void MABManager::create_population(){
 }
 
 void MABManager::adapt(unsigned int iterations){
+	iteration_counter++;
+	update_scores();
+	if (iteration_counter % this->lp == 0){
+		/* code */
+
+		//clear scores
+	}
 	return;
+}
+
+void MABManager::update_scores(){
+	//add all obtained scores to respective config
+	for (auto a : this->pop->get_current_generation()){
+		int idx = -1;
+		//find corresponding config
+		for (int config = 0; config < operator_configurations.size(); config++){
+			if (a->get_mutation_ptr()->get_type() == operator_configurations[config].mutation_type &&
+					a->get_mutation_ptr()->get_F() == operator_configurations[config].F &&
+					a->get_crossover_ptr()->get_Cr() == operator_configurations[config].Cr &&
+					a->get_crossover_ptr()->get_type() == operator_configurations[config].crossover_type){
+				idx = config;
+				break;
+			} else{
+				//add config
+				//idx = operator_configurations.size() - 1;
+				break;
+			}
+		}
+		const auto hist = a->get_history();
+		const double last_fitness = std::get<1>(hist[hist.size()-1]);
+		const double first_fitness = std::get<1>(hist[hist.size()-this->lp]);
+		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
+		operator_configurations[idx].lp_scores.push_back(fitness_improvement);
+	}
+	//apply scoring method and update
+	for(auto config : operator_configurations){
+		if (config.lp_scores.empty() == false){
+			config.scores.push_back(tools.vec_avg(config.lp_scores)); //TODO: apply more scoring methods
+		}
+		config.lp_scores.clear();
+	}
+
 }

@@ -14,15 +14,16 @@ public:
 	Population* get_population(){return this->pop;};
 
 protected:
-	struct operator_combination{
-		MUTATION mutation_operator;
+	struct operator_configuration{
+		MUTATION mutation_type;
 		float F;
-		CROSSOVER crossover_operator;
+		CROSSOVER crossover_type;
 		float Cr;
-		float score;
+		std::vector<double> scores;
+		std::vector<double> lp_scores;
 	};
 
-	std::vector<operator_combination> scores;
+	std::vector<operator_configuration> operator_configurations;
 	
 	unsigned int calc_population_size(const Argparse* argparser) const{
 		if (std::stoi(argparser->get_values()["-pop_size"]) <= 4){
@@ -84,6 +85,7 @@ public:
 	MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	~MABManager(){};
     void adapt(unsigned int iterations);	//no adaptation
+    void update_scores();
 protected:	
 	void create_population();
 };
