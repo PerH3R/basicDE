@@ -36,6 +36,15 @@ public:
 
 	std::vector<double> vec_sum(std::vector<double> const& first, std::vector<double> const& second);
 
+	template<typename T>
+	double vec_avg(std::vector<T> const& first){
+		double total = 0;
+		for (auto i : first){
+			total += i;
+		}
+		return (total / first.size());
+	}
+
 	//taken from github->rickboks/auto-DE
 	template<typename T>
 	std::vector<T> pick_random(std::vector<T> possibilities, int const n, bool const replace){
