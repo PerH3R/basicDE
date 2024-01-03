@@ -21,6 +21,7 @@ protected:
 		float Cr;
 		std::vector<double> scores;
 		std::vector<double> lp_scores;
+		double Q;
 	};
 
 	std::vector<operator_configuration> operator_configurations;
@@ -55,6 +56,7 @@ protected:
 	size_t archive_size;
 	bool available_mutops[NUM_MUTATION_OPERATORS];
 	int iteration_counter = 0;
+	int mab_alpha = 0.5;
 };
 
 

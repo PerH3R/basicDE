@@ -92,7 +92,8 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			BINOMIAL,
 			tmp_mutation_ptr->get_predetermined_Cr(BINOMIAL),
 			{0.0},
-			{}
+			{},
+			0.0
 		};
 		operator_configurations.push_back(new_config);
 
@@ -105,12 +106,16 @@ void MABManager::create_population(){
 }
 
 void MABManager::adapt(unsigned int iterations){
-	iteration_counter++;
-	update_scores();
+	iteration_counter++;	
 	if (iteration_counter % this->lp == 0){
+		update_scores();
 		/* code */
+		for(c : operator_configurations){
+			c.Q = 0.0;
+			for(s : c.scores){
 
-		//clear scores
+			}
+		}
 	}
 	return;
 }
@@ -133,9 +138,10 @@ void MABManager::update_scores(){
 				break;
 			}
 		}
+		//calc fitness improvement over learning period of agent
 		const auto hist = a->get_history();
 		const double last_fitness = std::get<1>(hist[hist.size()-1]);
-		const double first_fitness = std::get<1>(hist[hist.size()-this->lp]);
+		const double first_fitness = std::get<1>(hist[hist.size()-this->lp]); //why does rbegin iterator straight up not work :'(
 		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
 		operator_configurations[idx].lp_scores.push_back(fitness_improvement);
 	}
