@@ -21,7 +21,8 @@ if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0 AND CMAKE_CXX_COMPILER_VERSION
 endif() 
 add_subdirectory(deps/IOHexperimenter)
 
-add_library(simpleDE src/agent.cc  src/adaptation.cc src/population.cc  src/tools.cc src/argparse.cc  src/crossover.cc  src/mutation.cc  src/selection.cc  src/boundary.cc)
+add_library(simpleDE src/agent.cc  src/adaptation.cc src/population.cc  src/tools.cc src/argparse.cc  src/crossover.cc  src/mutation.cc  src/selection.cc  src/boundary.cc
+            include/credit.h)
 target_include_directories(simpleDE PUBLIC include deps/IOHExperimenter/include)
 
 target_link_libraries(simpleDE ioh)
