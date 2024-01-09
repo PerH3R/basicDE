@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../include/population.h"
+#include "population.h"
+#include "credit.h"
 /*
 
 */
@@ -19,8 +20,9 @@ protected:
 		float F;
 		CROSSOVER crossover_type;
 		float Cr;
-		std::vector<double> scores;
-		std::vector<double> lp_scores;
+		std::vector<double> weighted_scores; //weighted scores over time
+		std::vector<double> scores; //average 'raw' score based on fitness improvement per learning period
+		std::vector<double> lp_improvements; //'raw' score based on fitness improvements this learning period from all agent with this config
 		double Q;
 	};
 
@@ -39,6 +41,7 @@ protected:
 	std::vector<float> Cr_history;
 
 	const Argparse* argparser;
+	Credit* credit_assigner;
 	Population* pop;
 	int base_boundary;
 	int base_crossover;
@@ -90,4 +93,5 @@ public:
     void update_scores();
 protected:	
 	void create_population();
+	double alpha;
 };

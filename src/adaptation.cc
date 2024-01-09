@@ -27,7 +27,7 @@ AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::Re
 	}else{
 		this->resample_limit = std::stoi(argparser->get_values()["-archive"]);
 	}
-	
+	this->credit_assigner = new FitnessImprovement(lp);
 }
 
 AdaptationManager::~AdaptationManager(){
@@ -93,6 +93,7 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			tmp_mutation_ptr->get_predetermined_Cr(BINOMIAL),
 			{0.0},
 			{},
+			{},
 			0.0
 		};
 		operator_configurations.push_back(new_config);
@@ -110,9 +111,9 @@ void MABManager::adapt(unsigned int iterations){
 	if (iteration_counter % this->lp == 0){
 		update_scores();
 		/* code */
-		for(c : operator_configurations){
+		for(auto c : operator_configurations){
 			c.Q = 0.0;
-			for(s : c.scores){
+			for(auto s : c.scores){
 
 			}
 		}
@@ -122,14 +123,19 @@ void MABManager::adapt(unsigned int iterations){
 
 void MABManager::update_scores(){
 	//add all obtained scores to respective config
-	for (auto a : this->pop->get_current_generation()){
+	std::vector<double> average_position(this->dim,0.0);
+	for (auto agent : this->pop->get_current_generation()){
+		average_position = tools.vec_sum(average_position, agent->get_position());
+	}
+	average_position = tools.vec_scale(average_position, 1/this->n);
+	for (auto agent : this->pop->get_current_generation()){
 		int idx = -1;
 		//find corresponding config
 		for (int config = 0; config < operator_configurations.size(); config++){
-			if (a->get_mutation_ptr()->get_type() == operator_configurations[config].mutation_type &&
-					a->get_mutation_ptr()->get_F() == operator_configurations[config].F &&
-					a->get_crossover_ptr()->get_Cr() == operator_configurations[config].Cr &&
-					a->get_crossover_ptr()->get_type() == operator_configurations[config].crossover_type){
+			if (agent->get_mutation_ptr()->get_type() == operator_configurations[config].mutation_type &&
+					agent->get_mutation_ptr()->get_F() == operator_configurations[config].F &&
+					agent->get_crossover_ptr()->get_Cr() == operator_configurations[config].Cr &&
+					agent->get_crossover_ptr()->get_type() == operator_configurations[config].crossover_type){
 				idx = config;
 				break;
 			} else{
@@ -139,18 +145,19 @@ void MABManager::update_scores(){
 			}
 		}
 		//calc fitness improvement over learning period of agent
-		const auto hist = a->get_history();
-		const double last_fitness = std::get<1>(hist[hist.size()-1]);
-		const double first_fitness = std::get<1>(hist[hist.size()-this->lp]); //why does rbegin iterator straight up not work :'(
-		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
-		operator_configurations[idx].lp_scores.push_back(fitness_improvement);
+		const auto hist = agent->get_history();
+		// const double last_fitness = std::get<1>(hist[hist.size()-1]);
+		// const double first_fitness = std::get<1>(hist[hist.size()-this->lp]); //why does rbegin iterator straight up not work :'(
+		// double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
+		operator_configurations[idx].lp_improvements.push_back(credit_assigner->get_credit(hist, average_position));
 	}
+
 	//apply scoring method and update
 	for(auto config : operator_configurations){
-		if (config.lp_scores.empty() == false){
-			config.scores.push_back(tools.vec_avg(config.lp_scores)); //TODO: apply more scoring methods
+		if (config.lp_improvements.empty() == false){
+			config.scores.push_back(tools.vec_avg(config.lp_improvements)); //TODO: apply more scoring methods
 		}
-		config.lp_scores.clear();
+		config.lp_improvements.clear();
 	}
 
 }
