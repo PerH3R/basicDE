@@ -14,16 +14,16 @@ public:
 	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
 
+
 protected:
 	struct operator_configuration{
 		MUTATION mutation_type;
 		float F;
 		CROSSOVER crossover_type;
 		float Cr;
-		std::vector<double> weighted_scores; //weighted scores over time
-		std::vector<double> scores; //average 'raw' score based on fitness improvement per learning period
-		std::vector<double> lp_improvements; //'raw' score based on fitness improvements this learning period from all agent with this config
-		double Q;
+		std::vector<double> Q; //weighted Q scores over time
+		std::vector<double> scores; //average 'raw' score based on credit per learning period
+		std::vector<double> lp_improvements; //'raw' score based on credit this learning period from all agent with this config
 	};
 
 	std::vector<operator_configuration> operator_configurations;
@@ -35,6 +35,8 @@ protected:
 		return std::stoi(argparser->get_values()["-pop_size"]);
 	};
 	virtual void create_population() = 0;
+
+	bool agent_has_config(Agent* a, const operator_configuration& o);
 
 
 	std::vector<float> F_history;
@@ -94,4 +96,5 @@ public:
 protected:	
 	void create_population();
 	double alpha;
+	double total_Q = 0.0;
 };

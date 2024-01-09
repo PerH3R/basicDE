@@ -93,8 +93,7 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			tmp_mutation_ptr->get_predetermined_Cr(BINOMIAL),
 			{0.0},
 			{},
-			{},
-			0.0
+			{}
 		};
 		operator_configurations.push_back(new_config);
 
@@ -110,13 +109,19 @@ void MABManager::adapt(unsigned int iterations){
 	iteration_counter++;	
 	if (iteration_counter % this->lp == 0){
 		update_scores();
-		/* code */
+		//calculate weighted scores
+		total_Q = 0.0
 		for(auto c : operator_configurations){
-			c.Q = 0.0;
-			for(auto s : c.scores){
-
-			}
+			double new_Q = c.scores.back() * (1-this->alpha) + c.Q.back() * (1-this->alpha)
+			c.Q.push_back(new_Q);
+			total_Q += new_Q; 
 		}
+		for (int i = 0; i < this->n; ++i){
+			// get random config from tools.rand_double_unif(0,total_Q);
+			this->pop->get_current_generation()[i]->
+		}
+		
+		https://stackoverflow.com/questions/10531565/how-should-roulette-wheel-selection-be-organized-for-non-sorted-population-in-g
 	}
 	return;
 }
@@ -132,10 +137,7 @@ void MABManager::update_scores(){
 		int idx = -1;
 		//find corresponding config
 		for (int config = 0; config < operator_configurations.size(); config++){
-			if (agent->get_mutation_ptr()->get_type() == operator_configurations[config].mutation_type &&
-					agent->get_mutation_ptr()->get_F() == operator_configurations[config].F &&
-					agent->get_crossover_ptr()->get_Cr() == operator_configurations[config].Cr &&
-					agent->get_crossover_ptr()->get_type() == operator_configurations[config].crossover_type){
+			if (agent_has_config(agent, operator_configurations[config])){
 				idx = config;
 				break;
 			} else{
@@ -160,4 +162,14 @@ void MABManager::update_scores(){
 		config.lp_improvements.clear();
 	}
 
+}
+
+bool AdaptationManager::agent_has_config(Agent* a, const operator_configuration& o){
+	if (a->get_mutation_ptr()->get_type() == o.mutation_type &&
+		a->get_mutation_ptr()->get_F() == o.F &&
+		a->get_crossover_ptr()->get_Cr() == o.Cr &&
+		a->get_crossover_ptr()->get_type() == o.crossover_type){
+		return true;
+	}
+	return false;
 }
