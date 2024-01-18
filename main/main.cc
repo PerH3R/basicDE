@@ -60,6 +60,8 @@ AdaptationManager* get_adaptation_manager(Argparse* argparser, ioh::problem::Rea
 			return new FixedManager(argparser, problem, budget);
 		case 1:
 			return new RandomManager(argparser, problem, budget);
+		case 2:
+			return new MABManager(argparser, problem, budget);
 		default:
 			std::cerr << "Operator manager " << selection << " out of range. Continuing using FixedManager." << std::endl;
 			return new FixedManager(argparser, problem, budget);		
@@ -107,9 +109,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			first_it = false;
 		}
 
-		manager->adapt(iterations);		
-
-		iterations++;
+		
 		// std::cout << "budget left: " << *budget << " iteration: " << iterations <<std::endl;
 		//mutate
 		pop->apply_mutation();
@@ -141,6 +141,11 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			best_location = pop->get_current_generation()[0]->get_position();
 			
 		}
+
+
+		
+		manager->adapt(iterations);	
+		iterations++;
 		//additional stopping criteria
 		//...
 		if (*budget != previous_iteration_budget){
