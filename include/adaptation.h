@@ -95,9 +95,11 @@ public:
     void update_scores();
 protected:	
 	void create_population();
+	int config_in_configs(operator_configuration new_config);
+	void add_config_from_agent(Agent* a);
 	operator_configuration get_new_config();
-	void set_config_on_agent(operator_configuration new_config);
-	double alpha;
+	void set_config_on_agent(operator_configuration new_config, int a_idx);
+	double alpha = 0.5;
 	double random_config_epsilon = 0.1;
 	double total_Q = 0.0;
 };
