@@ -110,20 +110,44 @@ void MABManager::adapt(unsigned int iterations){
 	if (iteration_counter % this->lp == 0){
 		update_scores();
 		//calculate weighted scores
-		total_Q = 0.0
+		total_Q = 0.0;
 		for(auto c : operator_configurations){
-			double new_Q = c.scores.back() * (1-this->alpha) + c.Q.back() * (1-this->alpha)
+			double new_Q = c.scores.back() * (1-this->alpha) + c.Q.back() * (1-this->alpha);
 			c.Q.push_back(new_Q);
 			total_Q += new_Q; 
 		}
 		for (int i = 0; i < this->n; ++i){
 			// get random config from tools.rand_double_unif(0,total_Q);
-			this->pop->get_current_generation()[i]->
+			// this->pop->get_current_generation()[i]->
 		}
 		
-		https://stackoverflow.com/questions/10531565/how-should-roulette-wheel-selection-be-organized-for-non-sorted-population-in-g
+		//https://stackoverflow.com/questions/10531565/how-should-roulette-wheel-selection-be-organized-for-non-sorted-population-in-g
 	}
 	return;
+}
+
+void MABManager::set_config_on_agent(operator_configuration new_config){
+
+}
+
+AdaptationManager::operator_configuration MABManager::get_new_config(){
+	//find best configuration
+	int best_config;
+	double best_Q = std::numeric_limits<double>::max();
+	for (int i = 0; i < operator_configurations.size(); ++i){
+		if (operator_configurations[i].Q.back() < best_Q){
+			best_config = i;
+		}
+	}
+
+	if (tools.rand_double_unif(0,1) < this->random_config_epsilon){
+		int random_config = tools.rand_int_unif(0, operator_configurations.size());
+		while(random_config == best_config){
+			random_config = tools.rand_int_unif(0, operator_configurations.size());
+		}
+		return operator_configurations[random_config];
+	}
+	return operator_configurations[best_config];
 }
 
 void MABManager::update_scores(){
