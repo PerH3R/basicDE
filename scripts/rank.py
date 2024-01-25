@@ -170,6 +170,7 @@ for location in locations:
             savename += "./average/"
         savename += '-'.join([str(d) for d in rank_dims]) + '/'
         os.makedirs(os.path.dirname(savename), exist_ok=True)
+
         # gather configuration data to initialize dataframe
         first_config = True
         for config_name in final_ranking.keys():
@@ -213,6 +214,7 @@ for location in locations:
         print("Dataframe:")
         print("\\/F \t Cr>")
         print(frame)
+        frame = frame[::-1]
         framename += " " + ','.join([str(d) for d in rank_dims])
 
         num_NaN = frame.isnull().sum().sum()
@@ -224,7 +226,7 @@ for location in locations:
         # if filter_Cr0:
         #     ax.add_patch(Rectangle((Cr_values.index(best_cr)-1, F_values.index(best_f)),1,1, fill=False, edgecolor='green', lw=2))
         # else:
-        ax.add_patch(Rectangle((Cr_values.index(best_cr), F_values.index(best_f)),1,1, fill=False, edgecolor='green', lw=2))
+        ax.add_patch(Rectangle((Cr_values.index(best_cr), F_values[::-1].index(best_f)),1,1, fill=False, edgecolor='green', lw=2))
         savename += location.split('/')[1][1:] + "-" + framename.replace("/", "") + ".png"
         plt.xlabel("Cr")
         plt.ylabel("F")
