@@ -124,11 +124,10 @@ void MABManager::adapt(unsigned int iterations){
 		total_Q = 0.0;
 		std::cout << "Q_vals: ";
 		for(operator_configuration& c : this->operator_configurations){
-			std::cout << "-";
 			// if (!c.scores.empty()){
 				// double new_Q = c.scores.back() * (1-this->alpha) + c.Q.back() * (1-this->alpha);
 				// c.Q.push_back(new_Q);
-				std::cout << c.Q.back();
+				std::cout << c.Q.back() << " - ";;
 				total_Q += c.Q.back();
 			// }
 				 
@@ -243,22 +242,12 @@ void MABManager::update_scores(){
 	for(operator_configuration& config : this->operator_configurations){
 		if (!config.lp_improvements.empty()){
 			double score_avg = tools.vec_avg(config.lp_improvements);
-			std::cout << "score_avg:" << score_avg << " ";
 			config.scores.push_back(score_avg); //TODO: apply more scoring methods
-			std::cout << "all_scores:" << score_avg << " ";
-			for (double score : config.scores){
-				std::cout << score << ",";
-			}std::cout << std::endl;
 			double new_Q = config.scores.back() * (1-this->alpha) + config.Q.back() * (1-this->alpha);
-			std::cout << "newQ:" << new_Q << std::endl << "all_Qs:";
 			config.Q.push_back(new_Q);
-			for (double qval : config.Q){
-				std::cout << qval << " ";
-			}std::cout << std::endl;
 		}else{
-			std::cout <<  "no scores" << " ";
-		}
-		std::cout << std::endl;
+			std::cout <<  "lp_improvements empty" << std::endl;;
+		}		
 		config.lp_improvements.clear();
 	}
 	_ = 0; //TODO
