@@ -89,8 +89,8 @@ public:
 	float get_predetermined_Cr(CROSSOVER Cr_type) override {return this->base_Cr[Cr_type];}
 	float auto_set_F(CROSSOVER Cr_type) override { this->F = this->base_F[Cr_type]; return this->F;}
 protected:
-	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_F};
-	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_Cr};
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.2, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};
 };
 
 class TargetToPBestDiv1 : public Mutation {
@@ -164,7 +164,7 @@ public:
 	float get_predetermined_Cr(CROSSOVER Cr_type) override {return this->base_Cr[Cr_type];}
 	float auto_set_F(CROSSOVER Cr_type) override { this->F = this->base_F[Cr_type]; return this->F;}
 protected:
-	float base_F[NUM_CROSSOVER_OPERATORS+1] = {1.1, fallback_F};
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_F};
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
@@ -178,7 +178,7 @@ public:
 	float auto_set_F(CROSSOVER Cr_type) override { this->F = this->base_F[Cr_type]; return this->F;}
 protected:
 	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_F};
-	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_Cr};
 };
 
 class TargetToRandDiv2 : public Mutation {
@@ -191,7 +191,7 @@ public:
 	float auto_set_F(CROSSOVER Cr_type) override { this->F = this->base_F[Cr_type]; return this->F;}
 protected:
 	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_F};
-	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.2, fallback_Cr};
 };
 
 class TwoOptDiv1 : public Mutation {
@@ -236,8 +236,8 @@ private:
 	double sig_u;
 	double sig_v;
 
-	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_F};
-	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
 class Bea : public Mutation {
@@ -296,8 +296,8 @@ private:
 	std::vector<std::vector<double>>* vector_pool_ptr;
 	bool improved = false;
 
-	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_F};
-	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_Cr};
+	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_F};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
 
