@@ -99,6 +99,7 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 		};
 		operator_configurations.push_back(new_config);
 	}
+	//set random configurations from operator_configurations on agents
 	for (int i = 0; i < this->n; ++i){
 		int new_config_idx = tools.rand_int_unif(0, operator_configurations.size()); //TODO: doublecheck values
 		set_config_on_agent(operator_configurations[new_config_idx], i);
@@ -151,43 +152,55 @@ void MABManager::set_config_on_agent(AdaptationManager::operator_configuration n
 }
 
 AdaptationManager::operator_configuration MABManager::get_new_config(){
-	//find best configuration
+	//find best configuration 
+	//TODO how to choose
 	int best_config_idx;
-	double best_Q = std::numeric_limits<double>::max();
+	double best_Q = std::numeric_limits<double>::min();
 	for (int i = 0; i < operator_configurations.size(); ++i){
-		if (operator_configurations[i].Q.back() < best_Q){
+		if (operator_configurations[i].Q.back() > best_Q){
 			best_config_idx = i;
+			best_Q = operator_configurations[best_config_idx].Q.back();
 		}
 	}
 
 	if (tools.rand_double_unif(0,1) < this->random_config_epsilon){
-		while(true){
-			//create new random config
-			//TODO: make work for EXPONENTIAL crossover
-			int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //exclude randomsearch
-			auto temp_m_ptr = pop->get_mutation_operator(new_m);
-			operator_configuration new_config = {
-				temp_m_ptr->get_type(),
-				temp_m_ptr->auto_set_F(BINOMIAL),
-				BINOMIAL,
-				temp_m_ptr->get_predetermined_Cr(BINOMIAL),
-				{0.0},
-				{},
-				{}
-			};
-			//if config does not exist yet
-			if (config_in_configs(new_config) == -1){
-				operator_configurations.push_back(new_config);
-				return operator_configurations.back();
-			}else{
-				//if exists
-				//make sure it is not by chance the same as best known config
-				if (config_in_configs(new_config) != best_config_idx){
-					return operator_configurations[config_in_configs(new_config)];
+		//do we choose at random from existing configurations or attempt to create a new one
+		bool createnew = false;
+		if (tools.rand_double_unif(0,1) < 0.0){ //TODO how to update F and Cr
+			createnew = true;
+		}
+		if(createnew){
+		//creating new config
+			while(true){			
+				//create new random config
+				//TODO: make work for EXPONENTIAL crossover
+				int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //exclude randomsearch
+				auto temp_m_ptr = pop->get_mutation_operator(new_m);
+				operator_configuration new_config = {
+					temp_m_ptr->get_type(),
+					temp_m_ptr->auto_set_F(BINOMIAL),
+					BINOMIAL,
+					temp_m_ptr->get_predetermined_Cr(BINOMIAL),
+					{0.0},
+					{},
+					{}
+				};
+				//if config does not exist yet
+				if (config_in_configs(new_config) == -1){
+					operator_configurations.push_back(new_config);
+					return operator_configurations.back();
 				}else{
-					//try again with new random config
+					//if exists
+					//make sure it is not by chance the same as best known config
+					if (config_in_configs(new_config) != best_config_idx){
+						return operator_configurations[config_in_configs(new_config)];
+					}else{
+						//try again with new random config
+					}
 				}
 			}
+		}else{ //choose random from existing configs
+			best_config_idx = tools.rand_int_unif(0,operator_configurations.size()); //TODO dont choose same one as best
 		}
 	}
 	return operator_configurations[best_config_idx];
