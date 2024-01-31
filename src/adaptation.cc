@@ -152,8 +152,7 @@ void MABManager::set_config_on_agent(AdaptationManager::operator_configuration n
 }
 
 AdaptationManager::operator_configuration MABManager::get_new_config(){
-	//find best configuration 
-	//TODO how to choose
+	//find best configuration TODO: how to choose
 	int best_config_idx;
 	double best_Q = std::numeric_limits<double>::min();
 	for (int i = 0; i < operator_configurations.size(); ++i){
@@ -163,6 +162,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 		}
 	}
 
+	//choose a random config instead with chance
 	if (tools.rand_double_unif(0,1) < this->random_config_epsilon){
 		//do we choose at random from existing configurations or attempt to create a new one
 		bool createnew = false;
@@ -200,7 +200,12 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 				}
 			}
 		}else{ //choose random from existing configs
-			best_config_idx = tools.rand_int_unif(0,operator_configurations.size()); //TODO dont choose same one as best
+			int new_config_idx;
+			do{
+				new_config_idx = tools.rand_int_unif(0,operator_configurations.size()); 
+			}while(best_config_idx != new_config_idx);
+
+			best_config_idx = new_config_idx;
 		}
 	}
 	return operator_configurations[best_config_idx];
