@@ -3,7 +3,9 @@
 #include "population.h"
 #include "credit.h"
 /*
-
+0 - no adaptation, runs according to all passed parameters
+1 - random operator switching, uses all operators besides random search and their best found F & Cr. IGNORES: -m -F -Cr
+2 - Multi-Armed Bandit ...
 */
 
 class AdaptationManager{
