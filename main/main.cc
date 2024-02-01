@@ -30,14 +30,22 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
 inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = true) //false
 {
 	std::string algname;
-	if (std::stoi(argparser->get_values()["-a"]) != 1)
+	if (std::stoi(argparser->get_values()["-a"]) == 0)
 	{
 		algname = MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])] + "_";
 		algname += 'F' + argparser->get_values()["-F"] + "_";
 		algname += CROSSOVER_NAMES[std::stoi(argparser->get_values()["-c"])] + "_";
 		algname += "Cr" + argparser->get_values()["-Cr"];
-	} else {
+	} else if (std::stoi(argparser->get_values()["-a"]) == 1){
 		algname = "random operators";
+	} else if (std::stoi(argparser->get_values()["-a"]) == 2){
+		algname = "MAB_lr" + argparser->get_values()["-lr"];
+	} else {
+		algname = "-aERROR";
+		algname += MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])] + "_";
+		algname += 'F' + argparser->get_values()["-F"] + "_";
+		algname += CROSSOVER_NAMES[std::stoi(argparser->get_values()["-c"])] + "_";
+		algname += "Cr" + argparser->get_values()["-Cr"];
 	}
 	std::string info = argparser->getArgsAsString();
 
