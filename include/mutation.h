@@ -317,6 +317,6 @@ private:
 	ioh::problem::RealSingleObjective* target_function;
 
 	// float base_F[NUM_CROSSOVER_OPERATORS+1] = {fallback_F, fallback_F};
-	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
+	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};
 };
 
