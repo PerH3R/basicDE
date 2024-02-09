@@ -39,7 +39,7 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
 	} else if (std::stoi(argparser->get_values()["-a"]) == 1){
 		algname = "random operators";
 	} else if (std::stoi(argparser->get_values()["-a"]) == 2){
-		algname = "MAB_lr" + argparser->get_values()["-lr"];
+		algname = "MAB_lp" + argparser->get_values()["-lp"];
 	} else {
 		algname = "-aERROR";
 		algname += MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])] + "_";
@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
 	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
 	// unsigned int* budget = &budget_value;
 
-	auto logger = get_logger(argparser, "results/m"+argparser->get_values()["-m"]+ "/"
+	auto logger = get_logger(argparser, "results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"]+ "/"
 			"-d"+argparser->get_values()["-d"]+
 			"-pop_size"+argparser->get_values()["-pop_size"]+
 			"-F"+argparser->get_values()["-F"]+
