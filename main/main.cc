@@ -249,8 +249,15 @@ int main(int argc, char* argv[]) {
 		int problem_dim = problem->meta_data().n_variables;
     	// int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size	
 
+    	int budget_pop_multiplier;
+    	if (std::stoi(argparser->get_values()["-pop_size"]) <= 4){
+			budget_pop_multiplier = 5 * problem->meta_data().n_variables;
+		}else{
+			budget_pop_multiplier = std::stoi(argparser->get_values()["-pop_size"]);
+		}
+
     	//reset budget
-    	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]) * (std::stod(argparser->get_values()["-budget_multiplier"]) * problem_dim);
+    	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]) * (std::stod(argparser->get_values()["-budget_multiplier"]) * problem_dim * budget_pop_multiplier);
     	if (budget_value < std::stoi(argparser->get_values()["-budget"]))
     	{
     		budget_value = std::stoi(argparser->get_values()["-budget"]);
