@@ -237,7 +237,7 @@ void MABManager::update_scores(){
 		for (int config = 0; config < operator_configurations.size(); config++){
 			if (agent_has_config(agent, operator_configurations[config])){
 				//config exists in database
-				std::cout << "f";
+				// std::cout << "f";
 				idx = config;
 				break;
 			}
@@ -264,7 +264,7 @@ void MABManager::update_scores(){
 			double new_Q = config.scores.back() * (1-this->alpha) + config.Q.back() * (1-this->alpha);
 			config.Q.push_back(new_Q);
 		}else{
-			std::cout <<  "e";
+			// std::cout <<  "e";
 		}		
 		config.lp_improvements.clear();
 	}
