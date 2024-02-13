@@ -26,7 +26,7 @@ flag				meaning						default					vals
 -a					operator adaptor			0 						int 0-...
 -r					resample limit				-1						int >= 0, negative will use automatic limit scaled with dimensionality (10+std::pow((std::log(this->dim)),2))
 -eps				epsilon						0.0 					real, minimum difference between min and max fitnessfor early stopping
--lp					learning period				20 						int > 0, number of iterations between the updating of each Agents operators
+-lp					learning period				50 						int > 0, number of iterations between the updating of each Agents operators
 
 -runs-				repeated runs				1						int
 -budget				base allowed funtion evals	10000					int, also lowest value budget can go
@@ -68,7 +68,7 @@ private:
 		{"-a", "0"},
 		{"-r", "-1"},
 		{"-eps", "0.0"},		
-		{"-lp", "20"},
+		{"-lp", "50"},
 		{"-runs","1"}, 
 		{"-budget", "10000"}, 
 		{"-budget_multiplier","1"},
