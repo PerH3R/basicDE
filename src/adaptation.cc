@@ -125,9 +125,6 @@ void MABManager::adapt(unsigned int iterations){
 		total_Q = 0.0;
 		std::cout << "Q_vals: ";
 		for(operator_configuration& c : this->operator_configurations){
-			// if (!c.scores.empty()){
-				// double new_Q = c.scores.back() * (1-this->alpha) + c.Q.back() * (1-this->alpha);
-				// c.Q.push_back(new_Q);
 				std::cout << c.Q.back() << " - ";;
 				total_Q += c.Q.back();
 			// }
@@ -263,6 +260,7 @@ void MABManager::update_scores(){
 			config.scores.push_back(score_avg); //TODO: apply more scoring methods
 			double new_Q = config.scores.back() * (1-this->alpha) + config.Q.back() * (1-this->alpha);
 			config.Q.push_back(new_Q);
+			config.Qbudget.push_back(*(this->budget));
 		}else{
 			// std::cout <<  "e";
 		}		
@@ -302,3 +300,23 @@ bool AdaptationManager::agent_has_config(Agent* a, const operator_configuration&
 	}
 	return false;
 } 
+
+void MABManager::log_Qs(){
+	std::ofstream Q_log;
+	std::string logname = std::string("results/") + "a2" + "lp" + std::to_string(this->lp) + "pid" + std::to_string(this->problem->meta_data().problem_id) 
+							+ "iid" + std::to_string(this->problem->meta_data().instance)+ ".csv";
+	Q_log.open(logname);
+	for (auto opconfig : operator_configurations){
+		Q_log << std::to_string(opconfig.mutation_type) + ",";
+		for (int i = 0; i < opconfig.Q.size(); ++i){
+			Q_log << std::to_string(opconfig.Qbudget[i]) + ";" + std::to_string(opconfig.Q[i]) + ',';
+		}
+
+
+		// for (double Q_score : opconfig.Q){
+		// 	Q_log << std::to_string(Q_score) + ',';
+		// }
+		Q_log << '\n';
+	}
+	Q_log.close();
+}
