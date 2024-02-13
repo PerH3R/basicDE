@@ -2,6 +2,7 @@
 
 #include "population.h"
 #include "credit.h"
+#include <fstream>
 /*
 0 - no adaptation, runs according to all passed parameters
 1 - random operator switching, uses all operators besides random search and their best found F & Cr. IGNORES: -m -F -Cr
@@ -15,6 +16,7 @@ public:
 	virtual ~AdaptationManager();
 	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
+	virtual void log_Qs() {}; 
 
 
 protected:
@@ -26,6 +28,7 @@ protected:
 		std::vector<double> Q; //weighted Q scores over time
 		std::vector<double> scores; //average 'raw' score based on credit per learning period
 		std::vector<double> lp_improvements; //'raw' score based on credit this learning period from all agent with this config
+		std::vector<unsigned int> Qbudget; //budget at moment of logging Q
 	};
 
 	std::vector<operator_configuration> operator_configurations;
@@ -63,7 +66,6 @@ protected:
 	size_t archive_size;
 	bool available_mutops[NUM_MUTATION_OPERATORS];
 	int iteration_counter = 0;
-	int mab_alpha = 0.5;
 };
 
 
@@ -94,6 +96,7 @@ public:
 	MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	~MABManager(){};
     void adapt(unsigned int iterations);	//no adaptation
+	void log_Qs() override; 
     void update_scores();
 protected:	
 	void create_population();
@@ -101,7 +104,7 @@ protected:
 	void add_config_from_agent(Agent* a);
 	operator_configuration get_new_config();
 	void set_config_on_agent(operator_configuration new_config, int a_idx);
-	double alpha = 0.5;
+	double alpha = 0.5; //low value to compensate for lower 
 	double random_config_epsilon = 0.1;
 	double total_Q = 0.0;
 };
