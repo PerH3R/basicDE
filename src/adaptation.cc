@@ -27,7 +27,7 @@ AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::Re
 	}else{
 		this->resample_limit = std::stoi(argparser->get_values()["-archive"]);
 	}
-	this->credit_assigner = new FitnessImprovement(this->lp);
+	this->credit_assigner = new LogFitnessImprovement(this->lp);
 }
 
 AdaptationManager::~AdaptationManager(){
