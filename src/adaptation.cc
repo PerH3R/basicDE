@@ -93,7 +93,7 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			tmp_mutation_ptr->auto_set_F(BINOMIAL),
 			BINOMIAL,
 			tmp_mutation_ptr->get_predetermined_Cr(BINOMIAL),
-			{0.0},
+			{1.0},
 			{},
 			{}
 		};
@@ -178,7 +178,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 					temp_m_ptr->auto_set_F(BINOMIAL),
 					BINOMIAL,
 					temp_m_ptr->get_predetermined_Cr(BINOMIAL),
-					{0.0},
+					{1.0},
 					{},
 					{}
 				};
