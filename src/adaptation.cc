@@ -336,10 +336,15 @@ void MABManager::log_Qs(){
 	std::ofstream Q_log;
 	std::string logname = std::string("results/") + "a2" + "lp" + std::to_string(this->lp) + "pid" + std::to_string(this->problem->meta_data().problem_id) 
 							+ "iid" + std::to_string(this->problem->meta_data().instance)+ ".csv";
+	std::cout << "a";
 	Q_log.open(logname);
+	std::cout << "b";
 	for (auto opconfig : operator_configurations){
 		Q_log << std::to_string(opconfig.mutation_type) + ",";
+		std::cout << "c";
+		//TODO: segfault here?
 		for (int i = 0; i < opconfig.Q.size(); ++i){
+			std::cout << i;
 			Q_log << std::to_string(opconfig.Qbudget[i]) + ";" + std::to_string(opconfig.Q[i]) + ',';
 		}
 
