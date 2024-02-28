@@ -50,3 +50,23 @@ public:
 	}
 };
 
+class BinaryImprovement : public Credit{
+public:
+	BinaryImprovement(int lp) : Credit(lp) {};
+	~BinaryImprovement() {};
+	double get_credit(const std::vector< 
+						std::tuple<
+							std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>
+						>
+					> history,
+					std::vector<double> mean_position){
+		const double last_fitness = std::get<1>(history[history.size() - 1]);
+		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
+		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
+		if(fitness_improvement > 0){
+			return 1;
+		}
+		return 0; //TODO is log ok here
+	}
+};
+

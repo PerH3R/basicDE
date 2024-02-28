@@ -17,6 +17,7 @@ public:
 	virtual void adapt(unsigned int iterations) = 0;
 	Population* get_population(){return this->pop;};
 	virtual void log_Qs() {}; 
+	std::shared_ptr<Credit> get_credit_operator(int crd_op = 0);
 
 
 protected:
@@ -48,7 +49,7 @@ protected:
 	std::vector<float> Cr_history;
 
 	const Argparse* argparser;
-	Credit* credit_assigner;
+	std::shared_ptr<Credit> credit_assigner;
 	Population* pop;
 	int base_boundary;
 	int base_crossover;
@@ -105,6 +106,7 @@ protected:
 	operator_configuration get_new_config();
 	void set_config_on_agent(operator_configuration new_config, int a_idx);
 	double alpha = 0.5; //low value to compensate for lower 
-	double random_config_epsilon = 0.1;
+	double eps_a;
+	int MABsel;
 	double total_Q = 0.0;
 };

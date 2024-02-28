@@ -27,7 +27,7 @@ AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::Re
 	}else{
 		this->resample_limit = std::stoi(argparser->get_values()["-archive"]);
 	}
-	this->credit_assigner = new LogFitnessImprovement(this->lp);
+	this->credit_assigner = get_credit_operator(1);
 }
 
 AdaptationManager::~AdaptationManager(){
@@ -35,6 +35,18 @@ AdaptationManager::~AdaptationManager(){
 	this->pop = NULL;
 }
 
+std::shared_ptr<Credit> AdaptationManager::get_credit_operator(int crd_op){
+	switch(crd_op){
+			case 0:
+				return std::make_shared<FitnessImprovement>(this->lp);
+			case 1:
+				return std::make_shared<LogFitnessImprovement>(this->lp);
+			case 2:
+				return std::make_shared<BinaryImprovement>(this->lp);
+			default:
+				return std::make_shared<LogFitnessImprovement>(this->lp);
+		}
+}
 
 
 FixedManager::FixedManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget) : AdaptationManager(argparser, problem, budget) {
@@ -85,6 +97,8 @@ void RandomManager::adapt(unsigned int iterations){
 MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget) : AdaptationManager(argparser, problem, budget) {
 	std::cout << "Using Multi-Armed Bandit approach." << std::endl;
 	this->create_population();
+	this->eps_a = std::stod(argparser->get_values()["-eps_a"]);
+	this->MABsel = std::stoi(argparser->get_values()["-MABsel"]);
 	//seed config database with base configurations
 	for (int i = 0; i < NUM_MUTATION_OPERATORS-1; ++i){
 		auto tmp_mutation_ptr = this->pop->get_mutation_operator(i, -1);
@@ -150,17 +164,33 @@ void MABManager::set_config_on_agent(AdaptationManager::operator_configuration n
 
 AdaptationManager::operator_configuration MABManager::get_new_config(){
 	//find best configuration TODO: how to choose
-	int best_config_idx;
-	double best_Q = std::numeric_limits<double>::min();
-	for (int i = 0; i < operator_configurations.size(); ++i){
-		if (operator_configurations[i].Q.back() > best_Q){
-			best_config_idx = i;
-			best_Q = operator_configurations[best_config_idx].Q.back();
+	int selected_config_idx;
+
+	if (MABsel==0){ //best selection
+		double best_Q = std::numeric_limits<double>::min();
+		for (int i = 0; i < operator_configurations.size(); ++i){
+			if (operator_configurations[i].Q.back() > best_Q){
+				selected_config_idx = i;
+				best_Q = operator_configurations[selected_config_idx].Q.back();
+			}
+		}
+	} else if (MABsel == 1){ //proportionate selection
+		double total_Q = 0.0;
+		for (int i = 0; i < operator_configurations.size(); ++i){
+			total_Q += operator_configurations[i].Q.back();
+		}
+		double prop_rand_val = tools.rand_double_unif(0.0, total_Q);
+		double rand_tracker = 0.0;
+		int selected_config_idx = 0;
+		while(rand_tracker < prop_rand_val){
+			rand_tracker += operator_configurations[selected_config_idx].Q.back();
+			selected_config_idx++;
 		}
 	}
+	
 
 	//choose a random config instead with chance
-	if (tools.rand_double_unif(0,1) < this->random_config_epsilon){
+	if (tools.rand_double_unif(0,1) < this->eps_a){
 		//do we choose at random from existing configurations or attempt to create a new one
 		bool createnew = false;
 		if (tools.rand_double_unif(0,1) < 0.0){ //TODO how to update F and Cr
@@ -189,7 +219,8 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 				}else{
 					//if exists
 					//make sure it is not by chance the same as best known config
-					if (config_in_configs(new_config) != best_config_idx){
+					//TODO: change for proportionate selection
+					if (config_in_configs(new_config) != selected_config_idx){ 
 						return operator_configurations[config_in_configs(new_config)];
 					}else{
 						//try again with new random config
@@ -200,12 +231,12 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 			int new_config_idx;
 			do{
 				new_config_idx = tools.rand_int_unif(0,operator_configurations.size()); 
-			}while(best_config_idx != new_config_idx);
+			}while(selected_config_idx != new_config_idx && MABsel == 0); //more variation for 'best' selection
 
-			best_config_idx = new_config_idx;
+			selected_config_idx = new_config_idx;
 		}
 	}
-	return operator_configurations[best_config_idx];
+	return operator_configurations[selected_config_idx];
 }
 
 int MABManager::config_in_configs(operator_configuration new_config){
@@ -281,7 +312,7 @@ void MABManager::add_config_from_agent(Agent* a){
 			a->get_mutation_ptr()->get_F(),
 			a->get_crossover(),
 			a->get_mutation_ptr()->get_predetermined_Cr(BINOMIAL),
-			{0.0},
+			{1.0},
 			{},
 			{}
 		};

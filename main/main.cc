@@ -13,10 +13,10 @@ struct results {
 
 inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> create_suite(int problem, int inst, int dim, const bool using_factory = true)
 {
-	const std::vector<int> problems{21,22,23,24};
-    const std::vector<int> instances{1};
-    // const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
-    // const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	// const std::vector<int> problems{21,22,23,24};
+    // const std::vector<int> instances{1};
+    const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
+    const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     std::vector<int> dimensions;
     if (dim == 0){ dimensions = {5,20}; }
     else{ dimensions = {dim}; }
@@ -27,7 +27,7 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
     return std::make_shared<ioh::suite::BBOB>(problems, instances, dimensions);
 }
 
-inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = true) //false
+inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = false) //false
 {
 	std::string algname;
 	if (std::stoi(argparser->get_values()["-a"]) == 0)
@@ -39,7 +39,10 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
 	} else if (std::stoi(argparser->get_values()["-a"]) == 1){
 		algname = "random operators";
 	} else if (std::stoi(argparser->get_values()["-a"]) == 2){
-		algname = "MAB_lp" + argparser->get_values()["-lp"];
+		algname = "MAB_lp" + argparser->get_values()["-lp"] + 
+					"eps" + argparser->get_values()["-eps_a"] + 
+					"sel" + argparser->get_values()["-MABsel"] +
+					"crd" + argparser->get_values()["-crd"];
 	} else {
 		algname = "-aERROR";
 		algname += MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])] + "_";
@@ -169,7 +172,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 
 		//TODO: bugged
 		//if the difference between the best and worst individual is smaller than the 
-		// if ((pop->get_current_generation()[0] - pop->get_current_generation().back()) <= std::stod(argparser->get_values()["epsilon"])){
+		// if ((pop->get_current_generation()[0] - pop->get_current_generation().back()) <= std::stod(argparser->get_values()["eps_f"])){
 		// 	*budget = 0;
 		// }
 		// rest_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1));
@@ -181,7 +184,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 
 		// std::cout << "==================" << std::endl;
 	}
-	manager->log_Qs();
+	// manager->log_Qs();
 	std::cout << "==================" << std::endl;
 	std::cout << "best possible fitness: " << problem->optimum().y << std::endl;
 	std::cout << "best fitness found   : " << best_fitness << std::endl;
@@ -215,13 +218,25 @@ int main(int argc, char* argv[]) {
 	// size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
 	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
 	// unsigned int* budget = &budget_value;
-
-	auto logger = get_logger(argparser, "results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"]+ "/"
-			"-d"+argparser->get_values()["-d"]+
-			"-pop_size"+argparser->get_values()["-pop_size"]+
+	std::string logger_folder = "results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"]+ "/";
+	logger_folder += "-d"+argparser->get_values()["-d"] +
+			"-pop_size"+argparser->get_values()["-pop_size"];
+	if (std::stoi(argparser->get_values()["-a"]) == 0){
+		logger_folder += 
 			"-F"+argparser->get_values()["-F"]+
 			"-Cr"+argparser->get_values()["-Cr"]+
-			"-b"+argparser->get_values()["-b"]);
+			"-b"+argparser->get_values()["-b"];
+	} else if (std::stoi(argparser->get_values()["-a"]) == 1){
+		//nothing
+	} else if (std::stoi(argparser->get_values()["-a"]) == 2){
+		logger_folder += "lp" + argparser->get_values()["-lp"] + 
+					"eps" + argparser->get_values()["-eps_a"] + 
+					"sel" + argparser->get_values()["-MABsel"] +
+					"crd" + argparser->get_values()["-credit"];
+	}
+
+	auto logger = get_logger(argparser, logger_folder)
+	;
     /// Instatiate a bbob suite of problem {1,2}, instance {1, 2} and dimension {5,10}.
     // const auto &suite_factory = ioh::suite::SuiteRegistry<ioh::problem::RealSingleObjective>::instance();
     // const auto suite = suite_factory.create("BBOB", {1, 20}, {1, 2}, {dim});
@@ -258,7 +273,8 @@ int main(int argc, char* argv[]) {
 		}
 
     	//reset budget
-    	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]) * (std::stod(argparser->get_values()["-budget_multiplier"]) * problem_dim * budget_pop_multiplier);
+    	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]) * (std::stod(argparser->get_values()["-budget_multiplier"])) * problem_dim; 
+    		// * budget_pop_multiplier); //way too much
     	if (budget_value < std::stoi(argparser->get_values()["-budget"]))
     	{
     		budget_value = std::stoi(argparser->get_values()["-budget"]);
