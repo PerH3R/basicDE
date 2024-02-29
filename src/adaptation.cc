@@ -181,11 +181,17 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 		}
 		double prop_rand_val = tools.rand_double_unif(0.0, total_Q);
 		double rand_tracker = 0.0;
-		int selected_config_idx = 0;
-		while(rand_tracker < prop_rand_val){
-			rand_tracker += operator_configurations[selected_config_idx].Q.back();
-			selected_config_idx++;
+		selected_config_idx = 0;
+		// std::cout << "tQ: " << total_Q << std::endl;
+		// std::cout << "pr: " << prop_rand_val << std::endl;
+		for (int i = 0; i < operator_configurations.size(); ++i){
+			rand_tracker += operator_configurations[i].Q.back();
+			if(rand_tracker >= prop_rand_val){
+				selected_config_idx = i;
+				break;
+			}
 		}
+		// std::cout << operator_configurations.size() << " " << selected_config_idx << std::endl;
 	}
 	
 
