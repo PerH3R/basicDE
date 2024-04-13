@@ -101,12 +101,13 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 	this->MABsel = std::stoi(argparser->get_values()["-MABsel"]);
 	//seed config database with base configurations
 	for (int i = 0; i < NUM_MUTATION_OPERATORS-1; ++i){
-		auto tmp_mutation_ptr = this->pop->get_mutation_operator(i, -1);
+		auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
+		mutation_ptr->auto_set_F(BINOMIAL);
+		auto crossover_ptr = this->pop->get_crossover_operator(i, -1);
+		crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(BINOMIAL));
 		operator_configuration new_config = {
-			tmp_mutation_ptr->get_type(),
-			tmp_mutation_ptr->auto_set_F(BINOMIAL),
-			BINOMIAL,
-			tmp_mutation_ptr->get_predetermined_Cr(BINOMIAL),
+			mutation_ptr,
+			crossover_ptr,
 			{1.0},
 			{},
 			{}
@@ -139,7 +140,7 @@ void MABManager::adapt(unsigned int iterations){
 		total_Q = 0.0;
 		std::cout << "Q_vals: ";
 		for(operator_configuration& c : this->operator_configurations){
-				std::cout << c.Q.back() << " - ";;
+				std::cout << c.Q.back() << " - ";
 				total_Q += c.Q.back();
 			// }
 				 
@@ -157,8 +158,8 @@ void MABManager::adapt(unsigned int iterations){
 }
 
 void MABManager::set_config_on_agent(AdaptationManager::operator_configuration new_config, int a_idx){
-	this->pop->set_individual_mutation(this->pop->get_mutation_operator(new_config.mutation_type, new_config.F), a_idx);
-	this->pop->set_individual_crossover(this->pop->get_crossover_operator(new_config.crossover_type, new_config.Cr), a_idx);
+	this->pop->set_individual_mutation(new_config.mutation_operator, a_idx);
+	this->pop->set_individual_crossover(new_config.crossover_operator, a_idx);
 	return;
 }
 
@@ -208,12 +209,13 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 				//create new random config
 				//TODO: make work for EXPONENTIAL crossover
 				int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //exclude randomsearch
-				auto temp_m_ptr = pop->get_mutation_operator(new_m);
+				auto m_ptr = this->pop->get_mutation_operator(new_m);
+				m_ptr->auto_set_F(BINOMIAL);
+				auto cr_ptr = this->pop->get_crossover_operator(BINOMIAL, m_ptr->get_predetermined_Cr(BINOMIAL));
+				cr_ptr->set_Cr(m_ptr->get_predetermined_Cr(BINOMIAL));
 				operator_configuration new_config = {
-					temp_m_ptr->get_type(),
-					temp_m_ptr->auto_set_F(BINOMIAL),
-					BINOMIAL,
-					temp_m_ptr->get_predetermined_Cr(BINOMIAL),
+					m_ptr,
+					cr_ptr,
 					{1.0},
 					{},
 					{}
@@ -248,10 +250,10 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 int MABManager::config_in_configs(operator_configuration new_config){
 	int config_idx = -1;
 	for (int i = 0; i < operator_configurations.size(); ++i){
-		if (new_config.mutation_type == operator_configurations[i].mutation_type &&
-		new_config.F == operator_configurations[i].F &&
-		new_config.Cr == operator_configurations[i].Cr &&
-		new_config.crossover_type == operator_configurations[i].crossover_type){
+		if (new_config.mutation_operator->get_F() == operator_configurations[i].mutation_operator->get_F() &&
+			new_config.mutation_operator->get_type() == operator_configurations[i].mutation_operator->get_type() &&
+			new_config.crossover_operator->get_Cr() == operator_configurations[i].crossover_operator->get_Cr() &&
+			new_config.crossover_operator->get_type() == operator_configurations[i].crossover_operator->get_type()){
 			return i;
 		}
 	}
@@ -314,10 +316,8 @@ void MABManager::add_config_from_agent(Agent* a){
 	}
 	std::cout << "adding new config" << std::endl;
 	operator_configuration new_config = {
-			a->get_mutation(),
-			a->get_mutation_ptr()->get_F(),
-			a->get_crossover(),
-			a->get_mutation_ptr()->get_predetermined_Cr(BINOMIAL),
+			a->get_mutation_ptr(),
+			a->get_crossover_ptr(),
 			{1.0},
 			{},
 			{}
@@ -328,11 +328,12 @@ void MABManager::add_config_from_agent(Agent* a){
 
 bool AdaptationManager::agent_has_config(Agent* a, const operator_configuration& o){
 	//std:: cout << a->get_mutation_ptr()->get_type() << " " << a->get_mutation_ptr()->get_F() << " " << a->get_crossover_ptr()->get_Cr() << " " << a->get_crossover_ptr()->get_type() << " " << std::endl;
-	//std::cout<< o.mutation_type << " " << o.F << " " << o.Cr << " " << o.crossover_type << " " << std::endl;
-	if (a->get_mutation_ptr()->get_type() == o.mutation_type &&
-		a->get_mutation_ptr()->get_F() == o.F &&
-		a->get_crossover_ptr()->get_Cr() == o.Cr &&
-		a->get_crossover_ptr()->get_type() == o.crossover_type){
+	std::cout<< o.mutation_operator << " " << o.crossover_operator << " " << std::endl;
+	if (a->get_mutation_ptr()->get_F() == o.mutation_operator->get_F() &&
+		a->get_mutation_ptr()->get_type() == o.mutation_operator->get_type() &&
+		a->get_crossover_ptr()->get_Cr() == o.crossover_operator->get_Cr() &&
+		a->get_crossover_ptr()->get_type() == o.crossover_operator->get_type()){
+		std::cout << "ahc = true" << std::endl;
 		return true;
 	}
 	return false;
@@ -346,7 +347,7 @@ void MABManager::log_Qs(){
 	Q_log.open(logname);
 	std::cout << "b";
 	for (auto opconfig : operator_configurations){
-		Q_log << std::to_string(opconfig.mutation_type) + ",";
+		Q_log << std::to_string(opconfig.mutation_operator->get_type()) + ",";
 		std::cout << "c";
 		//TODO: segfault here?
 		for (int i = 0; i < opconfig.Q.size(); ++i){

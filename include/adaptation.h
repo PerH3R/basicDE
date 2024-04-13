@@ -22,10 +22,8 @@ public:
 
 protected:
 	struct operator_configuration{
-		MUTATION mutation_type;
-		float F;
-		CROSSOVER crossover_type;
-		float Cr;
+		std::shared_ptr<Mutation> mutation_operator;
+		std::shared_ptr<Crossover> crossover_operator;
 		std::vector<double> Q; //weighted Q scores over time
 		std::vector<double> scores; //average 'raw' score based on credit per learning period
 		std::vector<double> lp_improvements; //'raw' score based on credit this learning period from all agent with this config
