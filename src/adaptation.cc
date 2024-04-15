@@ -284,7 +284,7 @@ void MABManager::update_scores(){
 			idx = operator_configurations.size()-1;
 		}
 		//calc fitness improvement over learning period of agent
-		const auto hist = agent->get_history();
+		const std::vector< std::tuple<std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>> >& hist = agent->get_history();
 		// const double last_fitness = std::get<1>(hist[hist.size()-1]);
 		// const double first_fitness = std::get<1>(hist[hist.size()-this->lp]); //why does rbegin iterator straight up not work :'(
 		// double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
@@ -328,12 +328,11 @@ void MABManager::add_config_from_agent(Agent* a){
 
 bool AdaptationManager::agent_has_config(Agent* a, const operator_configuration& o){
 	//std:: cout << a->get_mutation_ptr()->get_type() << " " << a->get_mutation_ptr()->get_F() << " " << a->get_crossover_ptr()->get_Cr() << " " << a->get_crossover_ptr()->get_type() << " " << std::endl;
-	std::cout<< o.mutation_operator << " " << o.crossover_operator << " " << std::endl;
-	if (a->get_mutation_ptr()->get_F() == o.mutation_operator->get_F() &&
-		a->get_mutation_ptr()->get_type() == o.mutation_operator->get_type() &&
-		a->get_crossover_ptr()->get_Cr() == o.crossover_operator->get_Cr() &&
-		a->get_crossover_ptr()->get_type() == o.crossover_operator->get_type()){
-		std::cout << "ahc = true" << std::endl;
+	// std::cout<< o.mutation_operator << " " << o.crossover_operator << "\n" <<
+		// a->get_mutation_ptr() << " " << a->get_crossover_ptr() << "\n" << std::endl;
+	if (a->get_mutation_ptr() == o.mutation_operator &&
+		a->get_crossover_ptr() == o.crossover_operator){
+		// std::cout << "ahc = true" << std::endl;
 		return true;
 	}
 	return false;

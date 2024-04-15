@@ -10,7 +10,7 @@ public:
 								std::tuple<
 									std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>
 								>
-							> history,
+							>& history,
 							std::vector<double> mean_position) = 0;
 protected:
 	int lp; //learning period
@@ -24,7 +24,7 @@ public:
 						std::tuple<
 							std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>
 						>
-					> history,
+					>& history,
 					std::vector<double> mean_position){
 		const double last_fitness = std::get<1>(history[history.size() - 1]);
 		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
@@ -41,7 +41,7 @@ public:
 						std::tuple<
 							std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>
 						>
-					> history,
+					>& history,
 					std::vector<double> mean_position){
 		const double last_fitness = std::get<1>(history[history.size() - 1]);
 		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
@@ -58,7 +58,7 @@ public:
 						std::tuple<
 							std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>
 						>
-					> history,
+					>& history,
 					std::vector<double> mean_position){
 		const double last_fitness = std::get<1>(history[history.size() - 1]);
 		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
@@ -66,7 +66,27 @@ public:
 		if(fitness_improvement > 0){
 			return 1;
 		}
-		return 0; //TODO is log ok here
+		return 0;
 	}
 };
 
+class R2 : public Credit{
+public:
+	R2(int lp) : Credit(lp) {};
+	~R2() {};
+	double get_credit(const std::vector< 
+						std::tuple<
+							std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>
+						>
+					>& history,
+					std::vector<double> mean_position){
+		const double last_fitness = std::get<1>(history[history.size() - 1]);
+		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
+		//TODO: 10 pts if global best
+		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
+		if(fitness_improvement > 0){
+			return 1;
+		}
+		return 0; 
+	}
+};
