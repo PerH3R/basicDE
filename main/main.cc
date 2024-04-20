@@ -42,7 +42,7 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
 		algname = "MAB_lp" + argparser->get_values()["-lp"] + 
 					"eps" + argparser->get_values()["-eps_a"] + 
 					"sel" + argparser->get_values()["-MABsel"] +
-					"crd" + argparser->get_values()["-crd"];
+					"crd" + argparser->get_values()["-credit"];
 	} else {
 		algname = "-aERROR";
 		algname += MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])] + "_";
