@@ -44,7 +44,7 @@ const std::string MUTATION_NAMES[]  = {
 	"desmu",
 	"BEA",
 	"DIRMUT",
-	"Random search"
+	"Random search"	
 	};
 
 /*
@@ -90,4 +90,23 @@ enum SELECTION {
 
 const std::string SELECTION_NAMES[] = {
 	"Elitist"
+};
+
+/*
+ * 	CREDIT
+ */
+
+enum CREDIT {
+    FITNESSIMPROVEMENT,
+    TANHFITNESSIMPROVEMENT,
+    BINARYIMPROVEMENT,
+    R2IMPROVEMENT,
+    NUM_CREDIT_OPERATORS = R2IMPROVEMENT,
+};
+
+const std::string CREDIT_NAMES[] = {
+	"FitnessImprovement",
+	"TanhImprovement",
+	"BinaryImprovement",
+	"R2Improvement",
 };

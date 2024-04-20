@@ -40,11 +40,13 @@ std::shared_ptr<Credit> AdaptationManager::get_credit_operator(int crd_op){
 			case 0:
 				return std::make_shared<FitnessImprovement>(this->lp);
 			case 1:
-				return std::make_shared<LogFitnessImprovement>(this->lp);
+				return std::make_shared<TanhFitnessImprovement>(this->lp);
 			case 2:
 				return std::make_shared<BinaryImprovement>(this->lp);
+			case 3:
+				return std::make_shared<R2Improvement>(this->lp);
 			default:
-				return std::make_shared<LogFitnessImprovement>(this->lp);
+				return std::make_shared<TanhFitnessImprovement>(this->lp);
 		}
 }
 
@@ -70,7 +72,7 @@ void RandomManager::create_population(){
 	}
 }
 
-void RandomManager::adapt(unsigned int iterations){
+void RandomManager::adapt(unsigned int iterations, const double& previous_best_fitness){
 	iteration_counter++;
 	if (iteration_counter % this->lp == 0){ // how often is adaptation applied	
 		for (int i = 0; i < this->pop->get_population_size(); ++i){
@@ -131,11 +133,11 @@ void MABManager::create_population(){
 
 }
 
-void MABManager::adapt(unsigned int iterations){
+void MABManager::adapt(unsigned int iterations, const double& previous_best_fitness){
 	iteration_counter++;	
 	if (iteration_counter % this->lp == 0){
 		std::cout << "calculating new_scores" << std::endl;
-		update_scores();
+		update_scores(previous_best_fitness);
 		//calculate weighted scores
 		total_Q = 0.0;
 		std::cout << "Q_vals: ";
@@ -260,7 +262,7 @@ int MABManager::config_in_configs(operator_configuration new_config){
 	return -1;
 }
 
-void MABManager::update_scores(){
+void MABManager::update_scores(const double& previous_best_fitness){
 	//calculate average position over all Agents
 	std::vector<double> average_position(this->dim, 0.0);
 	for (auto agent : this->pop->get_current_generation()){
@@ -285,10 +287,7 @@ void MABManager::update_scores(){
 		}
 		//calc fitness improvement over learning period of agent
 		const std::vector< std::tuple<std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>> >& hist = agent->get_history();
-		// const double last_fitness = std::get<1>(hist[hist.size()-1]);
-		// const double first_fitness = std::get<1>(hist[hist.size()-this->lp]); //why does rbegin iterator straight up not work :'(
-		// double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
-		double achieved_credit = credit_assigner->get_credit(hist, average_position);
+		double achieved_credit = credit_assigner->get_credit(hist, average_position, previous_best_fitness);
 		operator_configurations[idx].lp_improvements.push_back(achieved_credit);
 	}
 

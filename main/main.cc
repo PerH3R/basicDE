@@ -102,10 +102,12 @@ std::chrono::high_resolution_clock::duration avg_duration(std::vector<std::chron
 //main loop
 results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::problem::RealSingleObjective* problem, Argparse* argparser) {
 	double best_fitness = std::numeric_limits<double>::max();
+	double previous_best_fitness = std::numeric_limits<double>::max();
 	std::vector<double> best_location(problem->meta_data().n_variables, -1);
 	unsigned int iterations = 0;
 	unsigned int no_movement = 0;
 	unsigned int previous_iteration_budget = *budget;
+
 	Population* pop = manager->get_population();
 
 	//TODO: do something neat for this
@@ -147,7 +149,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			// if (pop->get_mutation() == DIRMUT){
 				pop->update_vector_pool(best_fitness);  //TODO: IF DIRMUT IS A POSSIBLE OPERATOR
 			// }
-
+			previous_best_fitness = best_fitness;
 			best_fitness = pop->get_current_generation()[0]->get_fitness(); //update best fitness
 			best_location = pop->get_current_generation()[0]->get_position();
 			
@@ -155,7 +157,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 
 
 		
-		manager->adapt(iterations);	
+		manager->adapt(iterations, previous_best_fitness);	
 		iterations++;
 		//additional stopping criteria
 		//...

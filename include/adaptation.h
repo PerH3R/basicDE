@@ -14,7 +14,7 @@ public:
 	AdaptationManager() = default;
 	AdaptationManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	virtual ~AdaptationManager();
-	virtual void adapt(unsigned int iterations) = 0;
+	virtual void adapt(unsigned int iterations, const double& previous_best_fitness) = 0;
 	Population* get_population(){return this->pop;};
 	virtual void log_Qs() {}; 
 	std::shared_ptr<Credit> get_credit_operator(int crd_op = 0);
@@ -73,7 +73,7 @@ class FixedManager : public AdaptationManager{
 public:
 	FixedManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
     ~FixedManager(){};
-    void adapt(unsigned int iterations){};	//no adaptation
+    void adapt(unsigned int iterations, const double& previous_best_fitness){};	//no adaptation
 protected:	
 	void create_population();
 };
@@ -83,7 +83,7 @@ class RandomManager : public AdaptationManager{
 public:
 	RandomManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF=false);
     ~RandomManager(){};
-    void adapt(unsigned int iterations);
+    void adapt(unsigned int iterations, const double& previous_best_fitness);
 protected:
 	void create_population();
 
@@ -94,10 +94,11 @@ class MABManager : public AdaptationManager{
 public:
 	MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	~MABManager(){};
-    void adapt(unsigned int iterations);	//no adaptation
+    void adapt(unsigned int iterations, const double& previous_best_fitness);	//no adaptation
 	void log_Qs() override; 
-    void update_scores();
-protected:	
+    
+protected:
+	void update_scores(const double& previous_best_fitness);
 	void create_population();
 	int config_in_configs(operator_configuration new_config);
 	void add_config_from_agent(Agent* a);
