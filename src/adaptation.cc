@@ -27,7 +27,7 @@ AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::Re
 	}else{
 		this->resample_limit = std::stoi(argparser->get_values()["-archive"]);
 	}
-	this->credit_assigner = get_credit_operator(1);
+	this->credit_assigner = get_credit_operator(std::stoi(argparser->get_values()["-credit"]));
 }
 
 AdaptationManager::~AdaptationManager(){
