@@ -105,6 +105,7 @@ protected:
 	operator_configuration get_new_config();
 	void set_config_on_agent(operator_configuration new_config, int a_idx);
 	double alpha = 0.5; //low value to compensate for lower 
+	double new_config_chance = 0.0; //chance to create new operator_configuration entry
 	double eps_a;
 	int MABsel;
 	double total_Q = 0.0;

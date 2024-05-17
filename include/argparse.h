@@ -29,12 +29,14 @@ flag				meaning						default					vals
 -eps_a				epsilon						0.1 					real, chance of random operator selection during MAB adaptation
 -MABsel				strategy selection for MAB	0 						int, determines how the operators of next iteration are chosen. 0=best, 1=proportional			
 -lp					learning period				50 						int > 0, number of iterations between the updating of each Agents operators
+-ops				selection of mutops for MAB	65535
 
 -runs-				repeated runs				1						int
 -budget				base allowed funtion evals	10000					int, also lowest value budget can go
 -budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
 -pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on 5*dimension of problem
-	
+-saveQ				save Q-values				0 						bool	
+
 //operator specific
 -archive		use archive (ttpb mut)			0						int (if negative, archive size = pop_size)	
 
@@ -71,6 +73,7 @@ private:
 		{"-r", "-1"},
 		{"-eps_f", "0.0"},		
 		{"-lp", "50"},
+		{"-ops", "65535"},
 		{"-runs","1"}, 
 		{"-budget", "10000"}, 
 		{"-budget_multiplier","1"},
@@ -79,6 +82,7 @@ private:
 		{"-eps_a","0.1"},
 		{"-MABsel","0"},
 		{"-credit","1"},
+		{"-saveQ","0"}
 	};
 
 

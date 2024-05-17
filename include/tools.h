@@ -27,6 +27,10 @@ public:
 
 	double rand_mantegna(double const& sig_u, double const& sig_v, double const& alpha);
 
+	bool extract_bit(double value, int idx){
+		return (value >> idx) & 1
+	};
+
 	//calculate difference in position
 	std::vector<double> vec_sub(std::vector<double> const& first, std::vector<double> const& second);
 

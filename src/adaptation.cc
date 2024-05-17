@@ -103,18 +103,23 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 	this->MABsel = std::stoi(argparser->get_values()["-MABsel"]);
 	//seed config database with base configurations
 	for (int i = 0; i < NUM_MUTATION_OPERATORS-1; ++i){
-		auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
-		mutation_ptr->auto_set_F(BINOMIAL);
-		auto crossover_ptr = this->pop->get_crossover_operator(i, -1);
-		crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(BINOMIAL));
-		operator_configuration new_config = {
-			mutation_ptr,
-			crossover_ptr,
-			{1.0},
-			{},
-			{}
-		};
-		operator_configurations.push_back(new_config);
+		if (tools.extract_bit(std::stoi(argparser->get_values()["-ops"]), i)){
+			std::cout << MUTATION_NAMES[i] << ':\t' << "True" << std::endl;
+			auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
+			mutation_ptr->auto_set_F(BINOMIAL);
+			auto crossover_ptr = this->pop->get_crossover_operator(i, -1);
+			crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(BINOMIAL));
+			operator_configuration new_config = {
+				mutation_ptr,
+				crossover_ptr,
+				{1.0},
+				{},
+				{}
+			};
+			operator_configurations.push_back(new_config);
+		} else {
+			std::cout << MUTATION_NAMES[i] << ':\t' << "False" << std::endl;
+		}
 	}
 	//set random configurations from operator_configurations on agents
 	for (int i = 0; i < this->n; ++i){
@@ -202,7 +207,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 	if (tools.rand_double_unif(0,1) < this->eps_a){
 		//do we choose at random from existing configurations or attempt to create a new one
 		bool createnew = false;
-		if (tools.rand_double_unif(0,1) < 0.0){ //TODO how to update F and Cr
+		if (tools.rand_double_unif(0,1) < this->new_config_chance){ //TODO how to update F and Cr
 			createnew = true;
 		}
 		if(createnew){
@@ -241,7 +246,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 			int new_config_idx;
 			do{
 				new_config_idx = tools.rand_int_unif(0,operator_configurations.size()); 
-			}while(selected_config_idx != new_config_idx && MABsel == 0); //more variation for 'best' selection
+			}while(selected_config_idx != new_config_idx && MABsel == 0); //in case of 'greedy' selection, dont randomize to the 'best' operator
 
 			selected_config_idx = new_config_idx;
 		}
@@ -341,6 +346,16 @@ void MABManager::log_Qs(){
 	std::ofstream Q_log;
 	std::string logname = std::string("results/") + "a2" + "lp" + std::to_string(this->lp) + "pid" + std::to_string(this->problem->meta_data().problem_id) 
 							+ "iid" + std::to_string(this->problem->meta_data().instance)+ ".csv";
+
+	std::string logger_folder = "results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"]+ "/";
+	logger_folder += "-d"+argparser->get_values()["-d"] +
+					"-pop_size"+argparser->get_values()["-pop_size"];
+
+	logger_folder += "lp" + argparser->get_values()["-lp"] + 
+					"eps" + argparser->get_values()["-eps_a"] + 
+					"sel" + argparser->get_values()["-MABsel"] +
+					"crd" + argparser->get_values()["-credit"];
+
 	std::cout << "a";
 	Q_log.open(logname);
 	std::cout << "b";
@@ -349,7 +364,6 @@ void MABManager::log_Qs(){
 		std::cout << "c";
 		//TODO: segfault here?
 		for (int i = 0; i < opconfig.Q.size(); ++i){
-			std::cout << i;
 			Q_log << std::to_string(opconfig.Qbudget[i]) + ";" + std::to_string(opconfig.Q[i]) + ',';
 		}
 
