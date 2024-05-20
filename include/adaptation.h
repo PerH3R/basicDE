@@ -17,6 +17,7 @@ public:
 	virtual void adapt(unsigned int iterations, const double& previous_best_fitness) = 0;
 	Population* get_population(){return this->pop;};
 	virtual void log_Qs() {}; 
+	virtual void Qlog_init() {}; 
 	std::shared_ptr<Credit> get_credit_operator(int crd_op = 0);
 
 
@@ -96,6 +97,7 @@ public:
 	~MABManager(){};
     void adapt(unsigned int iterations, const double& previous_best_fitness);	//no adaptation
 	void log_Qs() override; 
+	void Qlog_init() override; 
     
 protected:
 	void update_scores(const double& previous_best_fitness);
@@ -105,8 +107,10 @@ protected:
 	operator_configuration get_new_config();
 	void set_config_on_agent(operator_configuration new_config, int a_idx);
 	double alpha = 0.5; //low value to compensate for lower 
-	double new_config_chance = 0.0; //chance to create new operator_configuration entry
+	double new_config_chance = 0.0; //chance to create new operator_configuration entry. Use to, for example, implement SaDE like-behaviour (LOGGING WONT WORK CORRECTLY)
 	double eps_a;
 	int MABsel;
 	double total_Q = 0.0;
+	bool logging = false;
+	std::string Qlogger_location;
 };

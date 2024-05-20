@@ -101,10 +101,12 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 	this->create_population();
 	this->eps_a = std::stod(argparser->get_values()["-eps_a"]);
 	this->MABsel = std::stoi(argparser->get_values()["-MABsel"]);
+	this->logging = !!std::stoi(argparser->get_values()["-logQ"]);
+	std::cout << "logging: " << logging << std::endl;
 	//seed config database with base configurations
 	for (int i = 0; i < NUM_MUTATION_OPERATORS-1; ++i){
 		if (tools.extract_bit(std::stoi(argparser->get_values()["-ops"]), i)){
-			std::cout << MUTATION_NAMES[i] << ':\t' << "True" << std::endl;
+			std::cout << MUTATION_NAMES[i] << ':' << '\t' << "True" << std::endl;
 			auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
 			mutation_ptr->auto_set_F(BINOMIAL);
 			auto crossover_ptr = this->pop->get_crossover_operator(i, -1);
@@ -118,15 +120,16 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			};
 			operator_configurations.push_back(new_config);
 		} else {
-			std::cout << MUTATION_NAMES[i] << ':\t' << "False" << std::endl;
+			std::cout << MUTATION_NAMES[i] << ": "  << "False" << std::endl;
 		}
 	}
-	//set random configurations from operator_configurations on agents
+	//randomly set configurations from operator_configurations on agents
 	for (int i = 0; i < this->n; ++i){
 		int new_config_idx = tools.rand_int_unif(0, operator_configurations.size()); //TODO: doublecheck values
 		set_config_on_agent(operator_configurations[new_config_idx], i);
 	}
 
+	if (this->logging){Qlog_init();}
 }
 
 void MABManager::create_population(){
@@ -141,25 +144,23 @@ void MABManager::create_population(){
 void MABManager::adapt(unsigned int iterations, const double& previous_best_fitness){
 	iteration_counter++;	
 	if (iteration_counter % this->lp == 0){
-		std::cout << "calculating new_scores" << std::endl;
+		// std::cout << "calculating new_scores" << std::endl;
 		update_scores(previous_best_fitness);
 		//calculate weighted scores
 		total_Q = 0.0;
-		std::cout << "Q_vals: ";
-		for(operator_configuration& c : this->operator_configurations){
-				std::cout << c.Q.back() << " - ";
-				total_Q += c.Q.back();
-			// }
-				 
-		}
-		std::cout << std::endl;
+		// std::cout << "Q_vals: ";
+		// for(operator_configuration& c : this->operator_configurations){
+		// 		std::cout << c.Q.back() << " - ";
+		// 		total_Q += c.Q.back();
+		// }
+		// std::cout << std::endl;
 		for (int i = 0; i < this->n; ++i){ //for cur and next gen
 			// get random config from tools.rand_double_unif(0,total_Q);
 			operator_configuration new_config = get_new_config();
 			this->set_config_on_agent(new_config, i);
 		}
-		
-		//https://stackoverflow.com/questions/10531565/how-should-roulette-wheel-selection-be-organized-for-non-sorted-population-in-g
+
+		if (this->logging){ log_Qs();}
 	}
 	return;
 }
@@ -309,7 +310,7 @@ void MABManager::update_scores(const double& previous_best_fitness){
 		}		
 		config.lp_improvements.clear();
 	}
-	std::cout << std::endl;
+	// std::cout << std::endl;
 }
 
 void MABManager::add_config_from_agent(Agent* a){
@@ -342,36 +343,58 @@ bool AdaptationManager::agent_has_config(Agent* a, const operator_configuration&
 	return false;
 } 
 
-void MABManager::log_Qs(){
+void MABManager::Qlog_init(){
 	std::ofstream Q_log;
-	std::string logname = std::string("results/") + "a2" + "lp" + std::to_string(this->lp) + "pid" + std::to_string(this->problem->meta_data().problem_id) 
-							+ "iid" + std::to_string(this->problem->meta_data().instance)+ ".csv";
+	// std::string logname = std::string("results/") + "a2" + "lp" + std::to_string(this->lp) + "pid" + std::to_string(this->problem->meta_data().problem_id) 
+	// 						+ "iid" + std::to_string(this->problem->meta_data().instance)+ ".csv";
 
-	std::string logger_folder = "results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"]+ "/";
-	logger_folder += "-d"+argparser->get_values()["-d"] +
-					"-pop_size"+argparser->get_values()["-pop_size"];
-
-	logger_folder += "lp" + argparser->get_values()["-lp"] + 
+	std::string Qlogger_adap_dir = "./results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"];
+	
+	std::string Qlogger_main_dir = "-d"+argparser->get_values()["-d"] +
+					"-pop_size"+argparser->get_values()["-pop_size"] +
+					"lp" + argparser->get_values()["-lp"] + 
 					"eps" + argparser->get_values()["-eps_a"] + 
 					"sel" + argparser->get_values()["-MABsel"] +
 					"crd" + argparser->get_values()["-credit"];
 
-	std::cout << "a";
-	Q_log.open(logname);
-	std::cout << "b";
-	for (auto opconfig : operator_configurations){
-		Q_log << std::to_string(opconfig.mutation_operator->get_type()) + ",";
-		std::cout << "c";
-		//TODO: segfault here?
-		for (int i = 0; i < opconfig.Q.size(); ++i){
-			Q_log << std::to_string(opconfig.Qbudget[i]) + ";" + std::to_string(opconfig.Q[i]) + ',';
-		}
+	std::string Qlogger_func_dir = fmt::format("data_f{:d}_{}", this->problem->meta_data().problem_id, this->problem->meta_data().name);
 
+	std::string Qlogger_name = fmt::format("Qlog_f{:d}_DIM{:d}.csv", this->problem->meta_data().problem_id, this->problem->meta_data().n_variables);
 
-		// for (double Q_score : opconfig.Q){
-		// 	Q_log << std::to_string(Q_score) + ',';
-		// }
-		Q_log << '\n';
+	this->Qlogger_location = Qlogger_adap_dir + '/' + Qlogger_main_dir + '/' + Qlogger_func_dir + '/' + Qlogger_name;
+
+	// create new file if first instance in suite
+	if(this->problem->meta_data().instance == 1){
+		Q_log.open(Qlogger_location, std::ofstream::out);
+	} else{ 
+		Q_log.open(Qlogger_location, std::ofstream::app);
 	}
+	
+	//create header data
+	Q_log << "Budget";
+
+	for (auto opconfig : operator_configurations){
+		Q_log << ',' << MUTATION_NAMES[opconfig.mutation_operator->get_type()];
+	}
+	Q_log << '\n';
+	Q_log.close();
+	std::cout << "logging at: " << Qlogger_location << std::endl;
+
+}
+
+void MABManager::log_Qs(){
+	std::ofstream Q_log;
+
+	Q_log.open(this->Qlogger_location, std::ofstream::app);
+	bool first = true;
+	for (auto opconfig : operator_configurations){
+		if(first){
+			Q_log <<  fmt::format("{}",opconfig.Qbudget.back());
+			first = false;
+		}
+		//TODO: segfault here?
+		Q_log << ',' << fmt::format("{}",opconfig.Q.back());
+	}
+	Q_log << '\n';
 	Q_log.close();
 }
