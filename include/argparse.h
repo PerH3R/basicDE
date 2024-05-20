@@ -23,11 +23,12 @@ flag				meaning						default					vals
 -Cr					crossover rate 				0.5						real 0.0-1.0
 -b					base boundary operator		0 						int 0-2
 -s					selection operator			0 						int 0-0
--a					operator adaptor			0 						int 0-...
+-a					operator adaptor			2 						int 0-2, 0=fixed; 1=random muation operators; 2=MAB based Mutation operator selection
 -r					resample limit				-1						int >= 0, negative will use automatic limit scaled with dimensionality (10+std::pow((std::log(this->dim)),2))
 -eps_f				epsilon						0.0 					real, minimum difference between min and max fitnessfor early stopping
 -eps_a				epsilon						0.1 					real, chance of random operator selection during MAB adaptation
--MABsel				strategy selection for MAB	0 						int, determines how the operators of next iteration are chosen. 0=best, 1=proportional			
+-MABsel				strategy selection for MAB	1 						int, determines how the operators of next iteration are chosen. 0=greedy, 1=proportional
+-credit				how improvement is scored	3 						int, 0=fitness;1=tanh;2=binary;3=binary+			
 -lp					learning period				50 						int > 0, number of iterations between the updating of each Agents operators
 -ops				selection of mutops for MAB	65535
 
@@ -35,7 +36,7 @@ flag				meaning						default					vals
 -budget				base allowed funtion evals	10000					int, also lowest value budget can go
 -budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
 -pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on 5*dimension of problem
--saveQ				save Q-values				0 						bool	
+-logQ				log MAB Q-values			0 						boolean (numerical 0/1)	
 
 //operator specific
 -archive		use archive (ttpb mut)			0						int (if negative, archive size = pop_size)	
@@ -69,10 +70,10 @@ private:
 		{"-Cr","0.5"}, 
 		{"-b", "0"},
 		{"-s", "0"},
-		{"-a", "0"},
+		{"-a", "2"},
 		{"-r", "-1"},
 		{"-eps_f", "0.0"},		
-		{"-lp", "50"},
+		{"-lp", "5"},
 		{"-ops", "65535"},
 		{"-runs","1"}, 
 		{"-budget", "10000"}, 
@@ -80,9 +81,9 @@ private:
 		{"-pop_size", "0"},
 		{"-archive","0"},
 		{"-eps_a","0.1"},
-		{"-MABsel","0"},
+		{"-MABsel","1"},
 		{"-credit","1"},
-		{"-saveQ","0"}
+		{"-logQ","0"}
 	};
 
 
