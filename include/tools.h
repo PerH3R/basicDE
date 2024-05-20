@@ -27,8 +27,8 @@ public:
 
 	double rand_mantegna(double const& sig_u, double const& sig_v, double const& alpha);
 
-	bool extract_bit(double value, int idx){
-		return (value >> idx) & 1
+	bool extract_bit(int value, int idx){
+		return (value >> idx) & 1;
 	};
 
 	//calculate difference in position

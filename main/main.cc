@@ -16,7 +16,7 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
 	// const std::vector<int> problems{21,22,23,24};
     // const std::vector<int> instances{1};
     const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
-    const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    const std::vector<int> instances{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; //always start from 1 when logging MAB Q_vals
     std::vector<int> dimensions;
     if (dim == 0){ dimensions = {5,20}; }
     else{ dimensions = {dim}; }
