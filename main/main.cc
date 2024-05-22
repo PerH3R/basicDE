@@ -181,12 +181,13 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 
 		//optimum discovered, stop searching
 		if (best_fitness <= problem->optimum().y){
+			std::cout << "optimum found" << std::endl;
 			*budget = 0;
 		}
 
 		// std::cout << "==================" << std::endl;
 	}
-	// manager->log_Qs();
+	if (!!std::stoi(argparser->get_values()["-logQ"])){ manager->log_Qs(); }
 	std::cout << "==================" << std::endl;
 	std::cout << "best possible fitness: " << problem->optimum().y << std::endl;
 	std::cout << "best fitness found   : " << best_fitness << std::endl;

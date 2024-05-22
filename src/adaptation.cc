@@ -114,9 +114,10 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			operator_configuration new_config = {
 				mutation_ptr,
 				crossover_ptr,
-				{1.0},
-				{},
-				{}
+				{1.0}, //initial Q
+				{0.0}, //credited improvement
+				{0.0}, //raw improvement
+				{0}	   //iteration counter
 			};
 			operator_configurations.push_back(new_config);
 		} else {
@@ -129,7 +130,9 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 		set_config_on_agent(operator_configurations[new_config_idx], i);
 	}
 
-	if (this->logging){Qlog_init();}
+	if (this->logging){
+		Qlog_init();
+	}
 }
 
 void MABManager::create_population(){
@@ -160,7 +163,6 @@ void MABManager::adapt(unsigned int iterations, const double& previous_best_fitn
 			this->set_config_on_agent(new_config, i);
 		}
 
-		if (this->logging){ log_Qs();}
 	}
 	return;
 }
@@ -304,7 +306,7 @@ void MABManager::update_scores(const double& previous_best_fitness){
 			config.scores.push_back(score_avg); //TODO: apply more scoring methods
 			double new_Q = config.scores.back() * (1-this->alpha) + config.Q.back() * (1-this->alpha);
 			config.Q.push_back(new_Q);
-			config.Qbudget.push_back(*(this->budget));
+			config.Qbudget.push_back(iteration_counter);
 		}else{
 			// std::cout <<  "e";
 		}		
@@ -323,9 +325,10 @@ void MABManager::add_config_from_agent(Agent* a){
 	operator_configuration new_config = {
 			a->get_mutation_ptr(),
 			a->get_crossover_ptr(),
-			{1.0},
-			{},
-			{}
+			{1.0}, //initial Q
+			{0.0}, //credited improvement
+			{0.0}, //raw improvement
+			{this->iteration_counter}	   //iteration counter
 		};
 	operator_configurations.push_back(new_config);
 	return;
@@ -383,18 +386,37 @@ void MABManager::Qlog_init(){
 }
 
 void MABManager::log_Qs(){
-	std::ofstream Q_log;
-
-	Q_log.open(this->Qlogger_location, std::ofstream::app);
-	bool first = true;
+	std::cout << fmt::format("Logging instance {}: \n", this->problem->meta_data().instance);
+	
 	for (auto opconfig : operator_configurations){
-		if(first){
-			Q_log <<  fmt::format("{}",opconfig.Qbudget.back());
-			first = false;
-		}
-		//TODO: segfault here?
-		Q_log << ',' << fmt::format("{}",opconfig.Q.back());
+		std::cout << fmt::format("SizeOf {0} =  {1}:", opconfig.mutation_operator->get_type(), opconfig.Qbudget.size()) << std::endl;		
 	}
-	Q_log << '\n';
+
+	std::ofstream Q_log;
+	Q_log.open(this->Qlogger_location, std::ofstream::app);
+	// bool first = true;
+	// for (int i = 0; i < operator_configurations[0].Qbudget.size(); ++i){
+	// 	std::cout << i << std::endl;
+	// 	Q_log <<  fmt::format("{}", operator_configurations[0].Qbudget[i]);
+	// 	for (auto opconfig : operator_configurations){
+	// 		Q_log << ',' << fmt::format("{}", opconfig.Q[i]);
+	// 	}
+	// 	Q_log << '\n';
+	// }
+	// Q_log.close();
+
+	for (int i = 0; i <= this->iteration_counter; i+=this->lp){
+		Q_log <<  i;
+		std::cout << i << std::endl;
+		for (auto opconfig : operator_configurations){
+			auto iteration_iterator = std::find(opconfig.Qbudget.begin(), opconfig.Qbudget.end(), i);
+			if (iteration_iterator != opconfig.Qbudget.end()){
+				Q_log << ',' << fmt::format("{}", opconfig.Q[iteration_iterator - opconfig.Qbudget.begin()]);
+			} else {
+				Q_log << ',' ;
+			}
+		}
+		Q_log << '\n';
+	}
 	Q_log.close();
 }
