@@ -143,12 +143,12 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 		//on fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
-			std::cout << "new best is: " << fmt::format("{}", pop->get_current_generation()[0]->get_fitness()) << " at iteration " << iterations << std::endl;
+			// std::cout << "new best is: " << fmt::format("{}", pop->get_current_generation()[0]->get_fitness()) << " at iteration " << iterations << std::endl;
 
 			// // update vector pool using previous bestfitness
-			// if (pop->get_mutation() == DIRMUT){
+			if (tools.extract_bit(std::stoi(argparser->get_values()["-ops"]), DIRMUT)){
 				pop->update_vector_pool(best_fitness);  //TODO: IF DIRMUT IS A POSSIBLE OPERATOR
-			// }
+			}
 			previous_best_fitness = best_fitness;
 			best_fitness = pop->get_current_generation()[0]->get_fitness(); //update best fitness
 			best_location = pop->get_current_generation()[0]->get_position();
@@ -172,20 +172,11 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			pop->randomise_population();
 		}
 
-		//TODO: bugged
-		//if the difference between the best and worst individual is smaller than the 
-		// if ((pop->get_current_generation()[0] - pop->get_current_generation().back()) <= std::stod(argparser->get_values()["eps_f"])){
-		// 	*budget = 0;
-		// }
-		// rest_time.push_back(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1));
-
 		//optimum discovered, stop searching
 		if (best_fitness <= problem->optimum().y){
-			std::cout << "optimum found" << std::endl;
+			std::cout << fmt::format("Optimum {} found at iteration {} with {} budget left", best_fitness, iterations, *budget) << std::endl;
 			*budget = 0;
 		}
-
-		// std::cout << "==================" << std::endl;
 	}
 	if (!!std::stoi(argparser->get_values()["-logQ"])){ manager->log_Qs(); }
 	std::cout << "==================" << std::endl;

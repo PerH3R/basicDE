@@ -387,27 +387,12 @@ void MABManager::Qlog_init(){
 
 void MABManager::log_Qs(){
 	std::cout << fmt::format("Logging instance {}: \n", this->problem->meta_data().instance);
-	
-	for (auto opconfig : operator_configurations){
-		std::cout << fmt::format("SizeOf {0} =  {1}:", opconfig.mutation_operator->get_type(), opconfig.Qbudget.size()) << std::endl;		
-	}
 
 	std::ofstream Q_log;
 	Q_log.open(this->Qlogger_location, std::ofstream::app);
-	// bool first = true;
-	// for (int i = 0; i < operator_configurations[0].Qbudget.size(); ++i){
-	// 	std::cout << i << std::endl;
-	// 	Q_log <<  fmt::format("{}", operator_configurations[0].Qbudget[i]);
-	// 	for (auto opconfig : operator_configurations){
-	// 		Q_log << ',' << fmt::format("{}", opconfig.Q[i]);
-	// 	}
-	// 	Q_log << '\n';
-	// }
-	// Q_log.close();
 
 	for (int i = 0; i <= this->iteration_counter; i+=this->lp){
 		Q_log <<  i;
-		std::cout << i << std::endl;
 		for (auto opconfig : operator_configurations){
 			auto iteration_iterator = std::find(opconfig.Qbudget.begin(), opconfig.Qbudget.end(), i);
 			if (iteration_iterator != opconfig.Qbudget.end()){
