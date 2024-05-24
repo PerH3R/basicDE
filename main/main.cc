@@ -39,10 +39,11 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
 	} else if (std::stoi(argparser->get_values()["-a"]) == 1){
 		algname = "random operators";
 	} else if (std::stoi(argparser->get_values()["-a"]) == 2){
-		algname = "MAB_lp" + argparser->get_values()["-lp"] + 
-					"eps" + argparser->get_values()["-eps_a"] + 
-					"sel" + argparser->get_values()["-MABsel"] +
-					"crd" + argparser->get_values()["-credit"];
+		algname = "ops" + std::bitset<NUM_MUTATION_OPERATORS>(std::stoi(argparser->get_values()["-ops"])).to_string();
+		// algname = "MAB_lp" + argparser->get_values()["-lp"] + 
+		// 			"eps" + argparser->get_values()["-eps_a"] + 
+		// 			"sel" + argparser->get_values()["-MABsel"] +
+		// 			"crd" + argparser->get_values()["-credit"];
 	} else {
 		algname = "-aERROR";
 		algname += MUTATION_NAMES[std::stoi(argparser->get_values()["-m"])] + "_";
@@ -212,25 +213,30 @@ int main(int argc, char* argv[]) {
 	// size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
 	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
 	// unsigned int* budget = &budget_value;
-	std::string logger_folder = "results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"]+ "/";
-	logger_folder += "-d"+argparser->get_values()["-d"] +
-			"-pop_size"+argparser->get_values()["-pop_size"];
-	if (std::stoi(argparser->get_values()["-a"]) == 0){
-		logger_folder += 
-			"-F"+argparser->get_values()["-F"]+
-			"-Cr"+argparser->get_values()["-Cr"]+
-			"-b"+argparser->get_values()["-b"];
-	} else if (std::stoi(argparser->get_values()["-a"]) == 1){
-		//nothing
-	} else if (std::stoi(argparser->get_values()["-a"]) == 2){
-		logger_folder += "lp" + argparser->get_values()["-lp"] + 
-					"eps" + argparser->get_values()["-eps_a"] + 
-					"sel" + argparser->get_values()["-MABsel"] +
-					"crd" + argparser->get_values()["-credit"];
-	}
+	std::string adap_logger_folder = fmt::format("results/a{}m{}/", argparser->get_values()["-a"], argparser->get_values()["-m"]);
 
-	auto logger = get_logger(argparser, logger_folder)
-	;
+	// std::string sub_logger_folder += "-d"+argparser->get_values()["-d"] +
+	// 		"-pop_size"+argparser->get_values()["-pop_size"];
+	// if (std::stoi(argparser->get_values()["-a"]) == 0){
+	// 	sub_logger_folder += 
+	// 		"-F"+argparser->get_values()["-F"]+
+	// 		"-Cr"+argparser->get_values()["-Cr"]+
+	// 		"-b"+argparser->get_values()["-b"];
+	// } else if (std::stoi(argparser->get_values()["-a"]) == 1){
+	// 	//nothing
+	// } else if (std::stoi(argparser->get_values()["-a"]) == 2){
+	// 	sub_logger_folder += "lp" + argparser->get_values()["-lp"] + 
+	// 				"eps" + argparser->get_values()["-eps_a"] + 
+	// 				"sel" + argparser->get_values()["-MABsel"] +
+	// 				"crd" + argparser->get_values()["-credit"];
+	// }
+
+	std::string sub_logger_folder = "-ops" + std::bitset<NUM_MUTATION_OPERATORS>(std::stoi(argparser->get_values()["-ops"])).to_string();
+
+	std::string logger_folder = adap_logger_folder + sub_logger_folder;
+
+	auto logger = get_logger(argparser, logger_folder);
+
     /// Instatiate a bbob suite of problem {1,2}, instance {1, 2} and dimension {5,10}.
     // const auto &suite_factory = ioh::suite::SuiteRegistry<ioh::problem::RealSingleObjective>::instance();
     // const auto suite = suite_factory.create("BBOB", {1, 20}, {1, 2}, {dim});

@@ -351,23 +351,29 @@ void MABManager::Qlog_init(){
 	// std::string logname = std::string("results/") + "a2" + "lp" + std::to_string(this->lp) + "pid" + std::to_string(this->problem->meta_data().problem_id) 
 	// 						+ "iid" + std::to_string(this->problem->meta_data().instance)+ ".csv";
 
-	std::string Qlogger_adap_dir = "./results/a"+argparser->get_values()["-a"] + "m"+argparser->get_values()["-m"];
+	std::string Qlogger_adap_dir = fmt::format("Qresults/a{}m{}/", argparser->get_values()["-a"], argparser->get_values()["-m"]);
 	
-	std::string Qlogger_main_dir = "-d"+argparser->get_values()["-d"] +
-					"-pop_size"+argparser->get_values()["-pop_size"] +
-					"lp" + argparser->get_values()["-lp"] + 
-					"eps" + argparser->get_values()["-eps_a"] + 
-					"sel" + argparser->get_values()["-MABsel"] +
-					"crd" + argparser->get_values()["-credit"];
+	std::string Qlogger_main_dir =  "-ops"+ std::bitset<NUM_MUTATION_OPERATORS>(std::stoi(argparser->get_values()["-ops"])).to_string() + "/";
+									// "-d"+argparser->get_values()["-d"] +
+									// "-pop_size"+ argparser->get_values()["-pop_size"] +
+									// "lp" + argparser->get_values()["-lp"] + 
+									// "eps" + argparser->get_values()["-eps_a"] + 
+									// "sel" + argparser->get_values()["-MABsel"] +
+									// "crd" + argparser->get_values()["-credit"];
 
 	std::string Qlogger_func_dir = fmt::format("data_f{:d}_{}", this->problem->meta_data().problem_id, this->problem->meta_data().name);
 
 	std::string Qlogger_name = fmt::format("Qlog_f{:d}_DIM{:d}.csv", this->problem->meta_data().problem_id, this->problem->meta_data().n_variables);
 
-	this->Qlogger_location = Qlogger_adap_dir + '/' + Qlogger_main_dir + '/' + Qlogger_func_dir + '/' + Qlogger_name;
+	this->Qlogger_location = Qlogger_adap_dir + 
+								Qlogger_main_dir + 
+								// Qlogger_func_dir + 
+								Qlogger_name;
 
+	tools.create_dir(Qlogger_adap_dir + Qlogger_main_dir);
 	// create new file if first instance in suite
 	if(this->problem->meta_data().instance == 1){
+		tools.create_dir(Qlogger_adap_dir + Qlogger_main_dir);
 		Q_log.open(Qlogger_location, std::ofstream::out);
 	} else{ 
 		Q_log.open(Qlogger_location, std::ofstream::app);

@@ -5,6 +5,7 @@
 #include <memory>
 #include <random>
 #include "time.h"
+#include <filesystem>
 
 //TODO
 #include<iostream>
@@ -62,6 +63,10 @@ public:
 			picked.push_back(x);
 		}
 		return picked;
+	}
+
+	bool create_dir(std::string path){
+		return std::filesystem::create_directories(path);
 	}
 
 
