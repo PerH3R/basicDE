@@ -17,7 +17,7 @@ print(ops_perms)
 com2 = []
 
 for perm in ops_perms:
-	com2.append(["./main", "-a", str(adaptation_mode), "-budget", str(budget), "-ops", str(perm)])
+	com2.append(["./main", "-a", str(adaptation_mode), "-budget", str(budget), "-ops", str(perm), "-logQ", "1"])
 
 
 
