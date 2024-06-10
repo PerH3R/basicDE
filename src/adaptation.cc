@@ -104,7 +104,7 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 	this->logging = !!std::stoi(argparser->get_values()["-logQ"]);
 	std::cout << "logging: " << logging << std::endl;
 	//seed config database with base configurations
-	for (int i = 0; i < NUM_MUTATION_OPERATORS-1; ++i){
+	for (int i = 0; i <= NUM_MUTATION_OPERATORS-1; ++i){
 		if (tools.extract_bit(std::stoi(argparser->get_values()["-ops"]), i)){
 			std::cout << MUTATION_NAMES[i] << ':' << '\t' << "True" << std::endl;
 			auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
