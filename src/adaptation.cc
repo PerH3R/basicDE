@@ -100,6 +100,7 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 	std::cout << "Using Multi-Armed Bandit approach." << std::endl;
 	this->create_population();
 	this->eps_a = std::stod(argparser->get_values()["-eps_a"]);
+	this->alpha = std::stod(argparser->get_values()["-MABdecay"]);
 	this->MABsel = std::stoi(argparser->get_values()["-MABsel"]);
 	this->logging = !!std::stoi(argparser->get_values()["-logQ"]);
 	std::cout << "logging: " << logging << std::endl;

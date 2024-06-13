@@ -27,6 +27,7 @@ flag				meaning						default					vals
 -r					resample limit				-1						int >= 0, negative will use automatic limit scaled with dimensionality (10+std::pow((std::log(this->dim)),2))
 -eps_f				epsilon						0.0 					real, minimum difference between min and max fitnessfor early stopping
 -eps_a				epsilon						0.1 					real, chance of random operator selection during MAB adaptation
+-MABdecay			decay multiplier MAB		0.5 					real [0,1] affect how quick MAB ''forgets'' obtained results higher=faster
 -MABsel				strategy selection for MAB	1 						int, determines how the operators of next iteration are chosen. 0=greedy, 1=proportional
 -credit				how improvement is scored	3 						int, 0=fitness;1=tanh;2=binary;3=binary+			
 -lp					learning period				50 						int > 0, number of iterations between the updating of each Agents operators
@@ -81,6 +82,7 @@ private:
 		{"-pop_size", "0"},
 		{"-archive","0"},
 		{"-eps_a","0.1"},
+		{"-MABdecay","0.5"},
 		{"-MABsel","1"},
 		{"-credit","1"},
 		{"-logQ","0"}
