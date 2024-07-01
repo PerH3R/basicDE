@@ -47,7 +47,7 @@ std::vector<double> Tools::vec_sub(std::vector<double> const& first, std::vector
 
 std::vector<double> Tools::vec_scale(std::vector<double> const& vec, double const& scalar){
 	std::vector<double> result;
-	for (int i = 0; i < vec.size(); ++i){
+	for (size_t i = 0; i < vec.size(); ++i){
 	 	result.push_back(vec[i]*scalar);
 	}
 	return result; 
@@ -56,7 +56,7 @@ std::vector<double> Tools::vec_scale(std::vector<double> const& vec, double cons
 std::vector<double> Tools::vec_sum(std::vector<double> const& first, std::vector<double> const& second){
 	if (first.size() == second.size()){
 		std::vector<double> result;
-		for (int i = 0; i < first.size(); ++i){
+		for (size_t i = 0; i < first.size(); ++i){
 		 	result.push_back(first[i]+second[i]);
 		}
 		return result; 

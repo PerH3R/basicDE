@@ -158,7 +158,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			
 		}
 		
-		manager->adapt(iterations, previous_best_fitness);	
+		manager->adapt(previous_best_fitness);	
 		iterations++;
 
 		//additional stopping criteria and 

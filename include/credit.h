@@ -30,6 +30,9 @@ public:
 					std::vector<double> mean_position,
 					const double& previous_best_fitness
 					){
+		(void)mean_position; //silence warning
+		(void)previous_best_fitness;
+
 		const double last_fitness = std::get<1>(history[history.size() - 1]);
 		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
 		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
@@ -49,6 +52,9 @@ public:
 					std::vector<double> mean_position,
 					const double& previous_best_fitness
 					){
+		(void)mean_position; //silence warning
+		(void)previous_best_fitness;
+
 		const double last_fitness = std::get<1>(history[history.size() - 1]);
 		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
 		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
@@ -68,6 +74,9 @@ public:
 					std::vector<double> mean_position,
 					const double& previous_best_fitness
 					){
+		(void)mean_position; //silence warning
+		(void)previous_best_fitness;
+
 		const double last_fitness = std::get<1>(history[history.size() - 1]);
 		const double first_fitness = std::get<1>(history[history.size() - this->lp]); //why does rbegin iterator straight up not work :'(
 		double fitness_improvement = std::abs(first_fitness - last_fitness); //abs just in case someone want to maximise or smth
@@ -90,6 +99,7 @@ public:
 					std::vector<double> mean_position,
 					const double& previous_best_fitness
 					){
+		(void)mean_position; //silence warning
 
 		const double last_fitness = std::get<1>(history[history.size() - 1]);
 		if (last_fitness < previous_best_fitness){

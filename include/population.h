@@ -73,8 +73,10 @@ private:
 	bool agent_in_use(Agent* target);
 	bool improved = false;
 	
-
-	const size_t n; //population size
+	const Argparse* argparser;
+	ioh::problem::RealSingleObjective* target_function;
+	const size_t n; //population size	
+	unsigned int* budget;
 	size_t dim; //dimension size
 	float F;
 	float Cr;
@@ -84,7 +86,6 @@ private:
 	int base_selection;
 	int base_mutation;
 	int resample_limit;
-	unsigned int* budget;
 
 	std::vector<Agent*> cur_gen;
 	std::vector<Agent*> next_gen;
@@ -97,8 +98,6 @@ private:
 	int base_mutation_operator;
 	int base_boundary_correction;
 	std::shared_ptr<Selection> selection_operator;
-	const Argparse* argparser;
-	ioh::problem::RealSingleObjective* target_function;
 
 	//for DirMut
 	std::vector< std::vector<double> > vector_pool; //pool of difference vectors of improved agents	

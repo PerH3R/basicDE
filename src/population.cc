@@ -112,7 +112,7 @@ void Population::repopulate_next_gen() {
 }
 
 void Population::add_to_archive(std::vector<bool> kept_indexes){
-	for (int i = 0; i < kept_indexes.size(); ++i){
+	for (size_t i = 0; i < kept_indexes.size(); ++i){
 		if (kept_indexes[i] == 0){ //if child usurped parent
 			if (this->archive.size() < this->archive_size){ //if archive full
 				archive.push_back(std::get<0>(next_gen[i]->get_history().back())); //put parent position in archive
@@ -127,7 +127,7 @@ void Population::add_to_archive(std::vector<bool> kept_indexes){
 void Population::apply_selection() {
 	//swap outperforming trial vectors to cur_gen
 	auto kept_indexes = this->selection_operator->apply(this->cur_gen, this->next_gen);
-	for (int i = 0; i < this->n; ++i){
+	for (size_t i = 0; i < this->n; ++i){
 		//record winning strategy
 		auto t = this->cur_gen[i]->update_history();
 		//record winning strategy in counterpart
@@ -169,7 +169,7 @@ std::vector<Agent*> Population::get_next_generation(){
 void Population::set_individual_crossover(std::shared_ptr<Crossover> new_crossover, int idx){
 	if (idx == -1){
 		//change all
-		for (int i = 0; i < this->n; ++i){
+		for (size_t i = 0; i < this->n; ++i){
 			cur_gen[i]->set_crossover(new_crossover);
 			next_gen[i]->set_crossover(new_crossover);
 		}
@@ -186,7 +186,7 @@ void Population::set_individual_crossover(std::shared_ptr<Crossover> new_crossov
 void Population::set_individual_mutation(std::shared_ptr<Mutation> new_mutation, int idx){
 	if (idx == -1){
 		//change all
-		for (int i = 0; i < this->n; ++i){
+		for (size_t i = 0; i < this->n; ++i){
 			cur_gen[i]->set_mutation(new_mutation);
 			next_gen[i]->set_mutation(new_mutation);
 		}
@@ -202,7 +202,7 @@ void Population::set_individual_mutation(std::shared_ptr<Mutation> new_mutation,
 void Population::set_individual_boundary(std::shared_ptr<Boundary> new_boundary, int idx){
 	if (idx == -1){
 		//change all
-		for (int i = 0; i < this->n; ++i){
+		for (size_t i = 0; i < this->n; ++i){
 			cur_gen[i]->set_boundary(new_boundary);
 			next_gen[i]->set_boundary(new_boundary);
 		}
@@ -230,7 +230,7 @@ void Population::write_population(std::string filename){
 	// filename = file_location + filename;
 	std::ofstream positionfile;
 	positionfile.open(filename, std::ios::app);
-	for (int i = 0; i < n; ++i){
+	for (size_t i = 0; i < n; ++i){
 		std::vector<double> i_pos = this->cur_gen[i]->get_position();
 		std::ostringstream pos_oss;
     	std::copy(i_pos.begin(), i_pos.end(), std::ostream_iterator<double>(pos_oss, ","));
@@ -244,7 +244,7 @@ void Population::write_population(std::string filename){
 }
 
 void Population::update_vector_pool(double previous_best_fitness){
-	for (int i = 0; i < this->n; ++i){
+	for (size_t i = 0; i < this->n; ++i){
 		if (cur_gen[i]->get_fitness() < previous_best_fitness){
 			//next_gen contains previous generation at this point in the loop
 			auto diff = tools.vec_sub(cur_gen[i]->get_position(), next_gen[i]->get_position());

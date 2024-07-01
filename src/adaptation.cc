@@ -62,16 +62,18 @@ RandomManager::RandomManager(const Argparse* argparser, ioh::problem::RealSingle
 
 void RandomManager::create_population(){
 	this->pop = new Population(this->argparser, this->problem, n, this->budget, this->archive_size, this->resample_limit);
-	for (int i = 0; i < this->pop->get_population_size(); ++i){
+	for (size_t i = 0; i < this->pop->get_population_size(); ++i){
 		int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //TODO: doublecheck values, -1 to exclude randomsearch
 		this->pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, this->F), i);
 	}
 }
 
-void RandomManager::adapt(unsigned int iterations, const double& previous_best_fitness){
+void RandomManager::adapt(const double& previous_best_fitness){
+	(void)previous_best_fitness; //silence warning
+
 	iteration_counter++;
 	if (iteration_counter % this->lp == 0){ // how often is adaptation applied	
-		for (int i = 0; i < this->pop->get_population_size(); ++i){
+		for (size_t i = 0; i < this->pop->get_population_size(); ++i){
 			int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS-1); 	//exclude random search
 			if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ 		// BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
 				new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS-1);	// in order to keep iterations/operator the same
@@ -122,7 +124,7 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 		}
 	}
 	//randomly set configurations from operator_configurations on agents
-	for (int i = 0; i < this->n; ++i){
+	for (size_t i = 0; i < this->n; ++i){
 		int new_config_idx = tools.rand_int_unif(0, operator_configurations.size()); //TODO: doublecheck values
 		set_config_on_agent(operator_configurations[new_config_idx], i);
 	}
@@ -134,14 +136,9 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 
 void MABManager::create_population(){
 	this->pop = new Population(this->argparser, this->problem, n, this->budget, this->archive_size, this->resample_limit);
-	for(Agent* a : this->pop->get_current_generation()){
-		int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //-1 excludes random search
-		a->get_mutation_ptr()->auto_set_F(BINOMIAL);
-	}
-
 }
 
-void MABManager::adapt(unsigned int iterations, const double& previous_best_fitness){
+void MABManager::adapt(const double& previous_best_fitness){
 	iteration_counter++;	
 	if (iteration_counter % this->lp == 0){
 		// std::cout << "calculating new_scores" << std::endl;
@@ -154,7 +151,7 @@ void MABManager::adapt(unsigned int iterations, const double& previous_best_fitn
 		// 		total_Q += c.Q.back();
 		// }
 		// std::cout << std::endl;
-		for (int i = 0; i < this->n; ++i){ //for cur and next gen
+		for (size_t i = 0; i < this->n; ++i){ //for cur and next gen
 			// get random config from tools.rand_double_unif(0,total_Q);
 			operator_configuration new_config = get_new_config();
 			this->set_config_on_agent(new_config, i);
@@ -176,7 +173,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 
 	if (MABsel==0){ //best selection
 		double best_Q = std::numeric_limits<double>::min();
-		for (int i = 0; i < operator_configurations.size(); ++i){
+		for (size_t i = 0; i < operator_configurations.size(); ++i){
 			if (operator_configurations[i].Q.back() > best_Q){
 				selected_config_idx = i;
 				best_Q = operator_configurations[selected_config_idx].Q.back();
@@ -184,7 +181,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 		}
 	} else if (MABsel == 1){ //proportionate selection
 		double total_Q = 0.0;
-		for (int i = 0; i < operator_configurations.size(); ++i){
+		for (size_t i = 0; i < operator_configurations.size(); ++i){
 			total_Q += operator_configurations[i].Q.back();
 		}
 		double prop_rand_val = tools.rand_double_unif(0.0, total_Q);
@@ -192,7 +189,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 		selected_config_idx = 0;
 		// std::cout << "tQ: " << total_Q << std::endl;
 		// std::cout << "pr: " << prop_rand_val << std::endl;
-		for (int i = 0; i < operator_configurations.size(); ++i){
+		for (size_t i = 0; i < operator_configurations.size(); ++i){
 			rand_tracker += operator_configurations[i].Q.back();
 			if(rand_tracker >= prop_rand_val){
 				selected_config_idx = i;
@@ -225,6 +222,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 					cr_ptr,
 					{1.0},
 					{},
+					{},
 					{}
 				};
 				//if config does not exist yet
@@ -256,7 +254,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 
 int MABManager::config_in_configs(operator_configuration new_config){
 	int config_idx = -1;
-	for (int i = 0; i < operator_configurations.size(); ++i){
+	for (size_t i = 0; i < operator_configurations.size(); ++i){
 		if (new_config.mutation_operator->get_F() == operator_configurations[i].mutation_operator->get_F() &&
 			new_config.mutation_operator->get_type() == operator_configurations[i].mutation_operator->get_type() &&
 			new_config.crossover_operator->get_Cr() == operator_configurations[i].crossover_operator->get_Cr() &&
@@ -264,7 +262,7 @@ int MABManager::config_in_configs(operator_configuration new_config){
 			return i;
 		}
 	}
-	return -1;
+	return config_idx;
 }
 
 void MABManager::update_scores(const double& previous_best_fitness){
@@ -277,7 +275,7 @@ void MABManager::update_scores(const double& previous_best_fitness){
 	for (auto agent : this->pop->get_current_generation()){
 		int idx = -1;
 		//find corresponding config
-		for (int config = 0; config < operator_configurations.size(); config++){
+		for (size_t config = 0; config < operator_configurations.size(); config++){
 			if (agent_has_config(agent, operator_configurations[config])){
 				//config exists in database
 				// std::cout << "f";
@@ -394,7 +392,7 @@ void MABManager::log_Qs(){
 	std::ofstream Q_log;
 	Q_log.open(this->Qlogger_location, std::ofstream::app);
 
-	for (int i = 0; i <= this->iteration_counter; i+=this->lp){
+	for (unsigned int i = 0; i <= this->iteration_counter; i+=this->lp){
 		Q_log <<  i;
 		for (auto opconfig : operator_configurations){
 			auto iteration_iterator = std::find(opconfig.Qbudget.begin(), opconfig.Qbudget.end(), i);

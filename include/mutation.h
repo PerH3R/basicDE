@@ -22,13 +22,13 @@ public:
 	// virtual std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx, std::vector<std::vector<double>>& vector_pool) = 0;
 	// virtual void update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen){};
 	virtual void improved_to_true(){};
-	virtual void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){};
+	virtual void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){ (void)vector_pool;};
 
 	float get_F() const {return this->F;}
 	size_t get_n(){return this->n;}
 	void set_F(float new_F){this->F = new_F;}
-	virtual float auto_set_F(CROSSOVER Cr_type) {return fallback_F;}; //{ this->F = this->base_F[Cr_type];} //returns new value
-	virtual float get_predetermined_Cr(CROSSOVER Cr_type){return fallback_Cr;};
+	virtual float auto_set_F(CROSSOVER Cr_type) {(void)Cr_type; return fallback_F;}; //{ this->F = this->base_F[Cr_type];} //returns new value
+	virtual float get_predetermined_Cr(CROSSOVER Cr_type){(void)Cr_type; return fallback_Cr;};
 
 	// float get_predetermined_Cr(CROSSOVER Cr_type) override {return this->base_Cr[Cr_type];}
 protected:

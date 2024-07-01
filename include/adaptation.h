@@ -14,7 +14,7 @@ public:
 	AdaptationManager() = default;
 	AdaptationManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	virtual ~AdaptationManager();
-	virtual void adapt(unsigned int iterations, const double& previous_best_fitness) = 0;
+	virtual void adapt(const double& previous_best_fitness) = 0;
 	Population* get_population(){return this->pop;};
 	virtual void log_Qs() {}; 
 	virtual void Qlog_init() {}; 
@@ -64,8 +64,9 @@ protected:
 	// default value = 10+ln(dim)^2;
 	int resample_limit;
 
-	unsigned int* budget;
 	ioh::problem::RealSingleObjective* problem;
+	unsigned int* budget;
+	
 	int lp; //learning period, how many iterations between the application of new operators
 
 	const size_t n;
@@ -74,7 +75,7 @@ protected:
 	float F;
 	size_t archive_size;
 	bool available_mutops[NUM_MUTATION_OPERATORS];
-	int iteration_counter = 0;
+	unsigned int iteration_counter = 0;
 };
 
 
@@ -83,7 +84,9 @@ class FixedManager : public AdaptationManager{
 public:
 	FixedManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
     ~FixedManager(){};
-    void adapt(unsigned int iterations, const double& previous_best_fitness){};	//no adaptation
+    void adapt(const double& previous_best_fitness){
+    	(void)previous_best_fitness; //silence warning
+    };	//no adaptation
 protected:	
 	void create_population();
 };
@@ -93,7 +96,7 @@ class RandomManager : public AdaptationManager{
 public:
 	RandomManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, bool RandomizeF=false);
     ~RandomManager(){};
-    void adapt(unsigned int iterations, const double& previous_best_fitness);
+    void adapt(const double& previous_best_fitness);
 protected:
 	void create_population();
 
@@ -105,7 +108,7 @@ class MABManager : public AdaptationManager{
 public:
 	MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	~MABManager(){};
-    void adapt(unsigned int iterations, const double& previous_best_fitness);	//no adaptation
+    void adapt(const double& previous_best_fitness);	//no adaptation
 	void log_Qs() override; 
 	void Qlog_init() override; 
     
@@ -127,11 +130,19 @@ protected:
 	void set_config_on_agent(operator_configuration new_config, int a_idx);
 
 
-	double alpha = 0.5; 			// Amount of decay applied to results previous iteration
-	double new_config_chance = 0.0; //chance to create new operator_configuration entry. Use to, for example, implement SaDE like-behaviour (logging wont work correctly)
-	int MABsel; 					// Should the MAB select greedily or proportionatly from operator_configurations, given current Q-values 
-	double eps_a; 					// Chance to choose an operator at random instead of greedily or proportionatly
-	double total_Q = 0.0;			// Sum of all current Q-values for proportionate selections
-	bool logging = false;			// Log Q-values over time
-	std::string Qlogger_location;	// Where to save logs
+	// Amount of decay applied to results previous iteration
+	double alpha = 0.5;
+	// Chance to create new operator_configuration entry. Use to, for example, implement SaDE like-behaviour (logging wont work correctly)
+	// Not fully implemented and likely causes errors if set to >0
+	double new_config_chance = 0.0; 
+	// Should the MAB select greedily or proportionately from operator_configurations, given current Q-values 
+	int MABsel; 
+	// Chance to choose an operator at random instead of greedy or proportionate strategy					
+	double eps_a; 
+	// Sum of all current Q-values for proportionate selections			
+	double total_Q = 0.0;
+	// Log Q-values over time			
+	bool logging = false;	
+	// Where to save logs		
+	std::string Qlogger_location;	
 };
