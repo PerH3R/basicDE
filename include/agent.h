@@ -37,7 +37,7 @@ public:
 	CROSSOVER get_crossover();
 	MUTATION get_mutation();
 	BOUNDARY get_boundary();
-	const int get_id(){return id;};
+	int get_id() const {return id;};
 
 	void set_crossover(std::shared_ptr<Crossover> new_crossover){this->crossover_operator = new_crossover;};
 	void set_mutation(std::shared_ptr<Mutation> new_mutation){this->mutation_operator = new_mutation;};
@@ -62,16 +62,18 @@ private:
 	std::vector<double> position;
 	std::vector<double> donor;
 	double fitness;
-	unsigned int* budget;
+	
 
 	std::shared_ptr<Mutation> mutation_operator;
 	std::shared_ptr<Crossover> crossover_operator;
 	std::shared_ptr<Boundary> boundary_correction;
 
 	ioh::problem::RealSingleObjective* target_function;
-	bool fitness_uptodate;
-
+	
+	unsigned int* budget;
 	int resample_limit; //10+ln(dim)^2
+
+	bool fitness_uptodate;
 
 	// position, fitness, crossover operator, mutation operator, boundary operator
 	std::vector<

@@ -24,21 +24,21 @@ public:
 	virtual void improved_to_true(){};
 	virtual void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){};
 
-	const float get_F(){return this->F;}
+	float get_F() const {return this->F;}
 	size_t get_n(){return this->n;}
 	void set_F(float new_F){this->F = new_F;}
-	virtual float auto_set_F(CROSSOVER Cr_type) { }; //{ this->F = this->base_F[Cr_type];} //returns new value
+	virtual float auto_set_F(CROSSOVER Cr_type) {return fallback_F;}; //{ this->F = this->base_F[Cr_type];} //returns new value
 	virtual float get_predetermined_Cr(CROSSOVER Cr_type){return fallback_Cr;};
 
 	// float get_predetermined_Cr(CROSSOVER Cr_type) override {return this->base_Cr[Cr_type];}
 protected:
+	size_t dim;
+	size_t n; //pop size
 	float F = 0.5;
 	const float fallback_F = 0.5; //fallback mutation rate
 	const float fallback_Cr = 0.5; //fallback Cr rate
 	// float base_F[NUM_CROSSOVER_OPERATORS+1] = {fallback_F, fallback_F};//default mutation rate
 	// float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {fallback_Cr, fallback_Cr}; //default crossover rate
-	size_t n; //pop size
-	size_t dim;
 };
 
 class RandDiv1 : public Mutation {
@@ -220,6 +220,8 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};
 };
 
+
+// DO NOT USE WITH REFLECTION BOUNDARY OPERATOR
 class Desmu : public Mutation {
 public:
     Desmu(size_t dim, size_t n, float F = 0.5, double alpha = 1.0) : Mutation(dim, n, F) {
@@ -243,7 +245,7 @@ private:
 class Bea : public Mutation {
 public:
 	Bea(size_t dim, size_t n, std::shared_ptr<Boundary> boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
-			float F = 0.5, float Pbea = 0.8, int Nsegments = 5, int Nclones = 2, float locality = 0.1) : Mutation(dim, n, F), boundary_correction(boundary_correction),
+			float F = 0.5, float Pbea = 0.8, unsigned int Nsegments = 5, int Nclones = 2, float locality = 0.1) : Mutation(dim, n, F), boundary_correction(boundary_correction),
 			target_function(target_function), Nclones(Nclones), Pbea(Pbea), Nsegments(Nsegments), budget(budget), locality(locality){
 
 		if (Nsegments > dim){
@@ -267,11 +269,11 @@ private:
 
 	int Nclones; //>2 is useless unless x1-x3 are rerolled for each clone
 	float Pbea; //Probability of applying BEA local uniform random search
-	float locality; // [0,1] fraction of the total search space considered local vor BEA l.u.r.s., originally this is not a fraction but why???
-	int Nsegments;
-	int segment_size;
+	unsigned int Nsegments;
 	unsigned int* budget;
-
+	float locality; // [0,1] fraction of the total search space considered local vor BEA l.u.r.s., in paper this is not a fraction but why?	
+	int segment_size;
+	
 	float base_F[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_F};
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {1.0, fallback_Cr};
 };
