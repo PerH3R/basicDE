@@ -1,14 +1,14 @@
 #include "../include/argparse.h"
 
 
-Argparse::Argparse(const int argc, char* argv[]) : argc(argc), argv(argv)//, 
-		//arg_names{"-f", "-d", "-m", "-F", "-c", "-Cr", "-pop_mult", "-i", "-budget", "-archive"}
-{
+Argparse::Argparse(const int argc, char* argv[]) : argc(argc), argv(argv){
 	// std::vector<std::string> flags;
 
 	printArgs();
 
 	int i = 1; //skip main
+	
+	// Check if values are correct format
 	while (i < argc){
 		std::cout << i << " " << argv[i] << std::endl;		
 		//is a flag
@@ -29,14 +29,15 @@ Argparse::Argparse(const int argc, char* argv[]) : argc(argc), argv(argv)//,
 			std::cerr << "invalid formatting at: " << '"' << argv[i] << '"' << std::endl;
 			i++; //
 		}
-	if (!checkValidity()){
-		std::cerr << "Error in passed values " << std::endl;
-	}
+	// Check if values in valid range
+	if (!checkValidity()){ std::cerr << "Error in passed values " << std::endl;	}
+
 	};
 
 	printArgs();
 }
 
+//TODO: add remaing args 
 //after correct format check, checks if parameters are in correct range
 bool Argparse::checkValidity(){
 	for (auto item = flag_vals.cbegin(); item != flag_vals.cend(); ++item){

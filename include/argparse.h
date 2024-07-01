@@ -47,15 +47,24 @@ flag				meaning						default					vals
 
 class Argparse {
 public:
+	// Parse trough passed arguments and their values
 	Argparse(const int argc, char* argv[]);
 	~Argparse(){};
 
+	// Check correctness of value format
 	bool isReal(const std::string& str);
 	bool isInteger(const std::string& str);
-	void printArgs();
-	std::string getArgsAsString();
-	std::map<std::string, std::string> get_values() const;
+	// Check if values are in correct range
 	bool checkValidity();
+
+	// Print args and values to console
+	void printArgs();
+	// Get args and values as string
+	std::string getArgsAsString();
+
+	// Get searchable map and their values
+	std::map<std::string, std::string> get_values() const;
+	
 
 
 private:
