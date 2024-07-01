@@ -3,7 +3,7 @@
 // #include "ioh.h"
 //#include "../include/functions.h"
 
-#include <iostream> //genral output
+#include <iostream> //general output
 
 struct results {
 	std::vector<double> best_location;
@@ -34,6 +34,7 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
 
 inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = false) //false
 {
+	// Construct the name  and info field for the IOHprofiler JSONs
 	std::string algname;
 	if (std::stoi(argparser->get_values()["-a"]) == 0)
 	{
@@ -71,6 +72,8 @@ inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &
     );
 }
 
+
+// Instantiates a population which uses the specified adaptation strategy.
 AdaptationManager* get_adaptation_manager(Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget, int selection){
 	switch(selection){
 		case 0:
@@ -85,6 +88,8 @@ AdaptationManager* get_adaptation_manager(Argparse* argparser, ioh::problem::Rea
 	}	
 }
 
+
+// Consolidate the most important information of a run
 results return_value(std::vector<double> location, double fitness, int i){
   results result;
   result.best_location = location;
@@ -93,20 +98,10 @@ results return_value(std::vector<double> location, double fitness, int i){
   return result;
 }
 
-std::chrono::high_resolution_clock::duration avg_duration(std::vector<std::chrono::high_resolution_clock::duration> const& time_array){
-	std::chrono::high_resolution_clock::duration total_time;
-	for(auto i : time_array){
-		total_time += i;
-	}
-	std::cout << total_time.count() << std::size(time_array) << std::endl;
-	std::chrono::high_resolution_clock::duration avg_time = total_time / std::size(time_array);
-	return avg_time;
-
-}
-
 
 //main loop
 results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::problem::RealSingleObjective* problem, Argparse* argparser) {
+	// Set up variables
 	double best_fitness = std::numeric_limits<double>::max();
 	double previous_best_fitness = std::numeric_limits<double>::max();
 	std::vector<double> best_location(problem->meta_data().n_variables, -1);
@@ -115,11 +110,13 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 	unsigned int previous_iteration_budget = *budget;
 
 	Population* pop = manager->get_population();
+	
 
-	//TODO: do something neat for this
-	bool log_pos  = false;
+	// Generally not used because writes large amounts of data
 	bool first_it = true;
-	// bool  = true;
+	bool log_pos  = false;
+
+	
 	
 	//TODO: budget
 	while (*budget > 0) {
@@ -145,28 +142,26 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 			pop->write_population();
 		}
 		
-		// t1 = std::chrono::high_resolution_clock::now();
-		//on fitness improvement
+		
+		// On fitness improvement
 		if (pop->get_current_generation()[0]->get_fitness() < best_fitness)
 		{
 			// std::cout << "new best is: " << fmt::format("{}", pop->get_current_generation()[0]->get_fitness()) << " at iteration " << iterations << std::endl;
 
 			// // update vector pool using previous bestfitness
 			if (tools.extract_bit(std::stoi(argparser->get_values()["-ops"]), DIRMUT)){
-				pop->update_vector_pool(best_fitness);  //TODO: IF DIRMUT IS A POSSIBLE OPERATOR
+				pop->update_vector_pool(best_fitness);  
 			}
 			previous_best_fitness = best_fitness;
 			best_fitness = pop->get_current_generation()[0]->get_fitness(); //update best fitness
 			best_location = pop->get_current_generation()[0]->get_position();
 			
 		}
-
-
 		
 		manager->adapt(iterations, previous_best_fitness);	
 		iterations++;
-		//additional stopping criteria
-		//...
+
+		//additional stopping criteria and 
 		if (*budget != previous_iteration_budget){
 			no_movement = 0;
 			previous_iteration_budget = *budget;
@@ -198,46 +193,11 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 
 
 int main(int argc, char* argv[]) {
-	auto argparser = new Argparse(argc, argv);
-	
-    std::cout << "Warning: dont use Desmu with reflection" << std::endl;
+	auto argparser = new Argparse(argc, argv);	
 
-	tools.set_seed();	
-
-
-
-	//TODO: finish command line params and remove below
-	// int function_num = std::stoi(argparser->get_values()["-f"]);
-	// unsigned int number_of_runs = std::stoi(argparser->get_values()["-runs"]);
-
-	
-
-	// int dim = std::stoi(argparser->get_values()["-d"]);
-
-	// int m = std::stoi(argparser->get_values()["-m"]);
-	// size_t archive_size = std::stoi(argparser->get_values()["-archive"]);
-	// unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]);
-	// unsigned int* budget = &budget_value;
+	// Set up the path where logs are stored
 	std::string adap_logger_folder = fmt::format("results/a{}m{}/", argparser->get_values()["-a"], argparser->get_values()["-m"]);
-
-	// std::string sub_logger_folder += "-d"+argparser->get_values()["-d"] +
-	// 		"-pop_size"+argparser->get_values()["-pop_size"];
-	// if (std::stoi(argparser->get_values()["-a"]) == 0){
-	// 	sub_logger_folder += 
-	// 		"-F"+argparser->get_values()["-F"]+
-	// 		"-Cr"+argparser->get_values()["-Cr"]+
-	// 		"-b"+argparser->get_values()["-b"];
-	// } else if (std::stoi(argparser->get_values()["-a"]) == 1){
-	// 	//nothing
-	// } else if (std::stoi(argparser->get_values()["-a"]) == 2){
-	// 	sub_logger_folder += "lp" + argparser->get_values()["-lp"] + 
-	// 				"eps" + argparser->get_values()["-eps_a"] + 
-	// 				"sel" + argparser->get_values()["-MABsel"] +
-	// 				"crd" + argparser->get_values()["-credit"];
-	// }
-
 	std::string sub_logger_folder = "-ops" + std::bitset<NUM_MUTATION_OPERATORS>(std::stoi(argparser->get_values()["-ops"])).to_string();
-
 	std::string logger_folder = adap_logger_folder + sub_logger_folder;
 
 	auto logger = get_logger(argparser, logger_folder);
@@ -255,20 +215,15 @@ int main(int argc, char* argv[]) {
     /// for each new problem), the functionality is the same. 
     suite->attach_logger(logger);
 
-    // std::vector<std::chrono::high_resolution_clock::duration> mut_time;
-	// std::vector<std::chrono::high_resolution_clock::duration> cr_time;
-	// std::vector<std::chrono::high_resolution_clock::duration> sel_time;
-	// std::vector<std::chrono::high_resolution_clock::duration> sort_time;
-	// std::vector<std::chrono::high_resolution_clock::duration> rest_time;
-
     /// To access problems of the suite.
     for (const auto &problem_shr : *suite){
     	auto problem = problem_shr.get();
+
+    	// Set the seed to current instance number for repeatable experiments
     	tools.set_seed(problem->meta_data().instance);
 
     	// set up operators and problem variables
-		int problem_dim = problem->meta_data().n_variables;
-    	// int pop_size = std::stoi(argparser->get_values()["-pop_size"]);//read population size	
+		int problem_dim = problem->meta_data().n_variables;	
 
     	int budget_pop_multiplier;
     	if (std::stoi(argparser->get_values()["-pop_size"]) <= 4){
@@ -279,32 +234,27 @@ int main(int argc, char* argv[]) {
 
     	//reset budget
     	unsigned int budget_value = std::stoi(argparser->get_values()["-budget"]) * (std::stod(argparser->get_values()["-budget_multiplier"])) * problem_dim; 
-    		// * budget_pop_multiplier); //way too much
-    	if (budget_value < std::stoi(argparser->get_values()["-budget"]))
-    	{
+    	
+    	if (budget_value < std::stoi(argparser->get_values()["-budget"])){
     		budget_value = std::stoi(argparser->get_values()["-budget"]);
     	}
     	unsigned int* budget = &budget_value;
-    	std::cout << "setting budget to " << *budget << std::endl;
 
-			
 
-		
+    	std::cout << "setting budget to " << *budget << std::endl;		
 		std::cout << "metadata" << problem->meta_data() << std::endl;
 		std::cout << "optimal y: " << problem->optimum().y << std::endl;
 
+		// Construct population through AdaptationManager
 		AdaptationManager* manager = get_adaptation_manager(argparser, problem, budget, std::stoi(argparser->get_values()["-a"]));
-		// Population* pop = new Population(crossover, selection, mutation, problem, boundary_correction, pop_size, budget, archive_size);
-
-
-		// std::cout << "Run " << i << " ";
 		
-
+		// Run the DE on current problem
 		results result = single_problem(manager, budget, problem, argparser);
-		std::cout << "final result" << std::endl;
+		
 		
 
 		//print some results
+		std::cout << "final result" << std::endl;
 		manager->get_population()->print_fitness();
 		// std::cout << "--------------- history of best individual" << std::endl;
 		// manager->get_population()->get_current_generation()[0]->print_history();
