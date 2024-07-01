@@ -5,13 +5,9 @@ AdaptationManager::AdaptationManager(const Argparse* argparser, ioh::problem::Re
 	for (int i = 0; i < NUM_MUTATION_OPERATORS; ++i) {
 	  this->available_mutops[i] = 1;
 	}
-	// this->argparser = argparser;
-	// this->problem = problem;
-	this->budget = budget;
+	// this->budget = budget;
 	this->F = std::stod(argparser->get_values()["-F"]);
 	this->Cr = std::stod(argparser->get_values()["-Cr"]);
-	// this->dim = problem->meta_data().n_variables;
-	// n = std::stoi(argparser->get_values()["-pop_size"]);
 	this->archive_size = std::stoi(argparser->get_values()["-archive"]);
 	this->lp = std::stoi(argparser->get_values()["-lp"]);
 	
