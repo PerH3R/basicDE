@@ -40,7 +40,7 @@ double Tools::rand_mantegna(double const& sig_u, double const& sig_v, double con
 std::vector<double> Tools::vec_sub(std::vector<double> const& first, std::vector<double> const& second){
 	if (first.size() == second.size()){
 		std::vector<double> result;
-		for (int i = 0; i < first.size(); ++i){
+		for (size_t i = 0; i < first.size(); ++i){
 		 	result.push_back(first[i]-second[i]);
 		}
 		return result; 

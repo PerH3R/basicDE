@@ -2,6 +2,8 @@
 
 // RandDiv1
 std::vector<double> RandDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	//select 3 vectors uniformly at random 
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
@@ -18,6 +20,8 @@ std::vector<double> RandDiv1::apply(std::vector<Agent*> const& cur_gen, size_t i
 
 //RandDiv2
 std::vector<double> RandDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	//select 5 vectors uniformly at random 
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 5, false);
 
@@ -37,6 +41,8 @@ std::vector<double> RandDiv2::apply(std::vector<Agent*> const& cur_gen, size_t i
 
 // BestDiv1
 std::vector<double> BestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	//exclude optimal (first because sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
@@ -55,6 +61,8 @@ std::vector<double> BestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t i
 
 // BestDiv2
 std::vector<double> BestDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	//exclude optimal (first if sorted) solution from random options
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 4, false);
@@ -265,6 +273,8 @@ std::vector<double> TargetToRandDiv2::apply(std::vector<Agent*> const& cur_gen, 
 
 //2-OptDiv1
 std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
 	//use the fittest vector as base for donor
@@ -285,6 +295,8 @@ std::vector<double> TwoOptDiv1::apply(std::vector<Agent*> const& cur_gen, size_t
 
 //2-OptDiv2
 std::vector<double> TwoOptDiv2::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 5, false);
 
 	//use the fittest vector as base for donor
@@ -307,12 +319,14 @@ std::vector<double> TwoOptDiv2::apply(std::vector<Agent*> const& cur_gen, size_t
 
 // Desmu (stochastic levy-flight)
 std::vector<double> Desmu::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	std::vector<Agent*> cur_gen_ex_first = std::vector<Agent*>(cur_gen.begin() + 1, cur_gen.end());
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen_ex_first, 2, false);
 
 	//calculate stepsize
 	double step = tools.rand_mantegna(this->sig_u,this->sig_v,alpha);
-	//do this because the paper said so
+	//additionally scale because the paper said so
 	float scale_factor = step * tools.rand_double_unif(0.5, 1.0); 
 
 	//calculate donor vector
@@ -330,10 +344,11 @@ std::vector<double> Desmu::apply(std::vector<Agent*> const& cur_gen, size_t idx)
 
 //Bea
 void Bea::mutate_segment(const std::vector<Agent*>& cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
-		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, int start_index, int end_index){
+		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, unsigned int start_index, unsigned int end_index){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
 
 	//change segment using Bea or TTR/1
-	for (int i = 0; i < clones.size(); ++i){
+	for (size_t i = 0; i < clones.size(); ++i){
 		if(*budget > 0){
 			if (i == 0 && tools.rand_double_unif(0.0,1.0) < this->Pbea){
 				//Bea
@@ -359,10 +374,10 @@ void Bea::mutate_segment(const std::vector<Agent*>& cur_gen, size_t idx, std::ve
 	}
 
 
-	int best_clone = std::distance(fitness.begin(), std::max_element(std::begin(fitness), std::end(fitness)));
+	unsigned int best_clone = std::distance(fitness.begin(), std::max_element(std::begin(fitness), std::end(fitness)));
 
 	//copy into others
-	for (int i = 0; i < clones.size(); ++i){
+	for (size_t i = 0; i < clones.size(); ++i){
 		if(i != best_clone){
 			for (size_t j = start_index; j < end_index; j++) {
 				clones[i][j] = clones[best_clone][j];
@@ -386,14 +401,14 @@ std::vector<double> Bea::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	//select 3 uniform random vectors in advance for consistency TODO:ambiguous if each segment should have new random idx's
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
-	for (int i = 0; i < Nsegments; ++i){
+	for (size_t i = 0; i < Nsegments; ++i){
 		if (remainder == 0){
-			int start_index = (i*segment_size) + remainder_settled;
-			int end_index = ((i+1) * segment_size) + remainder_settled;
+			unsigned int start_index = (i*segment_size) + remainder_settled;
+			unsigned int end_index = ((i+1) * segment_size) + remainder_settled;
 			mutate_segment(cur_gen, idx, chosen_vectors, clones, fitness, start_index, end_index);
 		} else {
-			int start_index = (i*segment_size) + remainder_settled + 1;
-			int end_index = ((i+1) * segment_size) + remainder_settled + 1;
+			unsigned int start_index = (i*segment_size) + remainder_settled + 1;
+			unsigned int end_index = ((i+1) * segment_size) + remainder_settled + 1;
 			mutate_segment(cur_gen, idx, chosen_vectors, clones, fitness, start_index, end_index);
 			remainder--;
 			remainder_settled++;
@@ -426,7 +441,7 @@ std::vector<double> DirMut::apply(std::vector<Agent*> const& cur_gen, size_t idx
 
 
 	//clear vector pool after each iteration
-	if(idx < this->n == false){
+	if((idx < this->n) == false){
 		vector_pool.clear();
 		this->improved = false;
 	}
@@ -436,6 +451,9 @@ std::vector<double> DirMut::apply(std::vector<Agent*> const& cur_gen, size_t idx
 
 //RandomSearch
 std::vector<double> RandomSearch::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+	(void)cur_gen; //Suppress warning of unneeded function parameter for this operator
+
 	std::vector<double> donor_vec(this->dim, 0.0);
 	for (size_t j = 0; j < this->dim; j++) {
 		donor_vec[j] = tools.rand_double_unif(this->target_function->bounds().lb[j], this->target_function->bounds().ub[j]);

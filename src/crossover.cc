@@ -43,7 +43,7 @@ std::vector<double> Binomial::apply(const std::vector<double>& cur_pos, const st
 
 // Exponential
 CROSSOVER Exponential::get_type() {
-  return EXPONENTIAL;
+	return EXPONENTIAL;
 }
 
 // Apply crossover on all agents, returns selection
@@ -52,9 +52,9 @@ std::vector<double> Exponential::apply(const std::vector<double>& cur_pos, const
 	std::vector<double> new_pos = cur_pos;
 	new_pos.reserve(this->dim);
 
-	int crossover_point = tools.rand_int_unif(0,this->dim);
+	unsigned int crossover_point = tools.rand_uint_unif(0,this->dim);
 	new_pos[crossover_point] = donor_vec[crossover_point];
-	int current_index = crossover_point+1;
+	unsigned int current_index = crossover_point+1;
 	// bool returned = false;
 
 	while (current_index % this->dim < crossover_point){
