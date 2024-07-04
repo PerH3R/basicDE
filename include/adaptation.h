@@ -31,6 +31,7 @@ protected:
 		std::vector<double> lp_improvements; //'raw' score based on credit this learning period from all agent with this config
 		std::vector<unsigned int> Qbudget; //budget at moment of logging Q
 	};
+
 	// Contains the above structure for all operator combinations currently considered
 	std::vector<operator_configuration> operator_configurations;
 	
@@ -52,6 +53,7 @@ protected:
 	// Manages how improvement is measured for MAB
 	std::shared_ptr<Credit> credit_assigner;
 
+	// pointer to population class
 	Population* pop;
 
 	// Fallback operators
@@ -69,8 +71,13 @@ protected:
 	
 	int lp; //learning period, how many iterations between the application of new operators
 
+	// population size
 	const size_t n;
+
+	//dimensionality of current problem
 	const size_t dim;
+
+
 	float Cr;
 	float F;
 	size_t archive_size;
@@ -108,20 +115,25 @@ class MABManager : public AdaptationManager{
 public:
 	MABManager(const Argparse* argparser, ioh::problem::RealSingleObjective* problem, unsigned int* budget);
 	~MABManager(){};
-    void adapt(const double& previous_best_fitness);	//no adaptation
-	void log_Qs() override; 
+
+	// Adapt by updating q-values
+    void adapt(const double& previous_best_fitness);
+
+    // fuctions for logging Q-values (these are NOT the IOH logs)	
+	void log_Qs() override;
 	void Qlog_init() override; 
     
 protected:
 	// Update Q-values for adaptation step
 	void update_scores(const double& previous_best_fitness);
 
+	// initialize population
 	void create_population();
 
-	// Check if a configuration with certain values alredy exists in the operator_configurations
+	// Check if a configuration with certain values already exists in the operator_configurations
 	int config_in_configs(operator_configuration new_config);
 
-	// Generates a config from current settings of an agent
+	// Generates a config from current settings of an agent add adds it to operator_configurations
 	void add_config_from_agent(Agent* a);
 
 	// Selects a configuration according to eps_a and MABsel
@@ -143,6 +155,6 @@ protected:
 	double total_Q = 0.0;
 	// Log Q-values over time			
 	bool logging = false;	
-	// Where to save logs		
+	// Where to save logs (these are NOT the IOH logs)		
 	std::string Qlogger_location;	
 };

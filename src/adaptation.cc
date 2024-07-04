@@ -31,6 +31,7 @@ AdaptationManager::~AdaptationManager(){
 	this->pop = NULL;
 }
 
+
 std::shared_ptr<Credit> AdaptationManager::get_credit_operator(int crd_op){
 	switch(crd_op){
 			case 0:
@@ -62,6 +63,7 @@ RandomManager::RandomManager(const Argparse* argparser, ioh::problem::RealSingle
 
 void RandomManager::create_population(){
 	this->pop = new Population(this->argparser, this->problem, n, this->budget, this->archive_size, this->resample_limit);
+	// initialize population with random operators
 	for (size_t i = 0; i < this->pop->get_population_size(); ++i){
 		int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //TODO: doublecheck values, -1 to exclude randomsearch
 		this->pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, this->F), i);
@@ -69,23 +71,30 @@ void RandomManager::create_population(){
 }
 
 void RandomManager::adapt(const double& previous_best_fitness){
-	(void)previous_best_fitness; //silence warning
+	(void)previous_best_fitness; //silence warning  for unused parameter
 
 	iteration_counter++;
-	if (iteration_counter % this->lp == 0){ // how often is adaptation applied	
+	if (iteration_counter % this->lp == 0){ // apply operator randomization	once lp is reached
 		for (size_t i = 0; i < this->pop->get_population_size(); ++i){
-			int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS-1); 	//exclude random search
+			int new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS-1); 	// exclude random search
 			if (new_m == 6 && tools.rand_double_unif(0,1) > 1/(2*5)){ 		// BEA uses many evaluations so reroll based on Nclones and Nsegments (default values)
 				new_m = tools.rand_int_unif(0,NUM_MUTATION_OPERATORS-1);	// in order to keep iterations/operator the same
 			}
 			double new_F = this->F;
 			if (this->RandomizeF){
-				new_F = tools.rand_double_unif(0.2,0.8);
+				pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, tools.rand_double_unif(0.2,0.8)), i);
+			}else{
+				pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, new_F), i);
+
 			}
-			pop->set_individual_mutation( this->pop->get_mutation_operator(new_m, new_F), i);
 			auto mutation_ptr = pop->get_current_generation()[i]->get_mutation_ptr();
-			CROSSOVER crossover_type = BINOMIAL;
-			mutation_ptr->auto_set_F(BINOMIAL);			
+			CROSSOVER crossover_type = std::stoi(argparser->get_values()["-c"]);
+			if (this->RandomizeF == false){
+				// use predetermined best F if not random F
+				mutation_ptr->auto_set_F(std::stoi(argparser->get_values()["-c"]));
+			}
+			
+			// use best predetermined Cr crossover value for mutation+crossover operator combination
 			pop->get_current_generation()[i]->set_crossover(
 				pop->get_crossover_operator(crossover_type, mutation_ptr->get_predetermined_Cr(crossover_type))
 			);
@@ -101,15 +110,17 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 	this->alpha = std::stod(argparser->get_values()["-MABdecay"]);
 	this->MABsel = std::stoi(argparser->get_values()["-MABsel"]);
 	this->logging = !!std::stoi(argparser->get_values()["-logQ"]);
-	std::cout << "logging: " << logging << std::endl;
+	std::cout << "logging=" << logging << std::endl;
 	//seed config database with base configurations
 	for (int i = 0; i <= NUM_MUTATION_OPERATORS-1; ++i){
 		if (tools.extract_bit(std::stoi(argparser->get_values()["-ops"]), i)){
+			// print if operator is added
 			std::cout << MUTATION_NAMES[i] << ':' << '\t' << "True" << std::endl;
+
 			auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
-			mutation_ptr->auto_set_F(BINOMIAL);
+			mutation_ptr->auto_set_F(std::stoi(argparser->get_values()["-c"]));
 			auto crossover_ptr = this->pop->get_crossover_operator(i, -1);
-			crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(BINOMIAL));
+			crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(std::stoi(argparser->get_values()["-c"])));
 			operator_configuration new_config = {
 				mutation_ptr,
 				crossover_ptr,
@@ -120,15 +131,17 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			};
 			operator_configurations.push_back(new_config);
 		} else {
+			// print if operator is not added
 			std::cout << MUTATION_NAMES[i] << ": "  << "False" << std::endl;
 		}
 	}
 	//randomly set configurations from operator_configurations on agents
 	for (size_t i = 0; i < this->n; ++i){
-		int new_config_idx = tools.rand_int_unif(0, operator_configurations.size()); //TODO: doublecheck values
+		int new_config_idx = tools.rand_int_unif(0, operator_configurations.size());
 		set_config_on_agent(operator_configurations[new_config_idx], i);
 	}
 
+	// set up logging files and directories
 	if (this->logging){
 		Qlog_init();
 	}
@@ -140,17 +153,12 @@ void MABManager::create_population(){
 
 void MABManager::adapt(const double& previous_best_fitness){
 	iteration_counter++;	
-	if (iteration_counter % this->lp == 0){
-		// std::cout << "calculating new_scores" << std::endl;
+	if (iteration_counter % this->lp == 0){ // apply operator adaptation once lp is reached
+
 		update_scores(previous_best_fitness);
 		//calculate weighted scores
 		total_Q = 0.0;
-		// std::cout << "Q_vals: ";
-		// for(operator_configuration& c : this->operator_configurations){
-		// 		std::cout << c.Q.back() << " - ";
-		// 		total_Q += c.Q.back();
-		// }
-		// std::cout << std::endl;
+
 		for (size_t i = 0; i < this->n; ++i){ //for cur and next gen
 			// get random config from tools.rand_double_unif(0,total_Q);
 			operator_configuration new_config = get_new_config();
@@ -171,7 +179,8 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 	//find best configuration TODO: how to choose
 	int selected_config_idx;
 
-	if (MABsel==0){ //best selection
+
+	if (MABsel==0){ //greedy selection
 		double best_Q = std::numeric_limits<double>::min();
 		for (size_t i = 0; i < operator_configurations.size(); ++i){
 			if (operator_configurations[i].Q.back() > best_Q){
@@ -187,8 +196,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 		double prop_rand_val = tools.rand_double_unif(0.0, total_Q);
 		double rand_tracker = 0.0;
 		selected_config_idx = 0;
-		// std::cout << "tQ: " << total_Q << std::endl;
-		// std::cout << "pr: " << prop_rand_val << std::endl;
+
 		for (size_t i = 0; i < operator_configurations.size(); ++i){
 			rand_tracker += operator_configurations[i].Q.back();
 			if(rand_tracker >= prop_rand_val){
@@ -196,7 +204,6 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 				break;
 			}
 		}
-		// std::cout << operator_configurations.size() << " " << selected_config_idx << std::endl;
 	}
 	
 
@@ -207,7 +214,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 		if (tools.rand_double_unif(0,1) < this->new_config_chance){ //TODO how to update F and Cr
 			createnew = true;
 		}
-		if(createnew){
+		if(createnew){ //PARTIALLY SET UP -- if new configs can be created, do so (see createnew in adptation.h)
 		//creating new config
 			while(true){			
 				//create new random config
@@ -249,6 +256,7 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 			selected_config_idx = new_config_idx;
 		}
 	}
+
 	return operator_configurations[selected_config_idx];
 }
 
@@ -266,15 +274,17 @@ int MABManager::config_in_configs(operator_configuration new_config){
 }
 
 void MABManager::update_scores(const double& previous_best_fitness){
-	//calculate average position over all Agents
+
+	//calculate average position over all Agents, can be used for credit assignment
 	std::vector<double> average_position(this->dim, 0.0);
 	for (auto agent : this->pop->get_current_generation()){
 		average_position = tools.vec_sum(average_position, agent->get_position());
 	}
 	average_position = tools.vec_scale(average_position, 1/this->n);
+
 	for (auto agent : this->pop->get_current_generation()){
 		int idx = -1;
-		//find corresponding config
+		//find if config of agent already exists in operator_configurations
 		for (size_t config = 0; config < operator_configurations.size(); config++){
 			if (agent_has_config(agent, operator_configurations[config])){
 				//config exists in database
@@ -283,27 +293,32 @@ void MABManager::update_scores(const double& previous_best_fitness){
 				break;
 			}
 		}
-		if (idx == -1){ //matching config not found
+		//add config to operator_configurations if not found
+		if (idx == -1){ 
 			//create new_config
 			add_config_from_agent(agent);
 			idx = operator_configurations.size()-1;
 		}
-		//calc fitness improvement over learning period of agent
+
+		//calculate obtained credit trough fitness improvement over last learning period iterations of agent
 		const std::vector< std::tuple<std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>> >& hist = agent->get_history();
 		double achieved_credit = credit_assigner->get_credit(hist, average_position, previous_best_fitness);
 		operator_configurations[idx].lp_improvements.push_back(achieved_credit);
 	}
 
-	//apply scoring method and update
+	//calculate updated Q-values and update
 	for(operator_configuration& config : this->operator_configurations){
 		if (!config.lp_improvements.empty()){
+			// average all obtained credit over all agents with a given configuration in the past learning period 
 			double score_avg = tools.vec_avg(config.lp_improvements);
-			config.scores.push_back(score_avg); //TODO: apply more scoring methods
+			config.scores.push_back(score_avg); //TODO: possible alternatives max(), sum()
+
+			// Update Q-value by decaying past values and adding newest score
 			double new_Q = config.scores.back() * (1-this->alpha) + config.Q.back() * (1-this->alpha);
 			config.Q.push_back(new_Q);
 			config.Qbudget.push_back(iteration_counter);
 		}else{
-			// std::cout <<  "e";
+			// configuration not used in last learning period
 		}		
 		config.lp_improvements.clear();
 	}
@@ -330,22 +345,18 @@ void MABManager::add_config_from_agent(Agent* a){
 }
 
 bool AdaptationManager::agent_has_config(Agent* a, const operator_configuration& o){
-	//std:: cout << a->get_mutation_ptr()->get_type() << " " << a->get_mutation_ptr()->get_F() << " " << a->get_crossover_ptr()->get_Cr() << " " << a->get_crossover_ptr()->get_type() << " " << std::endl;
-	// std::cout<< o.mutation_operator << " " << o.crossover_operator << "\n" <<
-		// a->get_mutation_ptr() << " " << a->get_crossover_ptr() << "\n" << std::endl;
 	if (a->get_mutation_ptr() == o.mutation_operator &&
 		a->get_crossover_ptr() == o.crossover_operator){
-		// std::cout << "ahc = true" << std::endl;
 		return true;
 	}
 	return false;
 } 
 
+
 void MABManager::Qlog_init(){
 	std::ofstream Q_log;
-	// std::string logname = std::string("results/") + "a2" + "lp" + std::to_string(this->lp) + "pid" + std::to_string(this->problem->meta_data().problem_id) 
-	// 						+ "iid" + std::to_string(this->problem->meta_data().instance)+ ".csv";
 
+	// construct path and name from current settings
 	std::string Qlogger_adap_dir = fmt::format("Qresults/a{}m{}/", argparser->get_values()["-a"], argparser->get_values()["-m"]);
 	
 	std::string Qlogger_main_dir =  "-ops"+ std::bitset<NUM_MUTATION_OPERATORS>(std::stoi(argparser->get_values()["-ops"])).to_string() + "/";
@@ -391,7 +402,7 @@ void MABManager::log_Qs(){
 
 	std::ofstream Q_log;
 	Q_log.open(this->Qlogger_location, std::ofstream::app);
-
+	// log values of Q over time per configuration
 	for (unsigned int i = 0; i <= this->iteration_counter; i+=this->lp){
 		Q_log <<  i;
 		for (auto opconfig : operator_configurations){
