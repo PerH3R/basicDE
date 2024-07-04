@@ -88,10 +88,10 @@ void RandomManager::adapt(const double& previous_best_fitness){
 
 			}
 			auto mutation_ptr = pop->get_current_generation()[i]->get_mutation_ptr();
-			CROSSOVER crossover_type = std::stoi(argparser->get_values()["-c"]);
+			CROSSOVER crossover_type = CROSSOVER(std::stoi(argparser->get_values()["-c"]));
 			if (this->RandomizeF == false){
 				// use predetermined best F if not random F
-				mutation_ptr->auto_set_F(std::stoi(argparser->get_values()["-c"]));
+				mutation_ptr->auto_set_F(crossover_type);
 			}
 			
 			// use best predetermined Cr crossover value for mutation+crossover operator combination
@@ -118,9 +118,10 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			std::cout << MUTATION_NAMES[i] << ':' << '\t' << "True" << std::endl;
 
 			auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
-			mutation_ptr->auto_set_F(std::stoi(argparser->get_values()["-c"]));
+			CROSSOVER crossover_type = CROSSOVER(std::stoi(argparser->get_values()["-c"]));
+			mutation_ptr->auto_set_F(crossover_type);
 			auto crossover_ptr = this->pop->get_crossover_operator(i, -1);
-			crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(std::stoi(argparser->get_values()["-c"])));
+			crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(crossover_type));
 			operator_configuration new_config = {
 				mutation_ptr,
 				crossover_ptr,
