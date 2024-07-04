@@ -11,11 +11,16 @@ struct results {
 	unsigned iterations;
 };
 
+// construct a suite 
+// adapted from https://github.com/IOHprofiler/IOHexperimenter/blob/master/example/suite_example.hpp
 inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> create_suite(int problem, int inst, int dim, const bool using_factory = true)
 {
 	// const std::vector<int> problems{21,22,23,24};
     // const std::vector<int> instances{1};
+
+    // include all problems
     const std::vector<int> problems{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
+    // number of instances (same base function with different minimum)
     const std::vector<int> instances{ 1, 2, 3, 4, 5, 6, 7, 8, 9,10,
     								 11,12,13,14,15,16,17,18,19,20,
     								 21,22,23,24,25,26,27,28,29,30,
@@ -32,6 +37,9 @@ inline std::shared_ptr<ioh::suite::Suite<ioh::problem::RealSingleObjective>> cre
     return std::make_shared<ioh::suite::BBOB>(problems, instances, dimensions);
 }
 
+
+// create a logger for IOHanalyzer
+// adapted from https://github.com/IOHprofiler/IOHexperimenter/blob/master/example/logger_example.hpp
 inline ioh::logger::Analyzer get_logger(Argparse* argparser, const std::string &folder_name = "results", const bool store_positions = false) //false
 {
 	// Construct the name  and info field for the IOHprofiler JSONs
@@ -193,6 +201,7 @@ results single_problem(AdaptationManager* manager, unsigned int* budget, ioh::pr
 
 
 int main(int argc, char* argv[]) {
+	// parse command line arguments
 	auto argparser = new Argparse(argc, argv);	
 
 	// Set up the path where logs are stored
@@ -248,7 +257,7 @@ int main(int argc, char* argv[]) {
 		// Construct population through AdaptationManager
 		AdaptationManager* manager = get_adaptation_manager(argparser, problem, budget, std::stoi(argparser->get_values()["-a"]));
 		
-		// Run the DE on current problem
+		// Run the DE on current problem instance
 		results result = single_problem(manager, budget, problem, argparser);
 		
 		
