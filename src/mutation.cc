@@ -75,23 +75,25 @@ std::vector<double> BestDiv2::apply(std::vector<Agent*> const& cur_gen, size_t i
 
 // Target To PBest Div 1
 std::vector<double> TargetToPBestDiv1::apply(std::vector<Agent*> const& cur_gen, size_t idx){
+	(void)idx; //Suppress warning of unneeded function parameter for this operator
+
 	float p_val;
 
 	//p between idx=2 and 20%	
 	p_val = tools.rand_double_unif((2/this->n), this->p_ceil);
 
 
-	int p_idx = tools.rand_int_unif(0, std::round(p_val*this->n) + 1); //+1 to avoid rounding to 0 since rand_int_unif has range [low,high) 
+	unsigned int p_idx = tools.rand_uint_unif(0, std::round(p_val*this->n) + 1); //+1 to avoid rounding to 0 since rand_int_unif has range [low,high) 
 
 	std::vector<std::vector<double>> temp_gen;
 	temp_gen.reserve(cur_gen.size()-2 + (*archive).size());
-	for (int i = 0; i < cur_gen.size(); ++i){
+	for (size_t i = 0; i < cur_gen.size(); ++i){
 	 	if (i != p_idx && i != idx){ //exclude p and target
 	 		temp_gen.push_back(cur_gen[i]->get_position());
 	 	}	 	
 	} 
 	if (this->use_archive()){
-		for (int i = 0; i < (*archive).size(); ++i){
+		for (size_t i = 0; i < (*archive).size(); ++i){
 			if (!(*archive)[i].empty()){
 				temp_gen.push_back((*archive)[i]);
 			}

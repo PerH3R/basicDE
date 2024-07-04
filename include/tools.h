@@ -23,6 +23,8 @@ public:
 
 	// [start, end)
 	int rand_int_unif(int const& begin, int const& end);
+
+	unsigned int rand_uint_unif(unsigned int const& begin, unsigned int const& end);
 			
 	double rand_double_norm(double const& mean, double const& stdDev);
 

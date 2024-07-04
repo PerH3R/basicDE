@@ -20,7 +20,7 @@ std::vector<double> Binomial::apply(const std::vector<double>& cur_pos, const st
 		std::cerr << "co apply invalid donor size\n";
 	}
 	
-	int crossover_point = tools.rand_int_unif(0,this->dim);
+	unsigned int crossover_point = tools.rand_uint_unif(0,this->dim);
 	for (size_t i = 0; i < this->dim; ++i){
 		float chance = tools.rand_double_unif(0.0, 1.0);
 		if ((chance <= Cr) || (i == crossover_point))		{

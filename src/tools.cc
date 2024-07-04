@@ -19,6 +19,11 @@ int Tools::rand_int_unif(int const& begin, int const& end){
 	std::uniform_int_distribution<int> dist(begin, end-1); // for [begin, end) dist
 	return dist(rng);
 }
+
+unsigned int Tools::rand_uint_unif(unsigned int const& begin, unsigned int const& end){
+	std::uniform_int_distribution<unsigned int> dist(begin, end-1); // for [begin, end) dist
+	return dist(rng);
+}
 			
 double Tools::rand_double_norm(double const& mean, double const& stdDev){
 	std::normal_distribution<double> N(mean, stdDev);
