@@ -21,6 +21,7 @@ protected:
 
 };
 
+// Receives a possibly o.o.b. position and return an in-bounds position on the edge of the search space
 class Clamp : public Boundary {
 public:
     Clamp (ioh::problem::RealSingleObjective* target_function) : Boundary(target_function) {};
@@ -29,6 +30,8 @@ public:
     std::vector<double> apply(std::vector<double> pos);
 };
 
+
+// Receives a possibly o.o.b. position and return an in-bounds position that is a reflection with respect to the search space boundary
 class Reflect : public Boundary {
 public:
     Reflect (ioh::problem::RealSingleObjective* target_function): Boundary(target_function) {};
@@ -37,6 +40,8 @@ public:
     std::vector<double> apply(std::vector<double> pos);
 };
 
+
+// Receives a possibly o.o.b. position and returns the o.o.b. aspects randomly initialized within bounds
 class Reinit : public Boundary {
 public:
     Reinit (ioh::problem::RealSingleObjective* target_function): Boundary(target_function) {};

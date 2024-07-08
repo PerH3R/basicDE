@@ -8,7 +8,7 @@ Boundary::Boundary(ioh::problem::RealSingleObjective* target_function) : target_
 
 // Clamp
 
-// Receives a possibly o.o.b. position and return an in-bounds position
+// Receives a possibly o.o.b. position and return an in-bounds position on the edge of the search space
 std::vector<double> Clamp::apply(std::vector<double> pos){
 	for (size_t i = 0; i < pos.size(); ++i){
 		if (pos[i] < this->target_function->bounds().lb[i]){
@@ -23,7 +23,7 @@ std::vector<double> Clamp::apply(std::vector<double> pos){
 
 // Reflect
 
-// Receives a possibly o.o.b. position and return an in-bounds position
+// Receives a possibly o.o.b. position and return an in-bounds position that is a reflection with respect to the search space boundary
 std::vector<double> Reflect::apply(std::vector<double> pos){
 	for (size_t i = 0; i < pos.size(); ++i){
 		while (pos[i] < this->target_function->bounds().lb[i] || pos[i] > this->target_function->bounds().ub[i]){
@@ -38,6 +38,7 @@ std::vector<double> Reflect::apply(std::vector<double> pos){
 	return pos;
 }
 
+// Receives a possibly o.o.b. position and returns the o.o.b. aspects randomly initialized within bounds
 std::vector<double> Reinit::apply(std::vector<double> pos){
 	for (size_t i = 0; i < pos.size(); ++i){
 		if (pos[i] < this->target_function->bounds().lb[i] || pos[i] > this->target_function->bounds().ub[i]){
