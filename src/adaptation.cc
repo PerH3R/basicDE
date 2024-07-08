@@ -43,7 +43,7 @@ std::shared_ptr<Credit> AdaptationManager::get_credit_operator(int crd_op){
 			case 3:
 				return std::make_shared<R2Improvement>(this->lp);
 			default:
-				return std::make_shared<TanhFitnessImprovement>(this->lp);
+				return std::make_shared<R2Improvement>(this->lp);
 		}
 }
 
