@@ -17,8 +17,8 @@ flag				meaning						default					vals
 //base
 -f					function					1						int 1-24
 -d					dimensions					0						int > 0; 0 = 5,20
--m					base mutation operator		1						int 0-16 
--F					mutation rate 				0.0						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
+-m					base mutation operator		0						int 0-16 
+-F					mutation rate 				0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
 -c					base crossover operator		0						int 0-1 0=BINOMIAL 1=EXPONENTIAL 
 -Cr					crossover rate 				0.5						real 0.0-1.0
 -b					base boundary operator		0 						int 0-2
@@ -30,7 +30,7 @@ flag				meaning						default					vals
 -MABdecay			decay multiplier MAB		0.5 					real [0,1] affect how quick MAB ''forgets'' obtained results higher=faster
 -MABsel				strategy selection for MAB	1 						int, determines how the operators of next iteration are chosen. 0=greedy, 1=proportional
 -credit				how improvement is scored	3 						int; 0=fitness, 1=tanh, 2=binary, 3=binary+			
--lp					learning period				50 						int > 0, number of iterations between the updating of each Agents operators
+-lp					learning period				5 						int > 0, number of iterations between the updating of each Agents operators
 -ops				selection of mutops for MAB	65535
 
 -runs-				repeated runs				1						int
@@ -93,7 +93,7 @@ private:
 		{"-eps_a","0.1"},
 		{"-MABdecay","0.5"},
 		{"-MABsel","1"},
-		{"-credit","1"},
+		{"-credit","3"},
 		{"-logQ","0"}
 	};
 
