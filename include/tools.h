@@ -8,7 +8,8 @@
 #include <filesystem>
 
 //TODO
-#include<iostream>
+#include<iostream> //remove
+// Template rand unif functions
 
 class Tools{
 public:
@@ -34,15 +35,16 @@ public:
 		return (value >> idx) & 1;
 	};
 
-	//calculate difference in position
+	// calculate difference in position between two vectors
 	std::vector<double> vec_sub(std::vector<double> const& first, std::vector<double> const& second);
 
-
+	// scale all values in a vector by a scalar amount
 	std::vector<double> vec_scale(std::vector<double> const& vec, double const& scalar);
 
-
+	// sum two vectors by element
 	std::vector<double> vec_sum(std::vector<double> const& first, std::vector<double> const& second);
 
+	// get average value over elements in a vector
 	template<typename T>
 	double vec_avg(std::vector<T> const& first){
 		double total = 0;
@@ -67,6 +69,7 @@ public:
 		return picked;
 	}
 
+	// create a path to a directory
 	bool create_dir(std::string path){
 		return std::filesystem::create_directories(path);
 	}
