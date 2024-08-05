@@ -16,7 +16,7 @@ Population::Population(const Argparse* argparser, ioh::problem::RealSingleObject
 	this->base_boundary = std::stoi(argparser->get_values()["-b"]);
 	this->base_mutation = std::stoi(argparser->get_values()["-m"]);
 
-	this->selection_operator = get_selection_operator();
+	this->selection_operator = create_selection_operator(this->base_selection);
 
 	// if (n <4){
 	// 	this->n = 5*ta-rget_function->meta_data().n_variables;;
@@ -51,8 +51,8 @@ Population::~Population() {
 }
 
 Agent* Population::create_agent(int id){
-	return new Agent(id, dim, get_mutation_operator(-1, this->F), 
-						  get_crossover_operator(-1, this->Cr), get_boundary_operator(), target_function, budget, this->resample_limit); 
+	return new Agent(id, dim, create_mutation_operator(-1, this->F), 
+						  create_crossover_operator(-1, this->Cr), create_boundary_operator(), target_function, budget, this->resample_limit); 
 }
 
 size_t Population::get_population_size(){
@@ -107,8 +107,7 @@ void Population::repopulate_next_gen() {
 			next_gen[i] = NULL;
 		}
 		this->next_gen[i] = create_agent(i);
-	}
-	
+	}	
 }
 
 void Population::add_to_archive(std::vector<bool> kept_indexes){
@@ -243,6 +242,7 @@ void Population::write_population(std::string filename){
 	
 }
 
+
 void Population::update_vector_pool(double previous_best_fitness){
 	for (size_t i = 0; i < this->n; ++i){
 		if (cur_gen[i]->get_fitness() < previous_best_fitness){
@@ -251,12 +251,11 @@ void Population::update_vector_pool(double previous_best_fitness){
 			this->vector_pool.push_back(diff); 
 		}
 	}
-	// std::cout << "vector pool size: " << vector_pool.size() << std::endl;
 	this->improved = true;
 }
 
 //default mut_op = -1, F = 0.0
-std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F){
+std::shared_ptr<Mutation> Population::create_mutation_operator(int mut_op, float F){
 
 	if (mut_op == -1){
 		mut_op = base_mutation;
@@ -293,7 +292,7 @@ std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F)
 			case 13:
 				return std::make_shared<Desmu>(this->dim, this->n, F);
 			case 14:
-				return std::make_shared<Bea>(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget, F);
+				return std::make_shared<Bea>(this->dim, this->n, this->create_boundary_operator(), this->target_function, this->budget, F);
 			case 15:
 				return std::make_shared<DirMut>(this->dim, this->n, F);
 			case 16:
@@ -334,7 +333,7 @@ std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F)
 			case 13:
 				return std::make_shared<Desmu>(this->dim, this->n);
 			case 14:
-				return std::make_shared<Bea>(this->dim, this->n, this->get_boundary_operator(), this->target_function, this->budget);
+				return std::make_shared<Bea>(this->dim, this->n, this->create_boundary_operator(), this->target_function, this->budget);
 			case 15:
 				return std::make_shared<DirMut>(this->dim, this->n);
 			case 16:
@@ -347,7 +346,7 @@ std::shared_ptr<Mutation> Population::get_mutation_operator(int mut_op, float F)
 }
 
 //default sel_op = -1
-std::shared_ptr<Selection> Population::get_selection_operator(int sel_op){
+std::shared_ptr<Selection> Population::create_selection_operator(int sel_op){
 	if (sel_op == -1){
 		sel_op = this->base_selection;
 	}
@@ -360,7 +359,7 @@ std::shared_ptr<Selection> Population::get_selection_operator(int sel_op){
 }
 
 //default c_op = -1, Cr = 0.0
-std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr){
+std::shared_ptr<Crossover> Population::create_crossover_operator(int c_op, float Cr){
 	if (Cr == 0.0){
 		Cr = this->Cr;
 	}
@@ -389,7 +388,7 @@ std::shared_ptr<Crossover> Population::get_crossover_operator(int c_op, float Cr
 }
 
 //default bound_op = -1
-std::shared_ptr<Boundary> Population::get_boundary_operator(int bound_op){
+std::shared_ptr<Boundary> Population::create_boundary_operator(int bound_op){
 	if (bound_op == -1){
 		bound_op = base_boundary;
 	}

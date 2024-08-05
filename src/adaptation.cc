@@ -66,7 +66,7 @@ void RandomManager::create_population(){
 	// initialize population with random operators
 	for (size_t i = 0; i < this->pop->get_population_size(); ++i){
 		int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //TODO: doublecheck values, -1 to exclude randomsearch
-		this->pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, this->F), i);
+		this->pop->set_individual_mutation(this->pop->create_mutation_operator(new_m, this->F), i);
 	}
 }
 
@@ -82,9 +82,9 @@ void RandomManager::adapt(const double& previous_best_fitness){
 			}
 			double new_F = this->F;
 			if (this->RandomizeF){
-				pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, tools.rand_double_unif(0.2,0.8)), i);
+				pop->set_individual_mutation(this->pop->create_mutation_operator(new_m, tools.rand_double_unif(0.2,0.8)), i);
 			}else{
-				pop->set_individual_mutation(this->pop->get_mutation_operator(new_m, new_F), i);
+				pop->set_individual_mutation(this->pop->create_mutation_operator(new_m, new_F), i);
 
 			}
 			auto mutation_ptr = pop->get_current_generation()[i]->get_mutation_ptr();
@@ -96,7 +96,7 @@ void RandomManager::adapt(const double& previous_best_fitness){
 			
 			// use best predetermined Cr crossover value for mutation+crossover operator combination
 			pop->get_current_generation()[i]->set_crossover(
-				pop->get_crossover_operator(crossover_type, mutation_ptr->get_predetermined_Cr(crossover_type))
+				pop->create_crossover_operator(crossover_type, mutation_ptr->get_predetermined_Cr(crossover_type))
 			);
 
 		}
@@ -117,10 +117,10 @@ MABManager::MABManager(const Argparse* argparser, ioh::problem::RealSingleObject
 			// print if operator is added
 			std::cout << MUTATION_NAMES[i] << ':' << '\t' << "True" << std::endl;
 
-			auto mutation_ptr = this->pop->get_mutation_operator(i, -1);
+			auto mutation_ptr = this->pop->create_mutation_operator(i, -1);
 			CROSSOVER crossover_type = CROSSOVER(std::stoi(argparser->get_values()["-c"]));
 			mutation_ptr->auto_set_F(crossover_type);
-			auto crossover_ptr = this->pop->get_crossover_operator(i, -1);
+			auto crossover_ptr = this->pop->create_crossover_operator(i, -1);
 			crossover_ptr->set_Cr(mutation_ptr->get_predetermined_Cr(crossover_type));
 			operator_configuration new_config = {
 				mutation_ptr,
@@ -221,9 +221,9 @@ AdaptationManager::operator_configuration MABManager::get_new_config(){
 				//create new random config
 				//TODO: make work for EXPONENTIAL crossover
 				int new_m = tools.rand_int_unif(0, NUM_MUTATION_OPERATORS-1); //exclude randomsearch
-				auto m_ptr = this->pop->get_mutation_operator(new_m);
+				auto m_ptr = this->pop->create_mutation_operator(new_m);
 				m_ptr->auto_set_F(BINOMIAL);
-				auto cr_ptr = this->pop->get_crossover_operator(BINOMIAL, m_ptr->get_predetermined_Cr(BINOMIAL));
+				auto cr_ptr = this->pop->create_crossover_operator(BINOMIAL, m_ptr->get_predetermined_Cr(BINOMIAL));
 				cr_ptr->set_Cr(m_ptr->get_predetermined_Cr(BINOMIAL));
 				operator_configuration new_config = {
 					m_ptr,
