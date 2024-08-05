@@ -121,7 +121,7 @@ std::tuple<std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_
 }
 
 void Agent::add_history(std::tuple<std::vector<double>, double, std::shared_ptr<Crossover>, std::shared_ptr<Mutation>, std::shared_ptr<Boundary>> snapshot){
-	history.push_back(snapshot);
+	this->history.push_back(snapshot);
 }
 
 void Agent::print_history(bool print_positions){
