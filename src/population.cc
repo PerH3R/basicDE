@@ -76,13 +76,12 @@ void Population::apply_mutation() {
 		}
 		this->cur_gen[i]->mutate(this->cur_gen, i);
 	}
-		
-	// mutation_operator->apply(this->cur_gen);
+
+	this->improved = false; // for dirmut
 }
 
 void Population::apply_crossover() {
 	for (size_t i = 0; i < this->n; i++) {
-		//this->next_gen[i] = 
 		this->cur_gen[i]->crossover(this->next_gen, i);
 	}
 }
