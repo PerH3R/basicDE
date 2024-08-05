@@ -27,7 +27,9 @@ protected:
 };
 
 
-//Elitist selection
+// Elitist selection
+// Compare index i of current and next generation. 
+// If next is better, swap Agents. If not, leave in next_gen to have location overwritten next iteration
 class Elitist : public Selection {
 public:
     Elitist(size_t n);
