@@ -376,7 +376,7 @@ void Bea::mutate_segment(const std::vector<Agent*>& cur_gen, size_t idx, std::ve
 
 	unsigned int best_clone = std::distance(fitness.begin(), std::max_element(std::begin(fitness), std::end(fitness)));
 
-	//copy into others
+	//copy segment of best clone into others
 	for (size_t i = 0; i < clones.size(); ++i){
 		if(i != best_clone){
 			for (size_t j = start_index; j < end_index; j++) {
@@ -390,6 +390,7 @@ std::vector<double> Bea::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	int remainder = this->dim % this->Nsegments;
 	int remainder_settled = 0;
 
+	//reserve space for clones
 	std::vector< std::vector<double> > clones;
 	for (int i = 0; i < Nclones; ++i){
 		clones.push_back(cur_gen[idx]->get_position());
@@ -398,17 +399,20 @@ std::vector<double> Bea::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	fitness.reserve(clones.size());
 
 
-	//select 3 uniform random vectors in advance for consistency TODO:ambiguous if each segment should have new random idx's
+	// select 3 uniform random vectors in advance for consistency TODO:ambiguous if each segment should have new random idx's
 	std::vector<Agent*> chosen_vectors = tools.pick_random(cur_gen, 3, false);
 
+	// Divide up the vector in roughly equal segments
 	for (size_t i = 0; i < Nsegments; ++i){
 		if (remainder == 0){
 			unsigned int start_index = (i*segment_size) + remainder_settled;
 			unsigned int end_index = ((i+1) * segment_size) + remainder_settled;
+			// apply mutation on just this segment
 			mutate_segment(cur_gen, idx, chosen_vectors, clones, fitness, start_index, end_index);
 		} else {
 			unsigned int start_index = (i*segment_size) + remainder_settled + 1;
 			unsigned int end_index = ((i+1) * segment_size) + remainder_settled + 1;
+			// apply mutation on just this segment
 			mutate_segment(cur_gen, idx, chosen_vectors, clones, fitness, start_index, end_index);
 			remainder--;
 			remainder_settled++;
@@ -424,23 +428,29 @@ std::vector<double> Bea::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 std::vector<double> DirMut::apply(std::vector<Agent*> const& cur_gen, size_t idx){
 	std::vector<double> donor_vec(this->dim, 0.0);
 	if (this->vector_pool_ptr == NULL){
-			std::cerr << "NO VEctor pool found. Prepare for errors." << std::endl;
+			std::cerr << "NO Vector pool found. Prepare for errors." << std::endl;
 		}
 		std::vector<std::vector<double>> vector_pool = *vector_pool_ptr;
+
+	// if global improvement occured last iteration
 	if(this->improved){		
 		size_t r1, r2;
+		// take a random base vector
 		do {
 			r1 = tools.rand_int_unif(0, this->n);
 		} while (r1 == idx);
+		// pull a random difference vector from the pool
 		r2 = tools.rand_int_unif(0, vector_pool.size());
+		// apply scaled difference vector to base vector
 		donor_vec = tools.vec_sum(cur_gen[r1]->get_position() , tools.vec_scale(vector_pool[r2], this->F));
 
 	} else{
+		// use normal operator
 		donor_vec = this->base_operator->apply(cur_gen, idx);
 	}
 
 
-	//clear vector pool after each iteration
+	//clear vector pool at the end of each iteration
 	if((idx < this->n) == false){
 		vector_pool.clear();
 		this->improved = false;

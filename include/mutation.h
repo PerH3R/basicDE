@@ -15,22 +15,26 @@ class Mutation {
 public:
 	// Mutation() = default;
 	Mutation(size_t dim, size_t n, float F = 0.5) : dim(dim), n(n), F(F){};
-	virtual bool use_archive() {return false;} ;
+	
+	// General
 	virtual ~Mutation() { };
 	virtual MUTATION get_type() = 0;
 	virtual std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx) = 0;
-	// virtual std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx, std::vector<std::vector<double>>& vector_pool) = 0;
-	// virtual void update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen){};
-	virtual void improved_to_true(){};
-	virtual void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){ (void)vector_pool;};
-
 	float get_F() const {return this->F;}
 	size_t get_n(){return this->n;}
 	void set_F(float new_F){this->F = new_F;}
 	virtual float auto_set_F(CROSSOVER Cr_type) {(void)Cr_type; return fallback_F;}; //{ this->F = this->base_F[Cr_type];} //returns new value
 	virtual float get_predetermined_Cr(CROSSOVER Cr_type){(void)Cr_type; return fallback_Cr;};
 
-	// float get_predetermined_Cr(CROSSOVER Cr_type) override {return this->base_Cr[Cr_type];}
+	// Dirmut specific
+	virtual void improved_to_true(){};
+	virtual void pass_vector_pool(std::vector<std::vector<double>>& vector_pool){ (void)vector_pool;};
+
+	// PBest specific
+	virtual bool use_archive() {return false;} 
+
+	
+
 protected:
 	size_t dim;
 	size_t n; //pop size
@@ -41,6 +45,8 @@ protected:
 	// float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {fallback_Cr, fallback_Cr}; //default crossover rate
 };
 
+
+// Vi = Xr1 + F (Xr2 - Xr3)
 class RandDiv1 : public Mutation {
 public:
     RandDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -54,6 +60,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_Cr};
 };
 
+// Vi = Xr1 + F (Xr2 - Xr3) + F (Xr4 - Xr5)
 class RandDiv2 : public Mutation {
 public:
     RandDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -67,6 +74,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};
 };
 
+// Vi = Xbest + F (Xr1 - Xr2) 
 class BestDiv1 : public Mutation {
 public:
     BestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -80,6 +88,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
+// Vi = Xbest + F (Xr1 - Xr2) + F (Xr3 - Xr4)
 class BestDiv2 : public Mutation {
 public:
     BestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -93,6 +102,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};
 };
 
+// Vi = Xi + F (Xpbest - Xi) + F (Xr1 - Xr2)
 class TargetToPBestDiv1 : public Mutation {
 public:
     TargetToPBestDiv1(size_t dim, size_t n, std::vector<std::vector<double>>* archive, float F = 0.5, int archive_size = 0) : Mutation(dim, n, F), 
@@ -104,7 +114,7 @@ public:
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx) override;
 	//TODO check if 'using' is needed \/
 	using Mutation::use_archive;
-	bool use_archive();
+	bool use_archive() override;
 	float get_predetermined_Cr(CROSSOVER Cr_type) override {return this->base_Cr[Cr_type];}
 	float auto_set_F(CROSSOVER Cr_type) override { this->F = this->base_F[Cr_type]; return this->F;}
 protected:	
@@ -142,6 +152,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
+// Vi = Xi + F (Xbest - Xi) + F (Xr1 - Xr2)
 class TargetToBestDiv1 : public Mutation {
 public:
     TargetToBestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -155,6 +166,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
+// Vi = Xi + F (Xbest - Xi) + F (Xr1 - Xr2) + F (Xr3 - Xr4)
 class TargetToBestDiv2 : public Mutation {
 public:
     TargetToBestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -168,6 +180,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
+// Vi = Xi + F (Xr1 - Xr2)
 class TargetToRandDiv1 : public Mutation {
 public:
     TargetToRandDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -181,6 +194,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_Cr};
 };
 
+// Vi = Xi + F (Xr1 - Xr2) + F (Xr3 - Xr4)
 class TargetToRandDiv2 : public Mutation {
 public:
     TargetToRandDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -194,6 +208,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.2, fallback_Cr};
 };
 
+// Vi = Xr1 + F (Xr2 - Xr3) if fitness(r1) < fitness(r2) else Vi = Xr2 + F (Xr1 - Xr3)
 class TwoOptDiv1 : public Mutation {
 public:
     TwoOptDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -207,6 +222,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.8, fallback_Cr};
 };
 
+// Vi = Xr1 + F (Xr2 - Xr3) + F (Xr4 - Xr5) if fitness(r1) < fitness(r2) else Vi = Xr2 + F (Xr1 - Xr3) + F (Xr4 - Xr5)
 class TwoOptDiv2 : public Mutation {
 public:
     TwoOptDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -222,6 +238,7 @@ protected:
 
 
 // DO NOT USE WITH REFLECTION BOUNDARY OPERATOR
+// Vi = Xi + Fu (Xr1 - Xr2)
 class Desmu : public Mutation {
 public:
     Desmu(size_t dim, size_t n, float F = 0.5, double alpha = 1.0) : Mutation(dim, n, F) {
@@ -242,6 +259,7 @@ private:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
+// doi:10.1109/sde.2014.7031532
 class Bea : public Mutation {
 public:
 	Bea(size_t dim, size_t n, std::shared_ptr<Boundary> boundary_correction, ioh::problem::RealSingleObjective* target_function, unsigned int* budget,
@@ -264,7 +282,7 @@ private:
 	void mutate_segment(const std::vector<Agent*>& cur_gen, size_t idx, std::vector<Agent*> chosen_vectors,
 		std::vector< std::vector<double> >& clones, std::vector<double>& fitness, unsigned int start_index, unsigned int end_index);
 
-	std::shared_ptr<Boundary> boundary_correction; //clamp seems like a very bad option
+	std::shared_ptr<Boundary> boundary_correction; 
 	ioh::problem::RealSingleObjective* target_function;
 
 	int Nclones; //>2 is useless unless x1-x3 are rerolled for each clone
@@ -278,15 +296,21 @@ private:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {1.0, fallback_Cr};
 };
 
+
+// If new global best -> save difference vectors between best vector and other vectors
+// iteration after new best -> apply randomly scaled difference vector from the pool to vectors
+// other iterations -> ise base operator
 class DirMut : public Mutation {
 public:
 	DirMut(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {
-		set_base_operator(new RandDiv1(dim, n, F));
+		this->set_base_operator(new RandDiv1(dim, n, F));
 		vector_pool_ptr = NULL;
 	};
     ~DirMut() {delete this->base_operator; this->base_operator=NULL;};
+
+    // Allow for possibility of changing base mutation operator
     void set_base_operator(Mutation* new_base_operator){ base_operator = new_base_operator; };
-    // void update_vector_pool(double best_fitness, std::vector<Agent*> cur_gen, std::vector<Agent*> next_gen, std::vector< std::vector<double> >& vector_pool);
+    // Keep track of improvement
     void improved_to_true() override {this->improved = true;};
     MUTATION get_type() override {return DIRMUT;};
 	std::vector<double> apply(std::vector<Agent*> const& cur_gen, size_t idx) override;
