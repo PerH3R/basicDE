@@ -5,4 +5,4 @@ It uses IOHprofiler (https://iohprofiler.github.io/) for problems and analysis, 
 
 Includes 16 mutation operators, 2 crossover operators, 3 Boundary operators + resampling, 4 credit assignment operators, 1 selection operator and allows for easy addition of new operators. To add new operators, add them to the respective .h and .cc file and to the operators.h file.
 
-An detailed explanation of command line flags can be found in the [argparse header](include/argparse.h).
+A detailed explanation of command line flags can be found in the [argparse header](include/argparse.h).
