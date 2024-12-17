@@ -7,7 +7,7 @@ Includes 16 mutation operators, 2 crossover operators, 3 Boundary operators + re
 
 A detailed explanation of command line flags can be found in the [argparse header](include/argparse.h).
 
-To make:
+### To make: 
 Have `/IOHexperimenter/` and `/BasicDE/` in the same folder. \
 From `/BasicDE/ ` :
 ```
