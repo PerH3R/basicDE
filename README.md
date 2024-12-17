@@ -1,14 +1,8 @@
 # basicDE
-todo draw out structure (in uml? plantuml)
-move mu AND crossover to individual level
+A not-so-basic anymore customisable Differential Evolution algorithm using a Multi-Armed Bandit approach for Adaptive Operator Selection.
 
-todo: ioh profiler function structure
-	include function in agent niet nodig?
-	make a list of what operators to add
+It uses IOHprofiler (https://iohprofiler.github.io/) for problems and analysis, IOHprofiler also allows for custom problems.
 
-	initialization -> check if they are sufficiently random
+Includes 16 mutation operators, 2 crossover operators, 3 Boundary operators + resampling, 4 credit assignment operators, 1 selection operator and allows for easy addition of new operators. To add new operators, add them to the respective .h and .cc file and to the operators.h file.
 
-
-PyBind interface/config files
-
-rework argparse strucuture for easier retrievable values
+An detailed explanation of command line flags can be found in the [argparse header](include/argparse.h).
