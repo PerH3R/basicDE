@@ -126,6 +126,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.5, fallback_Cr};
 };
 
+// Vi = Xr1 + F (Xbest - Xr1) + F (Xr2 - Xr3)
 class RandToBestDiv1 : public Mutation {
 public:
     RandToBestDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -139,6 +140,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.05, fallback_Cr};	
 };
 
+// Vi = Xr1 + F (Xbest - Xr1) + F (Xr2 - Xr3) + F (Xr4 - Xr5)
 class RandToBestDiv2 : public Mutation {
 public:
     RandToBestDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -180,7 +182,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.9, fallback_Cr};
 };
 
-// Vi = Xi + F (Xr1 - Xr2)
+// Vi = Xi + F (Xr1 - Xi) + F (Xr2 - Xr3)
 class TargetToRandDiv1 : public Mutation {
 public:
     TargetToRandDiv1(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};
@@ -194,7 +196,7 @@ protected:
 	float base_Cr[NUM_CROSSOVER_OPERATORS+1] = {0.1, fallback_Cr};
 };
 
-// Vi = Xi + F (Xr1 - Xr2) + F (Xr3 - Xr4)
+// Vi = Xi + F (Xr1 - Xi) + F (Xr2 - Xr3) + F (Xr4 - Xr5)
 class TargetToRandDiv2 : public Mutation {
 public:
     TargetToRandDiv2(size_t dim, size_t n, float F = 0.5) : Mutation(dim, n, F) {};

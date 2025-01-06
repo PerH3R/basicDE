@@ -31,9 +31,10 @@ flag				meaning						default					vals
 -MABsel				strategy selection for MAB	1 						int, determines how the operators of next iteration are chosen. 0=greedy, 1=proportional
 -credit				how improvement is scored	3 						int; 0=fitness, 1=tanh, 2=binary, 3=binary+			
 -lp					learning period				5 						int > 0, number of iterations between the updating of each Agents operators
--ops				selection of mutops for MAB	65535
+-ops				selection of mutops for MAB	65535					int 0-65535 (assuming the default 16 mutation operators), the decimal representation of a little endian bitstring
+																		example: "-ops 5" -> 5 = 0b0000000000000101 -> activates only 0th and 2nd mutation operators,  rand/1 & best/1
 
--runs-				repeated runs				1						int
+-runs 				repeated runs				1						int
 -budget				base allowed funtion evals	10000					int, also lowest value budget can go
 -budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
 -pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on 5*dimension of problem
