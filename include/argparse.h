@@ -12,36 +12,36 @@
 // #include <cctype>
 
 /*
-flag				meaning						default					vals
+flag				meaning				default					vals
 
 //base
--f					function					1						int 1-24
--d					dimensions					0						int > 0; 0 = 5,20
--m					base mutation operator		0						int 0-16 
--F					mutation rate 				0.5						real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
--c					base crossover operator		0						int 0-1 0=BINOMIAL 1=EXPONENTIAL 
--Cr					crossover rate 				0.5						real 0.0-1.0
--b					base boundary operator		0 						int 0-2
--s					selection operator			0 						int 0-0
--a					operator adaptor			2 						int 0-2, 0=fixed; 1=random muation operators; 2=MAB based Mutation operator selection
--r					resample limit				-1						int >= 0, negative will use automatic limit scaled with dimensionality (10+std::pow((std::log(this->dim)),2))
--eps_f				epsilon						0.0 					real, minimum difference between min and max fitnessfor early stopping
--eps_a				epsilon						0.1 					real, chance of random operator selection during MAB adaptation
+-f				function			1					int 1-24
+-d				dimensions			0					int > 0; 0 = 5,20
+-m				base mutation operator		0					int 0-16 
+-F				mutation rate 			0.5					real (TODO F \in [2/pop_size, 1] or [2/pop_size, D/pop_size] https://cir.nii.ac.jp/crid/1573387450569887488)
+-c				base crossover operator		0					int 0-1 0=BINOMIAL 1=EXPONENTIAL 
+-Cr				crossover rate 			0.5					real 0.0-1.0
+-b				base boundary operator		0 					int 0-2
+-s				selection operator		0 					int 0-0
+-a				operator adaptor		2 					int 0-2, 0=fixed; 1=random muation operators; 2=MAB based Mutation operator selection
+-r				resample limit			-1					int >= 0, negative will use automatic limit scaled with dimensionality (10+std::pow((std::log(this->dim)),2))
+-eps_f				epsilon				0.0 					real, minimum difference between min and max fitnessfor early stopping
+-eps_a				epsilon				0.1 					real, chance of random operator selection during MAB adaptation
 -MABdecay			decay multiplier MAB		0.5 					real [0,1] affect how quick MAB ''forgets'' obtained results higher=faster
--MABsel				strategy selection for MAB	1 						int, determines how the operators of next iteration are chosen. 0=greedy, 1=proportional
--credit				how improvement is scored	3 						int; 0=fitness, 1=tanh, 2=binary, 3=binary+			
--lp					learning period				5 						int > 0, number of iterations between the updating of each Agents operators
+-MABsel				strategy selection for MAB	1 					int, determines how the operators of next iteration are chosen. 0=greedy, 1=proportional
+-credit				how improvement is scored	3 					int; 0=fitness, 1=tanh, 2=binary, 3=binary+			
+-lp				learning period			5 					int > 0, number of iterations between the updating of each Agents operators
 -ops				selection of mutops for MAB	65535					int 0-65535 (assuming the default 16 mutation operators), the decimal representation of a little endian bitstring
-																		example: "-ops 5" -> 5 = 0b0000000000000101 -> activates only 0th and 2nd mutation operators,  rand/1 & best/1
+													example: "-ops 5" -> 5 = 0b0000000000000101 -> activates only 0th and 2nd mutation operators,  rand/1 & best/1
 
--runs 				repeated runs				1						int
+-runs 				repeated runs			1					int
 -budget				base allowed funtion evals	10000					int, also lowest value budget can go
--budget_multiplier	b = b * (b_m*dim)			1						real > 0.0
--pop_size			population size				0						int >= 4, 0 >= int < 4 will use automatic population size based on 5*dimension of problem
--logQ				log MAB Q-values			0 						boolean (numerical 0/1)	
+-budget_multiplier		b = b * (b_m*dim)		1					real > 0.0
+-pop_size			population size			0					int >= 4, 0 >= int < 4 will use automatic population size based on 5*dimension of problem
+-logQ				log MAB Q-values		0 					boolean (numerical 0/1)	
 
 //operator specific
--archive		use archive (ttpb mut)			0						int (if negative, archive size = pop_size)	
+-archive			use archive (ttpb mut)		0					int (if negative, archive size = pop_size)	
 
 */
 
