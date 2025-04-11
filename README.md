@@ -8,7 +8,7 @@ New operators can be easily added, but included are:
 - 2 crossover operators: Binomial and Exponential.
 - 3 Boundary operators: Clamp, Reflect, Reinitialize. Also allows for resampling (reattempting the mutation step when infeasable vectors are generated).
 - 4 credit assignment operators: fitness, tanh(fitness), Binary improvement, Binary+ improvement.
-- 1 selection operator: Elitist.\
+- 1 selection operator: Elitist.
 
 To add new operators, code them into the respective .h and .cc file and add an entry to the [operators.h](include/operators.h) file to make it selectable.
 
