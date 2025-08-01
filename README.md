@@ -14,7 +14,7 @@ To add new operators, code them into the respective .h and .cc file and add an e
 
 A detailed explanation of command line flags can be found in the [argparse header](include/argparse.h).
 
-### To make: 
+### Building the project: 
 Have `/IOHexperimenter/` and `/BasicDE/` in the same folder. \
 From `/BasicDE/ ` :
 ```
@@ -22,3 +22,6 @@ mkdir Build
 cd Build
 cmake .. -DCMAKE_BUILD_TYPE=[Debug|Release]  && sudo make install -j [core_count]
 ```
+
+### Thesis
+This program was made for a thesis project. The accompanying thesis can be found at the [LIACS Thesis Repository](https://theses.liacs.nl/3270)
