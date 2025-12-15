@@ -5,13 +5,8 @@
 #include <string>
 #include <map>
 
-
-//TODO: make usable for ranges of numbers
-
-
-// #include <cctype>
-
 /*
+!!!! IMPORTANT - IF VIEWING ON GITHUB, OPEN RAW FILE TO SEE THIS COMMENT BLOCK WITH INTENDED (AND MORE READABLE) SPACING !!!!
 flag				meaning				default					vals
 
 //base
